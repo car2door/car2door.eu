@@ -1,0 +1,1071 @@
+/* car2door.eu: one night map of Europe behind every page; pages and cards slide over it
+   (site.js). Taken over with the apps' design (D42, docs/website.md): the blue is Car2Door's
+   signal orange (plans/design/brand-sheet.md), labels on orange are ink, never white. */
+:root {
+  --text: #E2E8F0; --soft: #C3CEDF; --muted: #A7B4C8; --faint: #8996AC;
+  --primary: #FF6A13; --primary-dark: #E2550A; --sky: #FF8A45; --sky-text: #FFB98A; --sky-soft: rgba(255, 255, 255, .09);
+  --ink: #0E1726; --on-primary: #0E1726; --primary-soft: #FFE3D1;
+  --navy: #16203A; --navy-dark: #0A0F1E; --amber: #FFB020; --amber-text: #FFC861; --amber-soft: rgba(255, 176, 32, .16);
+  --night: #050B18; --line: rgba(255, 255, 255, .12); --line-soft: rgba(255, 255, 255, .08);
+  /* The frames over the night map are 25% less see-through than they were (Martin, 2026-10-24: easier
+     to read over the city lights): opacity = 1 - 0.75 x (1 - the old one). A light tint keeps its shade
+     on the dark map: --field is the old white .1 over a 25% navy layer, --tint the old white .08, --tint-low
+     the old white .05. Batch 19 took the same rule to the other pages' frames, the panel, the menu bar, the
+     header, the bands, the legal pages and to faded (disabled) buttons and placeholders; every text reaches
+     WCAG AA (4.5:1) on what is behind it (--faint was #7C8BA3). */
+  --panel: rgba(12, 20, 40, .745); --panel-hover: rgba(18, 28, 54, .805); --field: rgba(87, 92, 106, .325);
+  --tint: rgba(75, 81, 96, .31); --tint-low: rgba(54, 61, 77, .29); --glass: rgba(12, 20, 40, .625); --blur: blur(18px) saturate(150%);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; background: var(--night); }
+body { margin: 0; min-height: 100vh; background: var(--night); color: var(--text); font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+a { color: var(--sky); }
+h1, h2, h3 { letter-spacing: -0.02em; line-height: 1.15; color: #fff; }
+h2 { font-size: clamp(26px, 4vw, 34px); margin: 0 0 6px; }
+h3 { font-size: 19px; margin: 0 0 6px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+section.wrap { padding-top: 72px; }
+.sub { color: var(--muted); margin: 0 0 28px; }
+.note { color: var(--muted); font-size: 14px; margin: 14px 0 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* Headings the router focuses after a page change (site.js): no ring, they aren't controls. */
+h1[tabindex="-1"]:focus, .page[tabindex="-1"]:focus { outline: none; }
+
+/* The night map: drawn once, fixed behind everything. 100vh/lvh keeps it from resizing
+   when phone browser bars slide away. --scrim (site.js) darkens it as the page scrolls.
+   hero-net.js tilts it and draws the live network over it (see "Connected Europe" below). */
+.backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; z-index: 0; overflow: hidden; isolation: isolate; pointer-events: none; background: var(--night); }
+.backdrop svg { display: block; width: 100%; height: 100%; animation: map-in 1.6s 1.2s ease-out both; } /* hero-net.js takes over at once and tilts it */
+/* Darker on the text side and at the edges so copy stays readable over the lights (and over
+   the network, which these two layers sit on top of). */
+.backdrop::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(5, 11, 24, .74) 0%, rgba(5, 11, 24, .34) 48%, rgba(5, 11, 24, .08) 75%, rgba(5, 11, 24, .22) 100%), linear-gradient(rgba(5, 11, 24, .3), transparent 22%, transparent 89%, rgba(5, 11, 24, .8)); }
+.backdrop::after { content: ""; position: absolute; inset: 0; z-index: 1; background: rgba(5, 11, 24, .6); opacity: var(--scrim, 0); will-change: opacity; }
+
+/* Pages: see-through, in #stage. The one that is leaving is pinned (site.js) while it slides away. */
+#stage { position: relative; z-index: 1; overflow-x: clip; }
+@supports not (overflow: clip) { #stage { overflow-x: hidden; } }
+.page { display: block; min-height: calc(100vh - 64px); }
+.page.leaving { position: fixed; left: 0; right: 0; z-index: 0; pointer-events: none; }
+
+/* Header */
+/* Opaque along the top: the blur can't hide text right at the screen's edge, so what scrolls under
+   the header must not show through there (the background is fogged to plain navy there anyway). */
+.top { position: sticky; top: 0; z-index: 20; background: linear-gradient(var(--night) 22px, rgba(5, 11, 24, .865)); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); border-bottom: 1px solid var(--line-soft); }
+.top .brand { color: #fff; }
+.bar { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: #fff; text-decoration: none; }
+.logo { width: 36px; height: 36px; border-radius: 10px; background: var(--ink); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); color: #fff; display: inline-grid; place-items: center; flex: none; overflow: hidden; }
+.logo svg { width: 100%; height: 100%; }
+.logo.dark { width: 56px; height: 56px; border-radius: 16px; background: var(--primary); --m-disc: var(--ink); --m-door: var(--primary); --m-dot: var(--ink); box-shadow: 0 0 0 1px #ffffff22; margin-bottom: 18px; } /* the Driver app's icon: orange tile, ink disc */
+.top nav { display: flex; align-items: center; gap: 24px; }
+.top nav a { color: #CBD5E1; text-decoration: none; font-weight: 600; font-size: 15px; }
+.top nav a:hover, .top nav a[aria-current]:not(.btn) { color: #fff; }
+.btn { display: inline-block; background: var(--primary); color: var(--on-primary) !important; border-radius: 14px; padding: 12px 20px; font-weight: 700; text-decoration: none; }
+.btn.small { padding: 8px 14px; border-radius: 12px; }
+.btn.big { padding: 15px 28px; font-size: 18px; border-radius: 16px; }
+.top nav .login { transition: background .2s, box-shadow .2s; }
+.top nav .login:hover { background: var(--primary-dark); }
+.top nav .login.on { box-shadow: 0 0 0 2px rgba(255, 138, 69, .55); }
+/* Signed in: the first name next to a round initial. */
+.top nav .login.signed { display: inline-flex; align-items: center; gap: 8px; padding: 4px 13px 4px 4px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .16); color: #fff !important; }
+.top nav .login.signed:hover { background: rgba(255, 255, 255, .14); }
+.login .ava { width: 28px; height: 28px; border-radius: 9px; background: linear-gradient(var(--primary), var(--primary-dark)); color: var(--on-primary); display: grid; place-items: center; font-size: 13.5px; font-weight: 800; }
+.login .nm { max-width: 11ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Hero */
+.hero { position: relative; color: #fff; padding: 72px 0 88px; }
+.hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+.eyebrow { display: inline-block; background: var(--tint); border: 1px solid rgba(255, 226, 168, .3); color: #FFE2A8; font-weight: 700; font-size: 14px; border-radius: 999px; padding: 4px 12px; margin: 0 0 18px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+h1 { font-size: clamp(40px, 7vw, 64px); margin: 0 0 18px; letter-spacing: -0.035em; }
+.hero h1 { color: #fff; text-shadow: 0 2px 24px rgba(5, 11, 24, .6); }
+.lead { font-size: 19px; color: var(--muted); margin: 0 0 28px; max-width: 34em; text-wrap: pretty; } /* no word alone on a last line (build-site.py ties the last words too) */
+.hero .lead { color: #D5DEEC; text-shadow: 0 1px 12px rgba(5, 11, 24, .8); }
+.hero .lead span { display: block; } /* the closing sentence, on a line of its own */
+.hero .note { color: var(--muted); }
+.stores { display: flex; flex-wrap: wrap; gap: 12px; }
+.store { display: inline-flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, .92); color: #0F172A; border-radius: 12px; padding: 8px 16px 8px 12px; font-weight: 700; font-size: 18px; line-height: 1.1; opacity: 0.92; cursor: default; }
+.store svg { width: 26px; height: 26px; }
+.store small { display: block; font-weight: 500; font-size: 11px; opacity: 0.8; }
+/* Glass cards over the night map: Book your transport and Your account share one spot (.deck)
+   and one look: header row with the logo, segmented control, fields, big button. */
+.deck { display: grid; position: relative; }
+.deck > .card { grid-area: 1 / 1; }
+.deck.sliding { clip-path: inset(-200px 0 -200px 0); }
+.off { visibility: hidden; }
+/* Phones before signing in (site.js): the account card stands alone in the spot, as tall as
+   the step it shows, with no back arrow (there is nothing behind it). When its height changes
+   (another step, or Book your trip taking over) it eases to the new one as they slide; a step
+   coming in shows down to the edge of the growing box (the cards clip their own content). */
+.deck.solo > .book.off, .deck.solo .pane.off { display: none; }
+.panes.fitting { clip-path: inset(-40px -100vw 0); }
+.acct.gate .back-btn { display: none; }
+.card { color: #fff; background: var(--glass); border: 1px solid rgba(255, 255, 255, .16); border-radius: 26px; overflow: hidden; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .12); color-scheme: dark; }
+.card-head { display: flex; align-items: center; gap: 12px; padding: 18px 22px; background: rgba(255, 255, 255, .05); border-bottom: 1px solid rgba(255, 255, 255, .1); }
+.card-head .logo { width: 38px; height: 38px; border-radius: 12px; }
+.card-head h2 { margin: 0; font-size: 22px; letter-spacing: -0.02em; }
+.card small { display: block; color: var(--soft); font-size: 12.5px; font-weight: 700; margin-bottom: 4px; }
+.card input { font: inherit; font-size: 16px; color: #fff; background: var(--field); border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 12px; padding: 10px 12px; width: 100%; box-sizing: border-box; transition: border-color .15s, background .15s; }
+.card input::placeholder { color: rgba(226, 232, 240, .66); }
+.card input:focus { outline: none; border-color: var(--sky); background: rgba(255, 255, 255, .16); }
+.card input[aria-invalid] { border-color: #FF9B8A; }
+.book-body { padding: 20px 22px 6px; display: grid; gap: 14px; }
+/* Segmented control: a white pill slides under the chosen side. */
+.kinds { position: relative; display: grid; grid-template-columns: 1fr 1fr; background: var(--tint); border: 1px solid rgba(255, 255, 255, .1); border-radius: 14px; padding: 4px; }
+.kinds::before { content: ""; position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 11px; background: rgba(255, 255, 255, .94); box-shadow: 0 2px 8px rgba(0, 0, 0, .25); transform: translateX(calc(var(--i, 0) * 100%)); transition: transform .38s cubic-bezier(.22, .8, .24, 1); }
+.book.is-live .kinds, .kinds:has(label:last-child input:checked) { --i: 1; }
+.kinds label { position: relative; z-index: 1; }
+.kinds input { position: absolute; opacity: 0; pointer-events: none; }
+.kinds span { display: block; text-align: center; padding: 8px; border-radius: 11px; font-weight: 700; font-size: 15px; color: var(--soft); cursor: pointer; transition: color .2s; }
+.kinds input:checked + span { color: #0F172A; }
+.kinds input:focus-visible + span { outline: 2px solid var(--sky); }
+.route { display: grid; grid-template-columns: 14px 1fr 40px; gap: 10px; align-items: center; }
+.road { display: grid; justify-items: center; align-content: center; height: 100%; padding: 30px 0 18px; box-sizing: border-box; }
+.road .start { width: 10px; height: 10px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 10px var(--sky); }
+.road .dash { width: 0; flex: 1; min-height: 34px; border-left: 2px dotted rgba(255, 255, 255, .45); margin: 4px 0; }
+.road .ring { width: 8px; height: 8px; border-radius: 50%; border: 3px solid var(--amber); box-shadow: 0 0 10px var(--amber); }
+.addr { display: grid; gap: 10px; }
+.swap { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .2); background: var(--field); color: #fff; display: grid; place-items: center; cursor: pointer; margin-top: 18px; }
+.swap:hover { background: rgba(134, 140, 148, .4); }
+.swap svg { width: 20px; height: 20px; }
+.live-note { display: none; margin: 0; color: #FFE2A8; background: rgba(255, 176, 32, .14); border: 1px solid rgba(255, 176, 32, .3); border-radius: 12px; padding: 10px 12px; font-size: 14px; font-weight: 600; }
+.book.is-live .when { display: none; }
+/* The pickup's date and time (site.js WhenPicker, batch 19): two buttons like the fields, as in the apps,
+   and a picker in the panel's navy, solid (what it covers must not show through): under its buttons on a
+   computer, a sheet from the bottom on a phone. Every text on it reads at 4.5:1 or more. */
+.wp-btns { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 10px; }
+.wp-btn { display: flex; align-items: center; gap: 9px; min-width: 0; padding: 10px 12px; font: inherit; font-size: 16px; color: #fff; text-align: left; background: var(--field); border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 12px; cursor: pointer; transition: border-color .15s, background .15s; }
+.wp-btn:hover { background: rgba(134, 140, 148, .4); }
+.wp-btn:focus-visible, .wp-btn[aria-expanded="true"] { outline: none; border-color: var(--sky); background: rgba(255, 255, 255, .16); }
+.wp-btn svg { width: 19px; height: 19px; flex: none; color: var(--sky-text); }
+.wp-btn span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.wp-scrim { position: fixed; inset: 0; z-index: 40; background: rgba(5, 11, 24, .6); }
+.wp { position: fixed; z-index: 41; display: grid; gap: 10px; padding: 12px 12px 14px; color: #fff; background: #141F3A; border: 1px solid rgba(255, 255, 255, .2); border-radius: 22px 8px 22px 8px; box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .85); color-scheme: dark; font-size: 15px; line-height: 1.3; animation: wp-in .16s ease-out both; }
+.wp.as-sheet { left: 0; right: 0; top: auto; bottom: 0; max-height: 88vh; padding: 16px 16px calc(18px + env(safe-area-inset-bottom)); border-width: 1px 0 0; border-radius: 28px 10px 0 0; animation: wp-up .24s cubic-bezier(.22, .8, .24, 1) both; }
+@keyframes wp-in { from { opacity: 0; transform: translateY(-4px); } }
+@keyframes wp-up { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .wp, .wp.as-sheet { animation: none; } }
+.wp-head { display: flex; align-items: center; gap: 10px; padding: 0 2px 0 6px; }
+.wp-head b { min-width: 0; font-size: 16px; font-weight: 800; }
+.wp-head span { flex: 1; min-width: 0; color: var(--soft); font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wp-head b:only-of-type { flex: 1; }
+.wp-x, .wp-nav { width: 36px; height: 36px; flex: none; display: grid; place-items: center; padding: 0; border: 0; border-radius: 11px; background: rgba(255, 255, 255, .08); color: var(--soft); cursor: pointer; transition: background .15s, color .15s; }
+.wp-x { margin-left: auto; }
+.wp-x:hover, .wp-nav:hover:not(:disabled) { background: rgba(255, 255, 255, .14); color: #fff; }
+.wp-x svg, .wp-nav svg { width: 18px; height: 18px; }
+.wp-nav:disabled { opacity: .35; cursor: default; }
+.wp-month { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; align-items: center; gap: 6px; }
+.wp-month h3 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: 0; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wp-grid { width: 100%; border-collapse: separate; border-spacing: 3px; table-layout: fixed; }
+.wp-grid th { padding: 2px 0 4px; color: var(--muted); font-size: 12.5px; font-weight: 700; text-align: center; overflow: hidden; text-overflow: clip; white-space: nowrap; }
+.wp-grid td { padding: 0; text-align: center; }
+.wp-day, .wp-q { display: block; width: 100%; height: 40px; padding: 0; border: 0; border-radius: 12px 5px 12px 5px; background: transparent; color: #fff; font: inherit; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; transition: background .12s, color .12s; }
+.wp-day:hover:not(:disabled), .wp-q:hover:not(:disabled) { background: rgba(255, 255, 255, .1); }
+.wp-day:focus-visible, .wp-q:focus-visible, .wp-x:focus-visible, .wp-nav:focus-visible { outline: 2px solid var(--sky); outline-offset: 1px; }
+.wp-day[aria-current="date"] { color: var(--sky-text); box-shadow: inset 0 0 0 1.5px rgba(255, 138, 69, .7); }
+.wp-day[aria-pressed="true"], .wp-q[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); box-shadow: 0 6px 16px -6px rgba(255, 106, 19, .9); }
+.wp-day:disabled, .wp-q:disabled { color: var(--faint); font-weight: 500; cursor: default; }
+.wp-q { height: 38px; }
+.wp-scroll { max-height: 288px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, .22) transparent; margin: 0 -4px; padding: 0 4px; }
+.wp.as-sheet .wp-scroll { max-height: min(46vh, 340px); }
+.wp.as-sheet .wp-day { height: 44px; }
+.book.is-live .live-note { display: block; }
+.counts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.stepper { display: grid; grid-template-columns: 40px 1fr 40px; background: var(--field); border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 12px; overflow: hidden; }
+.stepper button { border: 0; background: transparent; color: #fff; font-size: 22px; font-weight: 700; cursor: pointer; }
+.stepper button:hover { background: rgba(255, 255, 255, .14); }
+.card .stepper input { text-align: center; background: transparent; border: 0; padding: 10px 0; -moz-appearance: textfield; }
+.card .stepper input:focus { background: transparent; }
+.stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.bags-note { margin: -6px 0 0; color: var(--muted); font-size: 13px; }
+.book-foot { padding: 14px 22px 20px; }
+.card .btn.big { width: 100%; border: 0; cursor: pointer; font: inherit; font-weight: 800; font-size: 18px; text-align: center; box-shadow: 0 10px 30px -8px rgba(255, 106, 19, .7); transition: background .15s, opacity .15s; }
+.card .btn.big:hover { background: var(--primary-dark); }
+.card .btn.big:disabled { opacity: .74; cursor: default; }
+/* Orange faded over the night navy reads brown: a button that can't be pressed yet (Pay before the
+   terms are ticked) is grey instead; one that is busy (Checking…, Paying…) stays orange. */
+.card .btn.big:disabled:not(.busy), .q .next:disabled:not(.busy) { opacity: 1; background: #343C50; color: #AEB9C9 !important; box-shadow: none; }
+.card .btn.big.busy:disabled, .q .next.busy:disabled { opacity: .88; }
+.book-foot p { margin: 10px 0 0; color: var(--soft); font-size: 13px; line-height: 1.45; text-align: center; }
+
+/* Booking in place (site.js): the trip, the price, the payment and the confirmation are steps of
+   Book your trip that share one cell and slide sideways, like the account card's. Every step is
+   as tall as the tallest, so the card keeps its size and its big button stays where it is. */
+.book .panes { grid-template-columns: minmax(0, 1fr); }
+.book .pane { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.book .book-foot { margin-top: auto; }
+.book h2 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.book h2:focus { outline: none; }
+.book .back-btn { overflow: hidden; transition: width .4s cubic-bezier(.22, .8, .24, 1), margin .4s cubic-bezier(.22, .8, .24, 1), opacity .25s, background .15s, color .15s; }
+.book[data-stage="trip"] .back-btn, .book[data-stage="done"] .back-btn { width: 0; margin: 0 -12px 0 0; opacity: 0; visibility: hidden; transition-property: width, margin, opacity, visibility; }
+/* Address suggestions under the From and To fields. */
+.af { position: relative; }
+/* The X that empties the field (site.js Suggest), over the field's right end while it holds text. */
+.af input { padding-right: 40px; }
+.af .clr { position: absolute; right: 5px; bottom: 7px; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--faint); display: grid; place-items: center; cursor: pointer; transition: color .15s; }
+.af .clr:hover { color: #fff; }
+.af .clr:focus-visible { outline: 2px solid var(--sky); }
+.af .clr svg { width: 20px; height: 20px; }
+.af:has(input:placeholder-shown) .clr { display: none; }
+.sugg { position: absolute; z-index: 6; left: 0; right: 0; top: calc(100% + 4px); margin: 0; padding: 6px; list-style: none; background: #142039; border: 1px solid rgba(255, 255, 255, .18); border-radius: 14px; box-shadow: 0 22px 44px -14px rgba(0, 0, 0, .8); }
+.sugg li { padding: 7px 10px; border-radius: 10px; cursor: pointer; line-height: 1.3; }
+.sugg li b { display: block; font-size: 15px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sugg li span { display: block; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sugg li:hover, .sugg li[aria-selected="true"] { background: rgba(255, 255, 255, .1); }
+/* My location, the first row while the field has the focus. */
+.sugg li.here b { display: flex; align-items: center; gap: 8px; color: var(--sky-text); }
+.sugg li.here svg { width: 18px; height: 18px; flex: none; }
+.sugg li.here:not(:last-child) { margin-bottom: 4px; box-shadow: 0 5px 0 -4px rgba(255, 255, 255, .12); }
+.sugg li.here.busy svg { animation: here-look 0.9s ease-in-out infinite alternate; }
+@keyframes here-look { to { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .sugg li.here.busy svg { animation: none; } }
+/* Price: the route, the trip in short, one tile per van with its price, a note, then Pay. */
+.trip-sum { display: grid; gap: 12px; }
+.legs { display: grid; gap: 8px; }
+.leg { position: relative; display: grid; grid-template-columns: 14px 1fr; gap: 10px; align-items: start; }
+.leg .start, .leg .ring { justify-self: center; margin-top: 7px; border-radius: 50%; }
+.leg .start { width: 10px; height: 10px; background: var(--sky); box-shadow: 0 0 10px var(--sky); }
+.leg .ring { width: 8px; height: 8px; margin-top: 8px; border: 3px solid var(--amber); box-shadow: 0 0 10px var(--amber); box-sizing: content-box; }
+.leg:first-child::after { content: ""; position: absolute; left: 6px; top: 22px; bottom: -6px; border-left: 2px dotted rgba(255, 255, 255, .45); }
+.leg p { margin: 0; min-width: 0; line-height: 1.35; }
+.leg b { display: block; font-size: 17px; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.leg p span { display: block; color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.leg p span:empty { display: none; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; color: var(--soft); font-size: 14px; font-weight: 600; line-height: 1.4; }
+.fact { display: inline-flex; align-items: center; gap: 6px; }
+.fact svg { width: 17px; height: 17px; flex: none; color: var(--sky-text); }
+.vpick { border: 0; margin: 0; padding: 0; min-width: 0; }
+.vpick legend { padding: 0; }
+.vopts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.vopt { position: relative; display: grid; align-content: center; justify-items: center; gap: 2px; min-height: 66px; padding: 8px 6px; border-radius: 14px; text-align: center; background: var(--field); border: 1.5px solid rgba(255, 255, 255, .14); cursor: pointer; transition: border-color .15s, background .15s; }
+.vopt:hover { background: rgba(255, 255, 255, .14); }
+.vopt input { position: absolute; opacity: 0; pointer-events: none; }
+.vopt b { font-size: 14px; color: var(--soft); line-height: 1.2; }
+.vopt .vprice { font-size: 19px; font-weight: 800; color: #fff; letter-spacing: -0.01em; line-height: 1.25; }
+.vopt.on { border-color: var(--sky); background: rgba(255, 255, 255, .12); box-shadow: inset 0 0 0 1px var(--sky); }
+.vopt.on b { color: #fff; }
+.vopt.luxury.on { border-color: var(--amber); background: rgba(255, 176, 32, .16); box-shadow: inset 0 0 0 1px var(--amber); }
+.vopt:has(input:focus-visible) { outline: 2px solid var(--sky); outline-offset: 2px; }
+.vopt.no { opacity: .625; cursor: default; }
+.vopt.no:hover { background: var(--field); }
+.vpick:disabled .vopt { cursor: default; } /* while the order is made */
+.vopt.no .vprice { font-size: 11.5px; font-weight: 600; color: var(--soft); line-height: 1.3; }
+.vcap { margin: 7px 0 0; color: var(--muted); font-size: 13px; text-align: center; }
+.notes { display: block; }
+.book-foot .total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 14px; }
+.total span { color: var(--soft); font-size: 15px; font-weight: 700; }
+.total b { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; color: #fff; line-height: 1; }
+.book .fine { text-wrap: pretty; }
+/* Payment: Stripe's form between the trip's total and Pay. */
+.pay-sum { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 14px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); }
+.ps-route { margin: 0; font-weight: 700; color: #fff; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ps-price { font-size: 21px; font-weight: 800; color: #fff; white-space: nowrap; }
+/* An invite voucher: the price and the voucher under the total. */
+.ps-off { margin: 8px 4px 0; color: var(--soft); font-size: 14px; }
+.pe-box { position: relative; min-height: 210px; }
+.bk-pay .spin { display: none; }
+.bk-pay.loading .spin { display: block; position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, .18); border-top-color: var(--sky); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.secure svg { display: inline-block; width: 15px; height: 15px; margin-right: 5px; vertical-align: -2px; color: var(--sky-text); }
+/* Booked. */
+.done-top { display: grid; justify-items: center; text-align: center; gap: 4px; padding-top: 4px; }
+.done-top .tick { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 8px; background: #12A150; box-shadow: 0 0 0 8px rgba(18, 161, 80, .18), 0 14px 32px -10px rgba(18, 161, 80, .8); }
+.done-top .tick svg { width: 34px; height: 34px; color: #fff; }
+.book[data-stage="done"] .tick { animation: pop .45s cubic-bezier(.3, 1.6, .5, 1) .2s both; }
+.done-top h3 { margin: 0; font-size: 24px; }
+.done-p { margin: 0; color: var(--soft); font-size: 15px; line-height: 1.5; text-wrap: pretty; }
+.done-sum { margin: 0; border-radius: 14px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); }
+.done-sum div { display: flex; justify-content: space-between; gap: 14px; padding: 9px 14px; }
+.done-sum div + div { border-top: 1px solid rgba(255, 255, 255, .08); }
+.done-sum dt { color: var(--muted); font-size: 14px; }
+.done-sum dd { margin: 0; font-weight: 700; font-size: 15px; color: #fff; text-align: right; overflow-wrap: anywhere; }
+.bk-done .book-foot .btn { width: 100%; text-align: center; }
+
+/* Your account: Log in on the left, Create account on the right, then Google and Apple,
+   then email. Its steps share one cell and slide sideways (site.js). */
+.acct { display: flex; flex-direction: column; outline: none; }
+.back-btn { width: 36px; height: 36px; margin: -2px -2px -2px -8px; border-radius: 11px; border: 0; background: transparent; color: var(--soft); display: grid; place-items: center; cursor: pointer; flex: none; transition: background .15s, color .15s; }
+.back-btn:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.back-btn:focus-visible { outline: 2px solid var(--sky); }
+.back-btn svg { width: 24px; height: 24px; }
+/* Spacing kept tight enough that the card is no taller than Book your trip in any language,
+   so the shared spot (.deck) doesn't grow when it slides in. */
+.acct-body { padding: 18px 22px 2px; display: grid; gap: 14px; align-content: start; flex: 1; }
+.acct[data-tab="create"] .tabs { --i: 1; }
+.acct.is-me .tabs, .acct.is-me .acct-legal { display: none; }
+.acct.is-me .acct-body { align-content: stretch; } /* Your account sits in the middle (its pane centres it); My trips fills it */
+.panes { display: grid; position: relative; }
+.pane { grid-area: 1 / 1; display: grid; gap: 12px; align-content: start; }
+.sso { display: grid; gap: 10px; }
+.sso-btn { position: relative; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; height: 50px; padding: 0 52px; border-radius: 14px; font: inherit; font-size: 16.5px; font-weight: 700; letter-spacing: -0.005em; cursor: pointer; transition: background .15s, transform .1s, opacity .15s; }
+.sso-btn svg { position: absolute; left: 18px; top: 50%; width: 22px; height: 22px; margin-top: -11px; }
+.sso-btn span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sso-btn:active { transform: scale(.985); }
+.sso-btn:disabled { opacity: .775; cursor: default; }
+.sso-btn:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.sso-btn.google { background: #fff; color: #1F1F1F; border: 1px solid #fff; }
+.sso-btn.google:hover { background: #F1F3F4; }
+.sso-btn.apple { background: #000; color: #fff; border: 1px solid rgba(255, 255, 255, .3); }
+.sso-btn.apple:hover { background: #111; }
+.sso-btn.apple svg { width: 21px; height: 21px; margin-top: -12px; }
+.or { display: flex; align-items: center; gap: 14px; margin: 0; color: var(--muted); font-size: 13px; font-weight: 700; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: rgba(255, 255, 255, .14); }
+.em, .cd { display: grid; gap: 10px; }
+.acct .btn.big { padding: 13px 20px; font-size: 17px; }
+.acct .btn.big.go { margin-top: 2px; }
+.hint { margin: 0; color: var(--muted); font-size: 13.5px; text-align: center; }
+.msg { margin: -2px 0 0; color: #FFB4A8; font-size: 14px; font-weight: 600; line-height: 1.45; }
+.msg:empty { display: none; }
+.msg.ok { color: #9BE3B5; }
+.link { border: 0; background: none; padding: 4px 0; font: inherit; font-size: 14.5px; font-weight: 700; color: var(--sky); cursor: pointer; }
+.link:hover { color: #fff; }
+.link:disabled { color: var(--faint); cursor: default; }
+.msg .link { padding: 0; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+.code-head { display: flex; gap: 14px; align-items: center; margin-bottom: 4px; }
+.code-head .mail { width: 48px; height: 48px; border-radius: 15px; flex: none; display: grid; place-items: center; color: var(--sky-text); background: var(--sky-soft); border: 1px solid rgba(255, 138, 69, .28); }
+.code-head .mail svg { width: 26px; height: 26px; }
+.code-head h3 { margin: 0 0 2px; font-size: 20px; }
+.code-head p { margin: 0; color: var(--soft); font-size: 14.5px; line-height: 1.4; overflow-wrap: anywhere; }
+.code-head b { color: #fff; }
+.card .code-in { font-size: 26px; font-weight: 700; letter-spacing: .42em; text-align: center; padding: 11px 12px 11px calc(12px + .42em); font-variant-numeric: tabular-nums; }
+.card .code-in::placeholder { letter-spacing: .42em; color: rgba(226, 232, 240, .475); }
+.code-links { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.acct-legal { margin: 0; padding: 12px 26px 18px; color: var(--muted); font-size: 12.5px; line-height: 1.5; text-align: center; }
+.acct-legal a { color: var(--soft); }
+.acct-legal a:hover { color: #fff; }
+.me-ava { position: relative; }
+.ava.big { width: 76px; height: 76px; border-radius: 26px; background: linear-gradient(var(--primary), var(--primary-dark)); color: var(--on-primary); display: grid; place-items: center; font-size: 32px; font-weight: 800; box-shadow: 0 14px 32px -10px rgba(255, 106, 19, .8); }
+.me-ava .ok { position: absolute; right: -6px; bottom: -6px; width: 28px; height: 28px; border-radius: 50%; background: #12A150; border: 3px solid #0F1A33; display: none; place-items: center; }
+.me-ava .ok::after { content: "✓"; color: #fff; font-size: 13px; font-weight: 800; font-style: normal; }
+.acct.fresh .me-ava .ok { display: grid; animation: pop .45s cubic-bezier(.3, 1.6, .5, 1); }
+.me-hi { display: none; margin: 0; font-size: 15px; font-weight: 800; color: #9BE3B5; }
+.acct.fresh .me-hi { display: block; }
+.me-name { font-size: 20px; font-weight: 800; color: #fff; overflow-wrap: anywhere; }
+.me-mail { color: var(--soft); font-size: 14.5px; overflow-wrap: anywhere; }
+.btn.ghost { background: transparent; border: 1.5px solid rgba(255, 255, 255, .2); color: #fff !important; font: inherit; font-weight: 700; font-size: 16px; padding: 12px 20px; border-radius: 16px; cursor: pointer; margin-top: 6px; }
+.btn.ghost:hover { background: rgba(255, 255, 255, .08); }
+@keyframes pop { from { transform: scale(.3); opacity: 0; } }
+
+/* My trips and one trip (site.js): views of the account card once signed in. They scroll inside
+   the card, which keeps the size of the spot it shares with Book your trip (the panes are taken
+   out of the flow and cover the card's body, edge to edge). */
+.acct .pane.tv { position: absolute; top: -18px; bottom: -2px; left: -22px; right: -22px; gap: 10px; padding: 16px 22px 22px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, .22) transparent;
+  /* what scrolls fades at the edges (at either end only the padding is under the fade) */
+  -webkit-mask-image: linear-gradient(transparent, #000 10px, #000 calc(100% - 16px), transparent); mask-image: linear-gradient(transparent, #000 10px, #000 calc(100% - 16px), transparent); }
+.acct .pane.tv:has(> .tempty, > .tload) { align-content: center; }
+.tsec { margin: 6px 0 -2px; font-size: 13.5px; font-weight: 800; letter-spacing: 0; color: var(--muted); }
+.tsec:first-child { margin-top: 0; }
+.trow { position: relative; display: grid; gap: 7px; padding: 13px 44px 13px 15px; border-radius: 16px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); color: #fff; text-decoration: none; transition: background .15s, border-color .15s; }
+.trow:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .2); }
+.trow:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.trow-top, .t-top { display: flex; flex-wrap: wrap; gap: 6px; }
+.trow-route { font-size: 17px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trow-foot { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: var(--soft); font-size: 14px; line-height: 1.35; }
+.trow-foot b { color: #fff; font-size: 16.5px; font-weight: 800; white-space: nowrap; }
+.trow .go-ic { position: absolute; right: 13px; top: 50%; width: 22px; height: 22px; margin-top: -11px; color: var(--muted); transform: scaleX(-1); }
+.trow .go-ic svg { display: block; width: 100%; height: 100%; }
+.trow:hover .go-ic { color: #fff; }
+/* Status, as the app colours it: finding a transporter amber, assigned to on the road blue, completed green. */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 800; line-height: 1.35; background: rgba(255, 255, 255, .1); color: var(--soft); }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge.blue { background: var(--sky-soft); color: var(--sky-text); }
+.badge.amber { background: var(--amber-soft); color: var(--amber-text); }
+.badge.green { background: rgba(18, 161, 80, .22); color: #8BE0AE; }
+.badge.live { background: rgba(255, 90, 90, .18); color: #FFA8A8; }
+.tload { display: grid; place-items: center; min-height: 160px; }
+.tload .spin { width: 30px; height: 30px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, .18); border-top-color: var(--sky); animation: spin .8s linear infinite; }
+.tempty { display: grid; justify-items: center; gap: 8px; padding: 8px 2px; text-align: center; }
+.tempty-ic { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; margin-bottom: 4px; color: var(--sky-text); background: var(--sky-soft); border: 1px solid rgba(255, 138, 69, .28); }
+.tempty-ic svg { width: 28px; height: 28px; }
+.tempty h3 { margin: 0; font-size: 20px; }
+.tempty p { margin: 0 0 6px; max-width: 32ch; color: var(--soft); font-size: 15px; line-height: 1.5; text-wrap: pretty; }
+.tv .btn { width: 100%; margin: 0; text-align: center; }
+.tv .btn:disabled { opacity: .74; cursor: default; }
+/* One trip: the route in full, what was booked and paid, then what happens next. */
+.tv .leg b, .tv .leg p span { white-space: normal; overflow-wrap: anywhere; }
+.done-sum .wide { flex-direction: column; gap: 2px; }
+.done-sum .wide dd { text-align: left; font-weight: 600; }
+.t-note { margin: 0; padding: 11px 14px; border-radius: 14px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); color: var(--soft); font-size: 14.5px; line-height: 1.45; text-wrap: pretty; }
+.t-note.amber { background: var(--amber-soft); border-color: rgba(255, 176, 32, .3); color: #FFE2A8; }
+.t-sec { display: grid; gap: 10px; padding: 14px; border-radius: 16px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); }
+.t-sec h3 { margin: 0; font-size: 13.5px; font-weight: 800; letter-spacing: 0; color: var(--muted); }
+.t-sec p { margin: 0; color: var(--soft); font-size: 14.5px; line-height: 1.45; text-wrap: pretty; }
+.t-person { display: flex; align-items: center; gap: 12px; }
+.t-person .ava { width: 46px; height: 46px; border-radius: 15px; flex: none; display: grid; place-items: center; background: linear-gradient(var(--primary), var(--primary-dark)); color: var(--on-primary); font-size: 19px; font-weight: 800; }
+.t-person p { display: grid; gap: 1px; min-width: 0; }
+.t-person b { color: #fff; font-size: 17px; line-height: 1.3; overflow-wrap: anywhere; }
+.t-person p span { color: var(--soft); font-size: 14px; }
+.t-sec .t-van { color: #fff; font-weight: 600; }
+.t-sec .t-call { display: flex; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.t-call svg { width: 20px; height: 20px; flex: none; }
+.t-call span { min-width: 0; overflow-wrap: anywhere; }
+.t-digits { display: block; padding-left: .3em; text-align: center; font-size: 40px; font-weight: 800; letter-spacing: .3em; line-height: 1.1; color: #fff; font-variant-numeric: tabular-nums; }
+.card textarea { display: block; width: 100%; min-height: 96px; resize: vertical; font: inherit; font-size: 16px; line-height: 1.45; color: #fff; background: var(--field); border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 12px; padding: 10px 12px; transition: border-color .15s, background .15s; }
+.card textarea::placeholder { color: rgba(226, 232, 240, .66); }
+.card textarea:focus { outline: none; border-color: var(--sky); background: rgba(255, 255, 255, .16); }
+.t-file { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .05); color: #fff; font: inherit; font-size: 15px; font-weight: 700; text-align: left; cursor: pointer; transition: background .15s; }
+.t-file:hover { background: rgba(255, 255, 255, .1); }
+.t-file:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.t-file svg { width: 20px; height: 20px; flex: none; color: var(--sky-text); }
+.t-file span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.t-file b { white-space: nowrap; }
+.t-cancel { display: grid; gap: 10px; margin-top: 2px; }
+.t-cancel p { margin: 0; color: #fff; font-weight: 700; text-align: center; text-wrap: pretty; }
+.t-cancel .t-cx { display: block; margin: 0; color: var(--soft); font-size: 14px; font-weight: 400; line-height: 1.45; text-align: center; text-wrap: pretty; }
+.t-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn.danger { border: 0; background: #E5484D; color: #fff !important; font: inherit; font-weight: 800; font-size: 16px; padding: 12px 16px; border-radius: 16px; cursor: pointer; }
+.btn.danger:hover { background: #CC3339; }
+.btn.ghost.danger { background: transparent; border: 1.5px solid rgba(255, 155, 138, .45); color: #FFB4A8 !important; }
+.btn.ghost.danger:hover { background: rgba(255, 120, 100, .1); }
+.tv .btn.ghost, .tv .btn.danger { padding: 12px 14px; }
+
+/* The panel (site.js): the account card in a frame over the page, like a screen of the client
+   app. Computers: on the right, between the header and the app's menu, the page dimmed behind
+   it. Phones: the whole screen under the header, the menu floating over its bottom. Nearly
+   solid, so it stands out from the map (the app's night-map cards). */
+.scrim { position: fixed; top: 64px; left: 0; right: 0; bottom: 0; z-index: 17; background: rgba(5, 11, 24, .55); }
+.sheet { position: fixed; z-index: 18; top: 80px; right: 16px; bottom: 100px; width: min(440px, calc(100% - 32px)); display: flex; }
+.sheet[hidden], .scrim[hidden], .tabbar[hidden] { display: none; }
+.sheet > .acct { flex: 1; min-width: 0; min-height: 0; background: rgba(20, 31, 58, .955); border-color: rgba(255, 255, 255, .2); border-radius: 28px 10px 28px 10px; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .85); }
+.sheet .acct .card-head .logo { display: none; }
+.sheet .acct h2 { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet .acct h2:focus { outline: none; }
+.sheet .acct .back-btn { display: none; }
+.sheet .acct.has-up .back-btn { display: grid; }
+.sheet .acct-body { min-height: 0; overflow-y: auto; }
+.sheet .acct.is-me .acct-body { overflow: visible; grid-template-rows: minmax(0, 1fr); }
+.x-btn { display: none; width: 38px; height: 38px; margin: -4px -6px -4px auto; border-radius: 12px; border: 0; background: rgba(255, 255, 255, .08); color: var(--soft); place-items: center; cursor: pointer; flex: none; transition: background .15s, color .15s; }
+.x-btn:hover { background: rgba(255, 255, 255, .14); color: #fff; }
+.x-btn:focus-visible { outline: 2px solid var(--sky); }
+.x-btn svg { width: 20px; height: 20px; }
+.sheet .x-btn { display: grid; }
+.acct .pane.tv { overscroll-behavior: contain; }
+@media (max-width: 860px) {
+  .scrim { display: none; }
+  .sheet { top: 64px; left: 0; right: 0; bottom: 0; width: auto; }
+  .sheet > .acct { border-radius: 0; border-width: 1px 0 0; box-shadow: none; }
+  .sheet .acct .pane.tv { padding-bottom: 104px; } /* clear of the menu */
+  .panel-over #stage { visibility: hidden; } /* the night map shows behind the panel, as in the app */
+}
+
+/* The client app's menu: New trip, My trips, Profile in a floating bar, the open one in gold
+   in a leaf-shaped chip (src/app/(tabs)/_layout.tsx). */
+.tabbar { position: fixed; z-index: 21; left: 50%; bottom: 16px; transform: translateX(-50%); width: min(400px, calc(100% - 32px)); height: 68px; display: flex; align-items: center; padding: 0 8px; border-radius: 34px; background: rgba(10, 17, 34, .955); border: 1px solid rgba(255, 255, 255, .2); box-shadow: 0 10px 20px rgba(0, 0, 0, .3); }
+.tabbar a { flex: 1; display: grid; justify-items: center; gap: 2px; color: var(--faint); font-size: 11.5px; font-weight: 700; text-decoration: none; }
+.tabbar .chip { width: 44px; height: 30px; display: grid; place-items: center; border-radius: 14px 6px 14px 6px; transition: background .2s; }
+.tabbar i { font-style: normal; }
+.tabbar svg { display: block; width: 22px; height: 22px; }
+.tabbar .f, .tabbar a.on .o { display: none; }
+.tabbar a.on .f { display: block; }
+.tabbar a:hover { color: var(--soft); }
+.tabbar a.on { color: #FFE2A8; }
+.tabbar a.on .chip { background: rgba(255, 255, 255, .1); }
+.tabbar a:focus-visible { outline: none; }
+.tabbar a:focus-visible .chip { box-shadow: 0 0 0 2px var(--sky); }
+/* Stepping aside for the card under it on a computer (site.js clearCard). */
+.tabbar { transition: transform .3s cubic-bezier(.22, .8, .24, 1), opacity .25s, visibility .3s; }
+.tabbar.aside { transform: translate(-50%, 110px); opacity: 0; visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .tabbar { transition: opacity .2s, visibility .2s; } .tabbar.aside { transform: translateX(-50%); } }
+.has-tabs #stage { padding-bottom: 92px; }
+@media (max-width: 860px) { body:has(.sheet input:focus, .sheet textarea:focus, #page input:focus, #page textarea:focus) .tabbar { display: none; } } /* the keyboard is up */
+
+/* Profile (signed in), as in the app: who you are, three tiles, then menus of rows. */
+.pf-head { display: flex; align-items: center; gap: 14px; }
+.pf-head .ava.big { width: 64px; height: 64px; border-radius: 23px 9px 23px 9px; font-size: 26px; }
+.pf-who { display: grid; gap: 4px; min-width: 0; }
+.pf-who .me-mail { justify-self: start; max-width: 100%; padding: 4px 10px; border-radius: 10px; background: rgba(255, 255, 255, .1); color: var(--text); font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-who .me-mail:empty { display: none; }
+.pf-more { display: grid; gap: 14px; }
+.pf-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.pf-tile { display: grid; justify-items: center; gap: 6px; padding: 16px 4px; border-radius: 22px 8px 22px 8px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); color: #fff; font-size: 14px; font-weight: 600; text-align: center; text-decoration: none; transition: background .15s; }
+.pf-tile:hover { background: rgba(255, 255, 255, .1); }
+.pf-tile:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.pf-tile svg { width: 24px; height: 24px; }
+.pf-tile span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-sec { margin: 6px 0 -6px 2px; font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+.mlist { display: grid; grid-template-columns: minmax(0, 1fr); border-radius: 24px 8px 24px 8px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); overflow: hidden; }
+.mi { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 10px 14px; border: 0; background: none; color: #fff; font: inherit; font-size: 16px; text-align: left; text-decoration: none; cursor: pointer; transition: background .15s; }
+.mi:hover { background: rgba(255, 255, 255, .06); }
+.mi:focus-visible { outline: 2px solid var(--sky); outline-offset: -2px; }
+.mi + .mi::before { content: ""; position: absolute; left: 62px; right: 0; top: 0; border-top: 1px solid rgba(255, 255, 255, .08); }
+.mi[hidden] { display: none; }
+.mi-ic { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: 13px 5px 13px 5px; background: var(--sky-soft); color: #FF9A5C; }
+.mi-ic svg { width: 19px; height: 19px; }
+.mi-ic.flagbox { background: none; }
+.mi-ic .flag { width: 26px; height: 18px; }
+.mi-t { flex: 1 1 auto; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mi-v { flex: 0 1 auto; max-width: 52%; display: flex; align-items: center; gap: 6px; min-width: 0; color: var(--muted); font-size: 14.5px; white-space: nowrap; overflow: hidden; }
+.mi-v > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.mi-v:empty { display: none; }
+.mi-v svg { width: 20px; height: 20px; color: var(--sky-text); }
+.mi-go { width: 16px; height: 16px; flex: none; color: var(--faint); }
+.mi-go svg { display: block; width: 100%; height: 100%; }
+.mi.red { color: #FF6B6F; }
+.mi.red .mi-ic { background: rgba(255, 107, 111, .16); color: #FF6B6F; }
+.mi.on { background: var(--sky-soft); }
+/* Profile's steps: a form, the invoices, the invite code, the question before deleting. */
+.pn-form { display: grid; gap: 12px; }
+.pn-form[hidden] { display: none; }
+.pn-form input:disabled { opacity: .7; }
+/* Report content (#report): the reason as two choices, and the thank-you once sent. */
+.rep-why { display: grid; gap: 10px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.rep-why legend { padding: 0; margin-bottom: 2px; }
+.rep .consent { margin-top: 0; }
+.rep-done { display: grid; gap: 14px; }
+.rep-done[hidden] { display: none; }
+.pn-form .pf-sec { margin: 8px 0 -4px 2px; }
+.pn-note { margin: 0; color: var(--soft); font-size: 14.5px; line-height: 1.45; text-wrap: pretty; }
+.pn-note a { color: var(--sky); }
+.card .pn-code { text-transform: uppercase; letter-spacing: .2em; font-weight: 700; }
+.t-file small { display: block; margin: 0; color: var(--muted); font-size: 13px; font-weight: 600; }
+.pn-del { display: grid; justify-items: center; gap: 8px; padding-top: 6px; text-align: center; }
+.pn-del h3 { margin: 4px 0 0; font-size: 20px; }
+.pn-del p { margin: 0; color: var(--soft); font-size: 15px; line-height: 1.5; text-wrap: pretty; }
+.pn-del .tempty-ic { color: #FF9B8A; background: rgba(255, 107, 111, .14); border-color: rgba(255, 107, 111, .3); }
+.tv .t-two .btn { width: auto; margin: 0; display: grid; place-items: center; text-align: center; }
+/* Help: the home page's questions. */
+.pn-faq { display: grid; gap: 8px; }
+.pn-faq details { padding: 12px 14px; border-radius: 16px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); }
+.pn-faq summary { cursor: pointer; font-weight: 700; color: #fff; line-height: 1.4; }
+.pn-faq details p { margin: 8px 0 0; color: var(--soft); font-size: 15px; line-height: 1.5; }
+/* A legal page or Join Transporters in the panel: their own pages' content, without its frame. */
+.acct .pane[data-pane="doc"] .legal { padding: 0; background: none; border: 0; border-radius: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; overflow: visible; font-size: 15.5px; }
+.acct .pane[data-pane="doc"] .legal h1 { display: none; }
+.acct .pane[data-pane="doc"] .legal h2 { font-size: 19px; margin-top: 28px; }
+.acct .pane[data-pane="join"] .join-inner { max-width: none; text-align: left; }
+.acct .pane[data-pane="join"] .eyebrow { display: none; }
+.acct .pane[data-pane="join"] .join-time { margin: 0 0 12px; text-align: center; }
+.acct .pane[data-pane="join"] .frame { padding: 0; background: none; border: 0; border-radius: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; overflow: visible; }
+.acct .pane[data-pane="join"] .q h1 { font-size: 24px; }
+.acct .pane.tv > * { min-width: 0; } /* a wide child (the Join form's grid) never pushes the panel wider */
+.acct .pane[data-pane="join"] .opts.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.acct .pane[data-pane="join"] .opts.grid .opt { padding: 13px 12px; gap: 10px; }
+.acct .pane[data-pane="join"] .opts.grid .opt b { font-size: 15px; overflow-wrap: anywhere; }
+.acct .pane[data-pane="join"] .opts.grid .tick { display: none; }
+/* The welcome on a phone in the home page's spot (before Book your trip comes): the head alone. */
+.deck .acct .pane.tv[data-pane="me"] { position: static; padding: 6px 0 18px; overflow: visible; -webkit-mask-image: none; mask-image: none; align-content: center; }
+.deck .acct .pf-more { display: none; }
+
+/* Sections below the hero: dark glass panels over the map. */
+.steps, .vans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.step, .van, .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 24px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06); }
+.step p, .van p, .tile p { color: var(--soft); margin: 0; }
+.num { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--sky-soft); color: var(--sky-text); font-weight: 800; margin-bottom: 16px; }
+.band { margin-top: 72px; background: linear-gradient(rgba(5, 11, 24, .51), rgba(5, 11, 24, .66)); border-block: 1px solid var(--line-soft); padding: 64px 0; }
+.band .tile { background: var(--tint-low); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.tag { display: inline-block; font-size: 13px; font-weight: 700; border-radius: 999px; padding: 3px 10px; background: var(--sky-soft); color: var(--sky-text); margin-bottom: 12px; }
+.tag.live { background: var(--amber-soft); color: var(--amber-text); }
+
+/* Van classes: a photo card per class */
+.van { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.stage { aspect-ratio: 8 / 5; background: rgba(255, 255, 255, .04); overflow: hidden; }
+.stage img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.van-body { padding: 22px 24px 24px; display: flex; flex-direction: column; flex: 1; }
+.van .tag { align-self: flex-start; }
+.van.lg .tag { background: var(--amber-soft); color: var(--amber-text); }
+.van .cap { color: var(--sky); font-weight: 700; margin: 0 0 8px; }
+.feats { list-style: none; padding: 0; margin: 14px 0 18px; display: grid; gap: 6px; font-size: 15px; }
+.feats li { position: relative; padding-left: 26px; }
+.feats li::before { content: "✓"; position: absolute; left: 0; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--sky-soft); color: var(--sky-text); font-size: 11px; font-weight: 800; display: grid; place-items: center; }
+.van-foot { margin-top: auto; display: flex; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+.van-foot .btn { white-space: nowrap; flex: 1; text-align: center; }
+.van.lux { background: linear-gradient(160deg, rgba(22, 32, 58, .925), rgba(10, 15, 30, .94)); border-color: rgba(255, 176, 32, .25); color: #fff; }
+.van.lux .tag { background: #FFB02022; color: var(--amber); }
+.van.lux .cap { color: var(--amber); }
+.van.lux p { color: #CBD5E1; }
+.van.lux .feats li::before { background: #FFB02022; color: var(--amber); }
+.van.lux .btn { background: var(--amber); color: var(--navy-dark) !important; }
+/* Shiny gold button for Join Transporters: a light sweep crosses it now and then */
+.btn.shiny { position: relative; overflow: hidden; isolation: isolate; color: var(--navy-dark) !important; background: linear-gradient(135deg, #FFE7A3 0%, #FFB020 45%, #E08A00 100%); box-shadow: 0 0 0 1px #FFE2A866, 0 6px 22px -6px rgba(255, 176, 32, .75); }
+.btn.shiny::after { content: ""; position: absolute; inset: -2px; z-index: -1; background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .85) 50%, transparent 65%); transform: translateX(-120%); animation: shine 3.2s ease-in-out infinite; }
+.btn.shiny:hover { filter: brightness(1.06); }
+.top nav a.btn.shiny { color: var(--navy-dark) !important; }
+.top nav a.btn.shiny[aria-current] { box-shadow: 0 0 0 2px #FFE2A8, 0 6px 22px -6px rgba(255, 176, 32, .75); }
+.drivers .btn.shiny { margin-top: 28px; }
+@keyframes shine { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+
+/* "Connected Europe": the night map tilted like a holographic table, with a live network of
+   trips drawn by hero-net.js. The table fades into the night sky at its horizon (--fog0/--fog1,
+   set by the script): the top layer paints the sky over the map, the scan band and the canvas.
+   (Painted rather than masked, and the map's colour lift is an SVG filter drawn once: both look
+   the same as a CSS mask and filter but cost far less on every frame.) */
+@keyframes map-in { from { opacity: 0; } }
+@keyframes map-on { from { opacity: 0; } 30% { opacity: .35; } }
+.backdrop.net-on::before { background: linear-gradient(var(--night) var(--fog0, 140px), rgba(5, 11, 24, .82) calc(var(--fog0, 140px) * .65 + var(--fog1, 290px) * .35), rgba(5, 11, 24, .4) calc(var(--fog0, 140px) * .3 + var(--fog1, 290px) * .7), rgba(5, 11, 24, 0) var(--fog1, 290px)), linear-gradient(90deg, rgba(5, 11, 24, .74) 0%, rgba(5, 11, 24, .34) 48%, rgba(5, 11, 24, .08) 75%, rgba(5, 11, 24, .22) 100%), linear-gradient(rgba(5, 11, 24, .3), transparent 22%, transparent 89%, rgba(5, 11, 24, .8)); }
+.backdrop.net-on svg { position: absolute; left: 0; top: 0; transform-origin: 0 0; backface-visibility: hidden; will-change: transform; animation: map-on 2.4s ease-out both; }
+.backdrop.net-on image { filter: url(#lift); }
+/* The scan band lifts the map's own city lights as it passes (colour-dodge on the navy base). */
+.backdrop .scan { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; opacity: 0; will-change: transform, opacity; mix-blend-mode: color-dodge; background: linear-gradient(rgba(200, 168, 118, 0) 0%, rgba(200, 168, 118, .3) 12%, rgba(196, 164, 118, .62) 28%, rgba(176, 152, 118, .45) 45%, rgba(140, 132, 125, .14) 75%, rgba(110, 112, 130, 0) 100%); -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); }
+.backdrop .net { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* Language picker */
+.lang { position: relative; }
+.lang summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; color: #CBD5E1; padding: 7px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .16); background: rgba(255, 255, 255, .06); }
+.lang summary::-webkit-details-marker { display: none; }
+.lang summary .earth { width: 20px; height: 20px; border-radius: 50%; flex: none; background: url(/img/earth.webp) 0 50% / auto 100% repeat-x; animation: earth-spin 14s linear infinite; transform: rotate(-18deg); box-shadow: inset -5px -2px 6px rgba(0, 0, 0, .65), inset 2px 1px 3px rgba(255, 255, 255, .35), 0 0 6px rgba(110, 180, 245, .45); }
+@keyframes earth-spin { to { background-position: 40px 50%; } }  /* west to east, like the real one */
+.flag { width: 22px; height: 15px; border-radius: 3px; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, .18); }
+.lang summary .flag { width: 18px; height: 12px; border-radius: 2px; }
+.lang[open] summary, .lang summary:hover { color: #fff; }
+.lang .menu { position: absolute; right: 0; top: calc(100% + 8px); background: rgba(14, 22, 42, .97); border: 1px solid var(--line); border-radius: 14px; padding: 6px; min-width: 190px; box-shadow: 0 24px 50px -16px rgba(0, 0, 0, .8); display: grid; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+.top nav .lang .menu a { display: flex; gap: 10px; align-items: center; color: var(--text); padding: 8px 10px; border-radius: 10px; font-size: 15px; }
+.lang .menu a span { flex: 1; }
+.lang .menu a b { color: var(--faint); font-size: 12px; }
+.lang .menu a:hover { background: rgba(255, 255, 255, .08); }
+.lang .menu a[aria-current] { background: var(--sky-soft); color: var(--sky-text); }
+.fnote { color: var(--faint) !important; font-size: 13px !important; margin: 4px 0 0; max-width: 260px; }
+
+/* Transporters */
+.drivers { margin-top: 72px; background: linear-gradient(160deg, rgba(22, 32, 58, .865), rgba(10, 15, 30, .91)); border-block: 1px solid var(--line-soft); color: #fff; padding: 72px 0; }
+.drivers .lead { color: #CBD5E1; }
+.drivers-grid { max-width: 760px; }
+.checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.checks li { position: relative; padding-left: 34px; color: #CBD5E1; }
+.checks li b { color: #fff; }
+.checks li::before { content: "✓"; position: absolute; left: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: var(--amber); color: var(--navy-dark); font-size: 13px; font-weight: 800; display: grid; place-items: center; }
+.note.light { color: #94A3B8; margin-top: 24px; }
+
+/* FAQ */
+#faq details { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 4px 20px; margin-bottom: 10px; transition: background .15s; }
+#faq details:hover, #faq details[open] { background: var(--panel-hover); }
+#faq summary { cursor: pointer; font-weight: 700; padding: 14px 0; list-style: none; display: flex; justify-content: space-between; gap: 12px; color: #fff; }
+#faq summary::-webkit-details-marker { display: none; }
+#faq summary::after { content: "+"; color: var(--sky); font-size: 22px; line-height: 1; }
+#faq details[open] summary::after { content: "−"; }
+#faq details p { color: var(--soft); margin: 0 0 16px; }
+
+/* Footer */
+.foot { margin-top: 80px; border-top: 1px solid var(--line-soft); padding: 40px 0 24px; background: rgba(5, 11, 24, .79); }
+.foot-grid { display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+.foot p { color: var(--muted); font-size: 14px; }
+.foot nav { display: grid; gap: 8px; align-content: start; }
+.foot nav a { color: #CBD5E1; text-decoration: none; font-size: 15px; }
+.foot nav a:hover { color: #fff; }
+.copy { color: var(--faint); font-size: 13px; margin-top: 24px; }
+
+@media (max-width: 860px) {
+  .hero { padding: 40px 0 64px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  .steps, .vans, .two { grid-template-columns: 1fr; }
+  .top nav > a:not(.btn) { display: none; }
+  .top nav { gap: 10px; }
+}
+/* Phones (the one-column layout) open like the app: the pill, one card (Log in / Create account
+   until the visitor signs in, then Book your trip: site.js), then the store badges side by side.
+   The headline and the lead are for the wide layout; the headline stays for screen readers. */
+@media (max-width: 860px) {
+  .hero { padding: 22px 0 48px; }
+  .hero-grid { gap: 0; max-width: 520px; }
+  .hero-copy { display: contents; }
+  .hero h1 { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .hero .lead { display: none; }
+  .hero .eyebrow { justify-self: center; margin: 0 0 18px; }
+  .hero-grid > .deck { order: 1; }
+  .hero .apps { order: 2; margin-top: 28px; }
+  .hero .stores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  /* Solid, so the network behind them can't show through; the note gets a soft dark halo, as it
+     sits over the brightest part of the map (the Balkans), and no word left alone on its last line. */
+  .hero .store { justify-content: center; min-width: 0; padding: 9px 10px; font-size: 16.5px; opacity: 1; background: #D5DAE2; }
+  .hero .store small { font-size: 10.5px; }
+  .hero .note { margin: 12px auto 0; max-width: 30em; text-align: center; font-size: 13.5px; line-height: 1.5; color: #CBD5E1; text-wrap: balance; text-shadow: 0 1px 10px rgba(5, 11, 24, .95), 0 0 2px rgba(5, 11, 24, .9); }
+}
+@media (max-width: 380px) {
+  .hero .store { gap: 8px; padding: 8px; font-size: 16px; }
+  .hero .store svg { width: 22px; height: 22px; }
+  .card-head h2 { font-size: clamp(19px, 5.6vw, 22px); }   /* long titles (bg "Резервирай пътуване") stay on one line */
+  .vopt { min-height: 60px; }
+}
+@media (max-width: 340px) {
+  .hero .store { gap: 6px; padding: 8px 6px; font-size: 15px; }
+  .hero .store small { font-size: 9.5px; }
+}
+
+/* An invite (Share & Earn, site.js, car2door.eu/r/CODE): under the lead on wide screens, between
+   the pill and the card spot on phones. Glass like the cards, with an amber edge. */
+.invite { margin: 0 0 28px; max-width: 34em; padding: 16px 18px 18px; border-radius: 22px; color: #fff; background: rgba(12, 20, 40, .715); border: 1px solid rgba(255, 226, 168, .32); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .75), inset 0 1px 0 rgba(255, 255, 255, .1); color-scheme: dark; }
+.invite.small { padding: 12px 12px 12px 14px; }
+.inv-head { display: flex; align-items: center; gap: 12px; }
+.inv-head .back-btn { margin-right: -4px; }
+.inv-ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none; color: var(--amber); background: var(--amber-soft); }
+.inv-ic svg { width: 22px; height: 22px; }
+.invite.ok .inv-ic { color: #fff; background: #12A150; }
+.inv-txt { flex: 1; min-width: 0; }
+.invite h2 { margin: 0; font-size: 18px; line-height: 1.3; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.inv-txt p { margin: 2px 0 0; color: var(--soft); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
+.inv-x { width: 34px; height: 34px; flex: none; align-self: flex-start; border: 0; border-radius: 10px; background: transparent; color: var(--soft); font: inherit; font-size: 24px; line-height: 1; cursor: pointer; }
+.inv-x:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.inv-x:focus-visible { outline: 2px solid var(--sky); }
+.inv-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.inv-opt { display: flex; align-items: center; gap: 10px; min-width: 0; text-align: left; font: inherit; color: #fff; text-decoration: none; background: rgba(255, 255, 255, .08); border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 16px; padding: 12px 14px; cursor: pointer; transition: background .15s, border-color .15s, transform .1s; }
+.inv-opt:hover { background: rgba(255, 255, 255, .14); border-color: var(--sky); }
+.inv-opt:active { transform: scale(.98); }
+.inv-opt:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.inv-opt svg { width: 26px; height: 26px; flex: none; color: var(--sky-text); }
+.inv-opt[data-inv="driver"] svg { color: var(--amber); }
+.inv-opt span { min-width: 0; }
+.inv-opt b { display: block; font-size: 16px; line-height: 1.25; }
+.inv-opt small { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; margin-top: 2px; }
+.invite .inv-store { display: block; width: 100%; margin-top: 14px; text-align: center; box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--primary) 70%, transparent); }
+.invite .inv-store:hover { background: var(--primary-dark); }
+.inv-web { display: table; margin: 8px auto 0; text-decoration: none; }
+/* Join Transporters: who invited this transporter, above the questions and on the thank-you. */
+.inv-chip { display: inline-flex; align-items: center; gap: 8px; margin: -4px 0 16px; padding: 6px 14px 6px 10px; border-radius: 999px; background: var(--amber-soft); border: 1px solid rgba(255, 176, 32, .35); color: var(--amber-text); font-weight: 700; font-size: 14px; line-height: 1.3; }
+.inv-chip svg, .inv-done svg { width: 18px; height: 18px; flex: none; }
+.inv-done { display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; color: var(--amber-text); }
+.inv-done svg { margin-top: 3px; color: var(--amber); }
+@media (max-width: 860px) {
+  .hero .invite { max-width: none; margin: 0 0 16px; }
+}
+@media (max-width: 400px) {
+  .inv-opts { grid-template-columns: 1fr; }
+}
+
+/* How Car2Door Pro works (four tiles) and the Driver app's store buttons, with the Driver app's
+   orange icon ("coming soon" until the store pages are public). */
+.drv-how-h { margin: 36px 0 14px; font-size: 22px; color: #fff; }
+.drv-how { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.dtile { padding: 16px 18px; border-radius: 22px 8px 22px 8px; background: var(--tint-low); border: 1px solid rgba(255, 255, 255, .12); }
+.dtile b { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; color: #fff; font-size: 17px; }
+.dtile b i { width: 26px; height: 26px; flex: none; display: grid; place-items: center; border-radius: 9px 4px 9px 4px; background: var(--amber-soft); color: var(--amber-text); font-style: normal; font-size: 14px; }
+.dtile p { margin: 0; color: #CBD5E1; font-size: 15px; line-height: 1.5; }
+@media (max-width: 640px) { .drv-how { grid-template-columns: minmax(0, 1fr); } }
+.dstores { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.dstore { display: inline-flex; align-items: center; gap: 10px; padding: 7px 16px 7px 8px; border-radius: 14px; background: linear-gradient(var(--navy), var(--navy-dark)); border: 1px solid rgba(255, 226, 168, .35); color: #fff; font-weight: 700; font-size: 17px; line-height: 1.1; text-decoration: none; }
+.dstores .dstore small { display: block; margin: 0 0 1px; color: #FFE2A8; font-size: 11px; font-weight: 600; }
+.dmark { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 10px; overflow: hidden; background: var(--primary); box-shadow: 0 0 0 1px #ffffff33; --m-disc: var(--ink); --m-door: var(--primary); --m-dot: var(--ink); }
+.dmark svg { width: 100%; height: 100%; }
+.q .dstores { margin: 18px 0 4px; }
+/* Join Transporters: one question per frame over the night map */
+.join { min-height: calc(100vh - 64px); min-height: calc(100dvh - 64px); padding: 48px 16px 56px; display: grid; place-items: start center; }
+.join-inner { position: relative; z-index: 1; width: 100%; max-width: 560px; text-align: center; }
+.join-time { color: var(--muted); font-size: 14px; margin: -8px 0 18px; }
+.frame { text-align: left; color: #fff; background: rgba(12, 20, 40, .66); border: 1px solid rgba(255, 255, 255, .16); border-radius: 28px; padding: 22px 24px 26px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .12); color-scheme: dark; overflow: hidden; }
+.progress { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+.progress span { display: block; height: 100%; width: 0; border-radius: 3px; background: linear-gradient(90deg, var(--sky), var(--amber)); transition: width .4s ease; }
+.frame-top { display: flex; justify-content: space-between; align-items: center; min-height: 40px; margin: 6px 0 4px; }
+.frame-top .back { border: 0; background: none; color: var(--soft); font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; padding: 8px 0; }
+.frame-top .back:hover { color: #fff; }
+.count { margin-left: auto; color: var(--muted); font-size: 13px; font-weight: 700; }
+.q { transition: transform .18s ease, opacity .18s ease; }
+.q.to-left { transform: translateX(-40px); opacity: 0; }
+.q.to-right { transform: translateX(40px); opacity: 0; }
+.q.from-right { transform: translateX(40px); opacity: 0; transition: none; }
+.q.from-left { transform: translateX(-40px); opacity: 0; transition: none; }
+.q h1 { font-size: clamp(26px, 5vw, 32px); margin: 0 0 8px; letter-spacing: -0.025em; }
+.qsub { color: var(--soft); margin: 0 0 6px; }
+.opts { display: grid; gap: 10px; margin-top: 20px; }
+.opts.grid { grid-template-columns: 1fr 1fr; }
+.opt { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; font: inherit; color: #fff; background: rgba(255, 255, 255, .08); border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 16px; padding: 15px 16px; cursor: pointer; transition: background .15s, border-color .15s, transform .1s; }
+.opt:hover { background: rgba(255, 255, 255, .14); }
+.opt:active { transform: scale(.98); }
+.opt.on { background: rgba(255, 255, 255, .12); border-color: var(--sky); box-shadow: inset 0 0 0 1px var(--sky); }
+.opt span { flex: 1; }
+.opt b { display: block; font-size: 17px; }
+.opt small { display: block; color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+.opt .flag { width: 30px; height: 20px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .25); }
+.opt .tick { width: 22px; height: 22px; border-radius: 7px; border: 2px solid rgba(255, 255, 255, .35); flex: none; display: grid; place-items: center; font-style: normal; }
+.opt.on .tick { background: var(--amber); border-color: var(--amber); }
+.opt.on .tick::after { content: "✓"; color: var(--navy-dark); font-size: 13px; font-weight: 800; }
+.fields { display: grid; gap: 14px; margin-top: 20px; }
+.fields label span { display: block; color: var(--soft); font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.fields input { font: inherit; font-size: 17px; color: #fff; width: 100%; background: var(--field); border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 14px; padding: 13px 14px; }
+.fields input:focus { outline: none; border-color: var(--sky); background: rgba(255, 255, 255, .16); }
+/* A phone number (batch 17): the country code first, "RO +40" with the browser's own list over it, then the number. */
+.ph { display: flex; gap: 8px; }
+.ph input { flex: 1; min-width: 0; }
+.ph-code { position: relative; flex: none; display: flex; align-items: center; gap: 6px; padding: 0 12px; color: #fff; font-weight: 700; background: var(--field); border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 12px; }
+.ph-code b { color: var(--soft); font-size: 12px; }
+.ph-code i { font-style: normal; color: var(--soft); font-size: 12px; }
+.ph-code select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+.ph-code:focus-within { border-color: var(--sky); background: rgba(255, 255, 255, .16); }
+.fields .ph-code { border-radius: 14px; font-size: 17px; }
+.fields small { display: block; color: var(--muted); font-size: 13px; margin-top: 5px; }
+.err { display: block; color: #FFB4A8; font-style: normal; font-size: 14px; font-weight: 600; margin-top: 6px; }
+.err:empty { display: none; }
+.q .next { width: 100%; border: 0; cursor: pointer; font: inherit; font-weight: 800; font-size: 18px; margin-top: 22px; text-align: center; box-shadow: 0 10px 30px -8px rgba(255, 106, 19, .7); }
+.q .next:hover { background: var(--primary-dark); }
+.q .next:disabled { opacity: .7; cursor: default; }
+.sum { margin: 18px 0 0; display: grid; gap: 2px; background: rgba(255, 255, 255, .06); border-radius: 16px; padding: 6px 16px; }
+.sum div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line-soft); }
+.sum div:last-child { border: 0; }
+.sum dt { color: var(--muted); font-size: 14px; }
+.sum dd { margin: 0; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
+.consent { display: flex; gap: 12px; align-items: flex-start; margin-top: 18px; color: var(--soft); font-size: 15px; cursor: pointer; }
+.consent input { width: 22px; height: 22px; margin: 1px 0 0; flex: none; accent-color: var(--amber); }
+.consent a { color: var(--sky); }
+.done-mark { width: 64px; height: 64px; border-radius: 50%; background: var(--amber); color: var(--navy-dark); font-size: 32px; font-weight: 800; display: grid; place-items: center; margin: 10px 0 18px; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+@media (max-width: 520px) { .frame { padding: 18px 16px 22px; border-radius: 24px; } .opts.grid .opt { padding: 13px 12px; gap: 10px; } .opts.grid .opt b { font-size: 15px; } .opts.grid .tick { display: none; } }
+
+/* Legal pages: the text in one readable dark card. */
+.legal-wrap { max-width: 860px; padding-top: 40px; padding-bottom: 72px; }
+.legal { padding: 40px 48px 32px; background: rgba(9, 15, 30, .85); font-size: 16.5px; line-height: 1.65; color: #CBD5E1; }
+.legal h1 { font-size: clamp(30px, 4.6vw, 42px); line-height: 1.12; margin: 0 0 8px; }
+.legal h2 { font-size: 21px; margin: 38px 0 10px; }
+.legal h3 { font-size: 17px; margin: 22px 0 6px; }
+.legal p, .legal li { color: #CBD5E1; }
+.legal li + li { margin-top: 6px; }
+.legal ul, .legal ol { padding-left: 22px; }
+.legal strong { color: #fff; }
+.legal .meta { color: var(--muted); margin: 0 0 24px; }
+.legal .draft { background: rgba(255, 176, 32, .1); border: 1px solid rgba(255, 176, 32, .3); color: #FFE2A8; border-radius: 14px; padding: 12px 16px; margin: 0 0 28px; font-size: 15px; }
+.legal .fill { background: rgba(255, 176, 32, .18); color: #FFD27A; border-radius: 5px; padding: 0 5px; font-weight: 600; }
+.legal .draft .fill { background: rgba(255, 176, 32, .24); }
+.legal table { border-collapse: collapse; width: 100%; font-size: 15px; display: block; overflow-x: auto; margin: 8px 0; }
+.legal th, .legal td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line-soft); }
+.legal th { background: rgba(255, 255, 255, .06); color: #fff; }
+.legal nav.links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--line); }
+.legal nav.links a { color: var(--soft); text-decoration: none; font-size: 14.5px; font-weight: 600; padding: 7px 13px; border-radius: 999px; background: var(--tint-low); border: 1px solid var(--line-soft); transition: background .15s, color .15s; }
+.legal nav.links a:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.legal nav.links a[aria-current] { background: var(--sky-soft); border-color: rgba(255, 138, 69, .3); color: var(--sky-text); }
+@media (max-width: 700px) {
+  .legal-wrap { padding: 20px 16px 48px; }
+  .legal { padding: 26px 20px 22px; border-radius: 22px; font-size: 16px; background: rgba(9, 15, 30, .925); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .legal h2 { font-size: 19px; margin-top: 30px; }
+  /* Tables too wide for a phone: each row becomes a block, each cell under its column
+     heading (data-label, added by build-site.py). */
+  .legal table, .legal tbody, .legal tr, .legal td { display: block; width: 100%; }
+  .legal table { overflow: visible; margin: 12px 0; }
+  .legal tr.th { display: none; }
+  .legal tr { padding: 10px 14px; margin: 0 0 10px; border: 1px solid var(--line-soft); border-radius: 14px; background: rgba(255, 255, 255, .04); }
+  .legal td { padding: 5px 0; border: 0; }
+  .legal td[data-label]::before { content: attr(data-label); display: block; color: var(--muted); font-size: 12.5px; font-weight: 700; }
+  .legal td:first-child { color: #fff; font-weight: 600; }
+}
+
+/* Phones: tighter card padding. */
+@media (max-width: 600px) {
+  .card { border-radius: 24px; }
+  .card-head { padding: 16px 18px; }
+  .book-body, .acct-body { padding-left: 18px; padding-right: 18px; }
+  .book-foot { padding: 14px 18px 18px; }
+  .acct-legal { padding: 12px 20px 18px; }
+  .acct .pane.tv { left: -18px; right: -18px; padding-left: 18px; padding-right: 18px; }
+  .sso-btn { font-size: 16px; padding: 0 46px; }
+  .sso-btn svg { left: 16px; }
+  .book .total { display: none; } /* the chosen van and Pay show the price; the price step stays within the card */
+}
+
+/* Small phones: logo only, compact language button, so Join Transporters and Log in both fit */
+.top nav .btn { white-space: nowrap; }
+.top nav .short { display: none; }
+@media (max-width: 600px) {
+  .top .bar { padding: 0 14px; }
+  .top .brand { font-size: 0; gap: 0; }
+  .top nav { gap: 8px; }
+  .top nav .btn.small { padding: 8px 11px; font-size: 14px; }
+  .top nav .login.signed { padding: 3px 10px 3px 3px; }
+  .login .nm { max-width: 8ch; }
+  .lang summary { font-size: 0; gap: 4px; padding: 7px 8px; }
+  .top nav .long { display: none; }
+  .top nav .short { display: inline; }
+}
+@media (max-width: 380px) { .top .bar { padding: 0 10px; } .top nav { gap: 6px; } .top nav .btn.small { padding: 8px 9px; font-size: 13.5px; } .login .nm { max-width: 6ch; } }
+/* Very small phones signed in: only the round initial, so the header still fits. */
+@media (max-width: 340px) { .login .nm { display: none; } .top nav .login.signed { padding: 3px; } }
+@media (max-width: 1100px) { .top nav .login .long { display: none; } .top nav .login .short { display: inline; } }
+
+/* The first visit's language card (site.js, "language card"): a white veil that softens the page,
+   and a light card in the middle with the ten languages. html.lgated keeps the page still under it. */
+html.lgated { overflow: hidden; }
+.lgate { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; background: rgba(255, 255, 255, .76); backdrop-filter: blur(6px) saturate(120%); -webkit-backdrop-filter: blur(6px) saturate(120%); color-scheme: light; animation: lgate-in .3s ease-out both; }
+.lgate.out { pointer-events: none; }
+.lgate-card { width: min(560px, 100%); max-height: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 28px 24px 24px; text-align: center; color: #0F172A; background: #fff; border: 1px solid rgba(15, 23, 42, .06); border-radius: 28px 10px 28px 10px; box-shadow: 0 30px 70px -24px rgba(5, 11, 24, .45); animation: lgate-up .42s cubic-bezier(.22, .8, .24, 1) both; }
+.lgate-card .logo { width: 52px; height: 52px; border-radius: 16px; }
+.lgate-card h2 { color: #0F172A; font-size: clamp(24px, 3.6vw, 30px); margin: 14px 0 22px; }
+.lgate-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
+.lgate-list button { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 12px 16px; text-align: left; font: inherit; font-size: 17px; font-weight: 600; color: #0F172A; background: #F4F6FA; border: 1.5px solid #E6E9F0; border-radius: 16px 6px 16px 6px; cursor: pointer; transition: background-color .15s, border-color .15s; }
+.lgate-list button span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lgate-list button:hover { background: #fff; border-color: #9DBFEA; }
+.lgate-list button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+.lgate-list button.on { color: #A8420A; /* the brand's orange for words on light: 6.1:1 */ background: #FFE3D1; border-color: var(--primary); }
+.lgate-list .flag { width: 30px; height: 20px; flex: none; border-radius: 3px; box-shadow: 0 0 0 1px rgba(15, 23, 42, .12); }
+@keyframes lgate-in { from { opacity: 0; } }
+@keyframes lgate-up { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+@media (max-width: 420px) {
+  .lgate-card { padding: 22px 14px 14px; }
+  .lgate-card h2 { margin: 12px 0 16px; }
+  .lgate-list { gap: 8px; }
+  .lgate-list button { min-height: 52px; padding: 10px 12px; gap: 10px; font-size: 16px; }
+}
+@media (max-width: 330px) { .lgate-list { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .lgate, .lgate-card { animation: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .backdrop svg, .backdrop.net-on svg, .lang summary .earth, .btn.shiny::after { animation: none; }
+  .backdrop .scan { display: none; }
+  .q, .progress span, .kinds::before { transition: none; }
+  .acct.fresh .me-ava .ok, .book[data-stage="done"] .tick { animation: none; }
+  .book .back-btn, .tabbar .chip { transition: none; }
+}
+
+/* The booking card's "I have read the Terms ... and agree" box, right above Pay (batch 19). */
+.book-foot .agree { margin: 0 0 14px; font-size: 14px; line-height: 1.45; }
+
+/* ---------------------------------------------------------------- Car2Door's own parts
+   The car (D42a a), the three prices (D9), the company proof footer (plans/trust), the Join page's
+   texts, the lane pages and a transport company's page: in the same frames, tiles and tags as
+   everything above. */
+.brand .n2 { color: var(--primary); } /* the 2 of the wordmark is orange (brand sheet) */
+/* The car: its own card inside Book your transport. */
+.car { margin: 0; padding: 10px 12px 14px; min-width: 0; border: 1px solid rgba(255, 255, 255, .12); border-radius: 18px 7px 18px 7px; background: rgba(255, 255, 255, .04); }
+.car legend { padding: 0 6px; margin-left: -4px; }
+.car legend small { margin: 0; color: #fff; font-size: 13.5px; font-weight: 800; }
+.car-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 96px; gap: 10px; align-items: end; }
+.car .make { grid-column: 1; grid-row: 1; }
+.car .plate { grid-column: 2; grid-row: 1; }
+.car .photo { grid-column: 3; grid-row: 1; align-self: stretch; position: relative; cursor: pointer; }
+.car .photo input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.ph-box { height: 100%; min-height: 66px; display: grid; place-items: center; align-content: center; gap: 4px; padding: 6px; border: 1.5px dashed rgba(255, 138, 69, .7); border-radius: 12px; background: rgba(255, 255, 255, .05) center / cover no-repeat; color: var(--sky-text); text-align: center; transition: background-color .15s, border-color .15s; }
+.ph-box svg { width: 22px; height: 22px; }
+.ph-box b { font-size: 12px; line-height: 1.15; }
+.photo:hover .ph-box { background-color: rgba(255, 255, 255, .1); }
+.photo:has(input:focus-visible) .ph-box { outline: 2px solid var(--sky); outline-offset: 2px; }
+.photo.has .ph-box { border-style: solid; border-color: rgba(255, 255, 255, .3); }
+.photo.has .ph-box svg, .photo.has .ph-box b { opacity: 0; }
+.photo.bad .ph-box { border-color: #FF9B8A; }
+.car .size { grid-column: 1 / 4; grid-row: 2; }
+.car .runs { grid-column: 1; grid-row: 3; }
+.car .value { grid-column: 2 / 4; grid-row: 3; }
+.car .runs, .car .value, .car .plate { min-width: 0; }
+.card .plate input { text-transform: uppercase; padding-left: 10px; padding-right: 8px; }
+.card .plate input::placeholder { text-transform: none; }
+.card .value input { -moz-appearance: textfield; }
+.card .value input::-webkit-inner-spin-button, .card .value input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+/* Two or three choices side by side, the chosen one filled (the size, does it drive). */
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 3px; background: var(--tint); border: 1px solid rgba(255, 255, 255, .1); border-radius: 12px; }
+.seg label { position: relative; min-width: 0; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg span { display: block; padding: 7px 4px; border-radius: 9px; text-align: center; font-size: 14px; font-weight: 700; line-height: 1.25; color: var(--soft); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: background .15s, color .15s; }
+.seg span:hover { background: rgba(255, 255, 255, .08); }
+.seg input:checked + span { background: rgba(255, 255, 255, .94); color: #0F172A; box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
+.seg input:focus-visible + span { outline: 2px solid var(--sky); }
+.card .runs .seg span { padding: 9px 4px; }
+@media (max-width: 420px) {
+  .car-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 84px; }
+  .car .make { grid-column: 1 / 3; grid-row: 1; }
+  .car .plate { grid-column: 1 / 3; grid-row: 2; }
+  .car .photo { grid-row: 1 / 3; }
+  .car .size { grid-column: 1 / 4; grid-row: 3; }
+  .car .runs { grid-row: 4; }
+  .car .value { grid-row: 4; }
+}
+/* The price step: the three options as rows, each with its window, deliver-by date and total. */
+.opick { border: 0; margin: 0; padding: 0; min-width: 0; }
+.opick legend { padding: 0; }
+.oopts { display: grid; gap: 8px; }
+.oopt { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 10px 14px; border-radius: 14px; background: var(--field); border: 1.5px solid rgba(255, 255, 255, .14); cursor: pointer; transition: border-color .15s, background .15s; }
+.oopt:hover { background: rgba(255, 255, 255, .14); }
+.oopt input { position: absolute; opacity: 0; pointer-events: none; }
+.oopt b { font-size: 16px; color: #fff; line-height: 1.25; }
+.oopt .ow { grid-column: 1; color: var(--soft); font-size: 13px; line-height: 1.35; }
+.oopt .oprice { grid-column: 2; grid-row: 1 / 3; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.oopt.on { border-color: var(--sky); background: rgba(255, 255, 255, .12); box-shadow: inset 0 0 0 1px var(--sky); }
+.oopt:has(input:focus-visible) { outline: 2px solid var(--sky); outline-offset: 2px; }
+.opick:disabled .oopt { cursor: default; }
+.car-sum { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 14px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); }
+.car-sum img { width: 88px; height: 66px; flex: none; border-radius: 10px; object-fit: cover; background: rgba(255, 255, 255, .08); }
+.car-sum p { margin: 0; min-width: 0; line-height: 1.35; }
+.car-sum b { display: block; color: #fff; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.car-sum span { display: block; color: var(--muted); font-size: 13px; }
+/* Until booking opens (the preview): the prices are examples, said in a line of its own. */
+.example-note { margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--amber-soft); border: 1px solid rgba(255, 176, 32, .3); color: #FFE2A8; font-size: 13px; font-weight: 600; line-height: 1.4; }
+.example-note[hidden] { display: none; }
+/* The preview's stand-in for Stripe's payment form (preview.js). */
+.pe-preview { display: grid; gap: 10px; padding: 4px 0; }
+.pe-preview .pe-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pe-preview .pe-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pe-preview .pe-tab { padding: 10px; border-radius: 12px; border: 1.5px solid #34405A; background: #18213A; color: var(--soft); font-size: 14px; font-weight: 700; }
+.pe-preview .pe-tab.on { border-color: var(--sky); color: #fff; }
+.pe-preview input { pointer-events: none; }
+/* Three tiles in a row (the three prices), one below the other on phones. */
+.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.tag.std { background: rgba(255, 255, 255, .1); color: #fff; }
+@media (max-width: 860px) { .three { grid-template-columns: minmax(0, 1fr); } }
+.band .sub { max-width: 44em; }
+/* Footer: the company proof, word for word (plans/trust/company-proof.md). */
+.foot .proof { max-width: 540px; }
+.foot .proof p { line-height: 1.6; }
+.foot .proof b { color: #fff; }
+.foot .proof p a { color: var(--sky); }
+.foot .never { color: #FFE2A8; font-weight: 700; }
+/* Join Transporters: the trust kit's texts under the form (the page only). */
+.join-info { padding-top: 24px; }
+.join-info h2 { margin-top: 56px; }
+.join-info .ji-hero { margin-top: 0; font-size: clamp(26px, 4vw, 36px); max-width: 20em; }
+.join-info .lead { max-width: 42em; }
+.ji-proof { display: inline-block; margin: 0; padding: 6px 14px; border-radius: 999px; background: var(--tint); border: 1px solid var(--line); color: var(--soft); font-size: 14px; font-weight: 700; }
+.ji-steps { counter-reset: s; list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 12px; }
+.ji-steps li { counter-increment: s; position: relative; padding: 16px 18px 16px 64px; border-radius: 22px 8px 22px 8px; background: var(--tint-low); border: 1px solid rgba(255, 255, 255, .12); color: #CBD5E1; }
+.ji-steps li::before { content: counter(s); position: absolute; left: 16px; top: 14px; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--sky-soft); color: var(--sky-text); font-weight: 800; }
+.ji-steps b, .join-info li b { color: #fff; }
+.ji-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 56px; }
+.ji-need { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 18px; }
+.join-info .tile h3 { margin-bottom: 12px; }
+.join-info .feats li { color: #CBD5E1; font-size: 15.5px; line-height: 1.5; }
+.ji-big { margin: 0 0 12px; color: #fff; font-size: 20px; font-weight: 800; }
+.ji-and { margin: 14px 0 0; color: #CBD5E1; }
+.ji-faq h2 { margin-bottom: 18px; }
+.ji-share { margin-top: 40px; }
+.ji-share p { margin: 0; color: #CBD5E1; }
+@media (max-width: 860px) { .ji-two, .ji-need { grid-template-columns: minmax(0, 1fr); } }
+/* Legal pages while they are outlines: the line that says so. */
+.legal .draft { margin: 18px 0 8px; padding: 12px 16px; border-radius: 14px; background: var(--amber-soft); border: 1px solid rgba(255, 176, 32, .3); color: #FFE2A8; font-weight: 600; }
+.legal h2 + h2 { margin-top: 14px; }
+/* Lane pages: one route, its example figures, the three prices and the questions. */
+.lane-hero { padding-bottom: 40px; }
+.lane-hero h1 { max-width: 14em; }
+.facts4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; max-width: 860px; margin: 8px 0 26px; }
+.fact4 { padding: 14px 16px; border-radius: 22px 8px 22px 8px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+.fact4 small { display: block; color: var(--muted); font-size: 13px; font-weight: 700; line-height: 1.3; }
+.fact4 b { display: block; margin-top: 4px; color: #fff; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.lane-cta { margin: 0; }
+.note.example { color: #FFE2A8; }
+.lane-price { margin: 0 0 6px; color: #fff; font-size: 30px; font-weight: 800; letter-spacing: -0.03em; }
+.lane-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.lane-link { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 16px 6px 16px 6px; background: var(--tint); border: 1px solid var(--line); color: #fff; text-decoration: none; font-weight: 700; }
+.lane-link:hover { background: var(--panel-hover); border-color: rgba(255, 138, 69, .5); }
+.lane-link .flag { width: 24px; height: 16px; border-radius: 3px; }
+@media (max-width: 860px) { .facts4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* A transport company's page (car2door.eu/d/<name>). */
+.carrier { padding-top: 48px; }
+.cpage { padding: 24px; display: grid; gap: 18px; }
+.c-head { display: flex; align-items: center; gap: 16px; }
+.c-ava { width: 64px; height: 64px; flex: none; border-radius: 20px 8px 20px 8px; display: grid; place-items: center; background: linear-gradient(var(--primary), var(--primary-dark)); color: var(--on-primary); font-size: 24px; font-weight: 800; }
+.c-head h1 { margin: 0; font-size: clamp(28px, 5vw, 40px); }
+.c-sub { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; color: var(--soft); font-weight: 600; }
+.c-sub .flag { width: 24px; height: 16px; border-radius: 3px; flex: none; }
+.badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.badges li { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(18, 161, 80, .16); border: 1px solid rgba(61, 214, 140, .35); color: #9BE3B5; font-size: 14px; font-weight: 700; }
+.badges li::before { content: "✓"; font-weight: 800; }
+.c-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.c-stats div { padding: 12px 14px; border-radius: 16px 6px 16px 6px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); }
+.c-stats b { display: block; color: #fff; font-size: 24px; font-weight: 800; }
+.c-stats small { color: var(--muted); font-size: 13px; font-weight: 700; }
+.carrier h2 { margin-top: 44px; }
+.c-runs { display: grid; gap: 10px; }
+.c-run { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 6px 16px; padding: 14px 18px; border-radius: 18px 7px 18px 7px; background: var(--tint-low); border: 1px solid rgba(255, 255, 255, .12); }
+.c-run b { color: #fff; font-size: 17px; }
+.c-run span { color: var(--soft); font-size: 15px; }
+.c-run .slots { padding: 3px 10px; border-radius: 999px; background: var(--sky-soft); color: var(--sky-text); font-weight: 700; font-size: 13.5px; }
+.c-reviews { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.c-rev { margin: 0; padding: 18px; border-radius: 22px 8px 22px 8px; background: var(--tint-low); border: 1px solid rgba(255, 255, 255, .12); display: grid; gap: 10px; align-content: start; }
+.stars { display: flex; gap: 2px; color: var(--primary); }
+.stars svg { width: 18px; height: 18px; }
+.c-rev blockquote { margin: 0; color: #E2E8F0; font-size: 15.5px; line-height: 1.55; }
+.c-rev figcaption { color: var(--muted); font-size: 13.5px; font-weight: 600; }
+.c-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 36px 0 0; }
+.c-actions .btn.ghost { margin-top: 0; }
+@media (max-width: 860px) {
+  .c-reviews { grid-template-columns: minmax(0, 1fr); }
+  .c-run { grid-template-columns: minmax(0, 1fr) auto; }
+  .c-run b { grid-column: 1 / 3; }
+}
+.wp-btns.wp-day-only { grid-template-columns: minmax(0, 1fr); }
+.wp-btn[hidden] { display: none; }
+/* With the car in it, Book your transport is taller than the trip card it came from: a little
+   less air between its rows keeps it, and its button, above the menu on a 900 px tall screen. */
+.book .book-body { gap: 11px; padding-top: 16px; }
+.book .card-head { padding-top: 15px; padding-bottom: 15px; }

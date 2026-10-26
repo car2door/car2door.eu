@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Van with car trailer">
+  <!-- Drawn for car2door.eu (no photo): a van with an open car trailer on a night road. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A1330"/><stop offset=".72" stop-color="#16224A"/><stop offset="1" stop-color="#0B1124"/></linearGradient>
+    <radialGradient id="glow" cx=".55" cy=".78" r=".62"><stop offset="0" stop-color="#FF6A13" stop-opacity=".26"/><stop offset="1" stop-color="#FF6A13" stop-opacity="0"/></radialGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2646"/><stop offset="1" stop-color="#0B1124"/></linearGradient>
+    <linearGradient id="van" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4F6FA"/><stop offset="1" stop-color="#C9D2DF"/></linearGradient>
+    <linearGradient id="car" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A45"/><stop offset="1" stop-color="#E2550A"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE7B8" stop-opacity=".55"/><stop offset="1" stop-color="#FFE7B8" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#sky)"/>
+  <rect width="800" height="500" fill="url(#glow)"/>
+  <g fill="#FFC861" opacity=".55"><circle cx="64" cy="312" r="2"/><circle cx="92" cy="318" r="1.5"/><circle cx="150" cy="306" r="2"/><circle cx="214" cy="314" r="1.5"/><circle cx="560" cy="300" r="2"/><circle cx="604" cy="309" r="1.5"/><circle cx="690" cy="304" r="2"/><circle cx="742" cy="312" r="1.5"/></g>
+  <path d="M0 326 Q110 296 230 318 T470 312 T800 320 V356 H0Z" fill="#131D3B"/>
+  <rect y="352" width="800" height="148" fill="url(#road)"/>
+  <path d="M0 452 H800" stroke="#fff" stroke-opacity=".22" stroke-width="5" stroke-dasharray="46 34"/>
+  <ellipse cx="400" cy="420" rx="330" ry="14" fill="#000" opacity=".35"/>
+  <!-- headlight beam -->
+  <path d="M722 352 L800 330 V392 Z" fill="url(#beam)"/>
+  <!-- trailer: deck, mudguards, drawbar -->
+  <path d="M70 372 H452 L478 384 H500" fill="none" stroke="#5B6B88" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="64" y="360" width="392" height="14" rx="4" fill="#3B4A6A"/>
+  <path d="M64 366 l-26 22" stroke="#3B4A6A" stroke-width="8" stroke-linecap="round"/>
+  <g><circle cx="236" cy="396" r="23" fill="#0B1124"/><circle cx="236" cy="396" r="10" fill="#6B7A96"/><circle cx="292" cy="396" r="23" fill="#0B1124"/><circle cx="292" cy="396" r="10" fill="#6B7A96"/></g>
+  <path d="M206 378 q0-14 30-14 h56 q30 0 30 14" fill="none" stroke="#5B6B88" stroke-width="6"/>
+  <!-- the car on the trailer -->
+  <path d="M96 352 q-8 0-8-10 v-20 q0-11 12-13 l44-8 l46-34 q9-7 21-7 h104 q13 0 22 9 l36 34 l40 7 q16 3 16 18 v14 q0 10-10 10 z" fill="url(#car)"/>
+  <path d="M196 276 l-34 27 h92 v-31 h-48 q-6 0-10 4z M270 272 v31 h88 l-28-26 q-5-5-12-5z" fill="#1F2B48"/>
+  <circle cx="148" cy="350" r="21" fill="#0B1124"/><circle cx="148" cy="350" r="9" fill="#AEB9C9"/>
+  <circle cx="370" cy="350" r="21" fill="#0B1124"/><circle cx="370" cy="350" r="9" fill="#AEB9C9"/>
+  <path d="M412 322 h14" stroke="#FFE3D1" stroke-width="5" stroke-linecap="round"/>
+  <!-- straps -->
+  <path d="M120 360 l18-18 M392 360 l-18-18" stroke="#FFB020" stroke-width="3"/>
+  <!-- the van -->
+  <path d="M490 262 q0-14 14-14 h160 q20 0 32 16 l34 46 q8 11 8 24 v44 q0 10-10 10 h-228 q-10 0-10-10z" fill="url(#van)"/>
+  <path d="M676 268 h-26 v50 h66 q6 0 3-6 l-26-36 q-7-8-17-8z" fill="#1F2B48"/>
+  <path d="M514 270 h120 v34 h-120z" fill="#2A3858" opacity=".9"/>
+  <path d="M490 340 h248" stroke="#FF6A13" stroke-width="10"/>
+  <circle cx="548" cy="392" r="26" fill="#0B1124"/><circle cx="548" cy="392" r="11" fill="#AEB9C9"/>
+  <circle cx="690" cy="392" r="26" fill="#0B1124"/><circle cx="690" cy="392" r="11" fill="#AEB9C9"/>
+  <rect x="722" y="350" width="14" height="8" rx="3" fill="#FFE7B8"/>
+  <rect x="486" y="350" width="8" height="12" rx="2" fill="#FF6B6F"/>
+</svg>

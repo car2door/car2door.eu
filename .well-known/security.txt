@@ -1,0 +1,5 @@
+Contact: mailto:support@car2door.eu
+Expires: 2027-10-31T00:00:00.000Z
+Preferred-Languages: en, ro, pl, bg, hu, lt, lv, es, fr, de, nl, pt
+Canonical: https://car2door.eu/.well-known/security.txt
+Policy: https://car2door.eu/privacy

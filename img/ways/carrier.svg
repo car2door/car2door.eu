@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Car carrier">
+  <!-- Drawn for car2door.eu (no photo): a truck with a two-deck car trailer on a night road. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A1330"/><stop offset=".72" stop-color="#16224A"/><stop offset="1" stop-color="#0B1124"/></linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".8" r=".64"><stop offset="0" stop-color="#FF6A13" stop-opacity=".24"/><stop offset="1" stop-color="#FF6A13" stop-opacity="0"/></radialGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2646"/><stop offset="1" stop-color="#0B1124"/></linearGradient>
+    <linearGradient id="cab" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4F6FA"/><stop offset="1" stop-color="#C9D2DF"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE7B8" stop-opacity=".55"/><stop offset="1" stop-color="#FFE7B8" stop-opacity="0"/></linearGradient>
+    <!-- one small car, drawn once and placed five times in its own colours -->
+    <g id="c">
+      <path d="M4 40 q-4 0-4-6 v-10 q0-6 7-7 l22-4 l24-17 q5-4 11-4 h56 q7 0 12 5 l19 17 l21 4 q8 2 8 10 v8 q0 6-6 6 z"/>
+      <path d="M57 3 l-17 14 h47 v-16 h-25 q-3 0-5 2z M92 1 v16 h45 l-14-13 q-3-3-7-3z" fill="#1F2B48"/>
+      <circle cx="30" cy="40" r="11" fill="#0B1124"/><circle cx="30" cy="40" r="4.5" fill="#AEB9C9"/>
+      <circle cx="140" cy="40" r="11" fill="#0B1124"/><circle cx="140" cy="40" r="4.5" fill="#AEB9C9"/>
+    </g>
+  </defs>
+  <rect width="800" height="500" fill="url(#sky)"/>
+  <rect width="800" height="500" fill="url(#glow)"/>
+  <g fill="#FFC861" opacity=".55"><circle cx="70" cy="200" r="1.5"/><circle cx="130" cy="214" r="2"/><circle cx="700" cy="206" r="1.5"/><circle cx="760" cy="196" r="2"/></g>
+  <path d="M0 322 Q150 300 280 316 T540 310 T800 318 V356 H0Z" fill="#131D3B"/>
+  <rect y="352" width="800" height="148" fill="url(#road)"/>
+  <path d="M0 452 H800" stroke="#fff" stroke-opacity=".22" stroke-width="5" stroke-dasharray="46 34"/>
+  <ellipse cx="400" cy="420" rx="370" ry="14" fill="#000" opacity=".35"/>
+  <path d="M760 352 L800 338 V390 Z" fill="url(#beam)"/>
+  <!-- the trailer's frame: lower deck, upper deck and the posts -->
+  <path d="M30 364 H590" stroke="#3B4A6A" stroke-width="12" stroke-linecap="round"/>
+  <path d="M40 270 H560 L600 300" fill="none" stroke="#5B6B88" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M60 364 V270 M200 364 V270 M340 364 V270 M480 364 V270 M570 364 V292" stroke="#5B6B88" stroke-width="6"/>
+  <path d="M40 270 l-14 18" stroke="#5B6B88" stroke-width="7" stroke-linecap="round"/>
+  <!-- the cars: three below, two above -->
+  <use href="#c" x="44" y="306" fill="#E9EEF5"/>
+  <use href="#c" x="224" y="306" fill="#FF6A13"/>
+  <use href="#c" x="402" y="306" fill="#AEB9C9"/>
+  <use href="#c" x="96" y="214" fill="#FF8A45"/>
+  <use href="#c" x="300" y="214" fill="#E9EEF5"/>
+  <circle cx="150" cy="396" r="22" fill="#0B1124"/><circle cx="150" cy="396" r="9" fill="#6B7A96"/>
+  <circle cx="200" cy="396" r="22" fill="#0B1124"/><circle cx="200" cy="396" r="9" fill="#6B7A96"/>
+  <circle cx="250" cy="396" r="22" fill="#0B1124"/><circle cx="250" cy="396" r="9" fill="#6B7A96"/>
+  <!-- the truck -->
+  <rect x="590" y="352" width="170" height="16" rx="4" fill="#26324F"/>
+  <path d="M624 218 q0-14 14-14 h80 q16 0 22 14 l20 60 q4 10 4 20 v66 q0 10-10 10 h-130 z" fill="url(#cab)"/>
+  <path d="M706 222 h-30 v64 h66 q6 0 4-6 l-18-48 q-5-10-22-10z" fill="#1F2B48"/>
+  <path d="M624 316 h130" stroke="#FF6A13" stroke-width="10"/>
+  <circle cx="616" cy="394" r="25" fill="#0B1124"/><circle cx="616" cy="394" r="10" fill="#AEB9C9"/>
+  <circle cx="718" cy="394" r="25" fill="#0B1124"/><circle cx="718" cy="394" r="10" fill="#AEB9C9"/>
+  <rect x="748" y="344" width="14" height="10" rx="3" fill="#FFE7B8"/>
+  <rect x="24" y="352" width="8" height="12" rx="2" fill="#FF6B6F"/>
+</svg>
