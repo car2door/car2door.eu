@@ -61,6 +61,11 @@ if (top !== self) top.location = location;
   var REF = 'car2door-referral'; // a Share & Earn invite code, same key as the apps
   // Every call to the backend goes through here, so the preview can answer it.
   function sbFetch(url, o) { return PREVIEW ? window.C2dPreview.fetch(url, o) : fetch(url, o); }
+  // Join Transporters alone can have its own backend (config.json join_supabase_url): then its
+  // applications reach that project while every other page stays the preview (docs/website.md).
+  var JOIN_SB = 'https://krscknuzrqhjfiryvqkc.supabase.co';
+  var JOIN_KEY = 'sb_publishable_fU_PwLGeh9IZxvl0g_ILEg_0hJo_ri-';
+  function joinFetch(url, o) { return JOIN_SB ? fetch(url, o) : sbFetch(url, o); }
   // name@domain.tld, with no empty parts (no '..', no dot at either end).
   var EMAIL_RE = /^[^@\s.]+(?:\.[^@\s.]+)*@[^@\s.]+(?:\.[^@\s.]+)+$/;
   // The longest text the database takes in each column the forms write, so nobody types past it:
@@ -1698,7 +1703,7 @@ if (top !== self) top.location = location;
 
   // One question per frame, saved to Supabase (table transporter_applications, insert only).
   function initJoin(form, D) {
-    var J = D.t, FLAGS = D.flags, API = SB + '/rest/v1/transporter_applications';
+    var J = D.t, FLAGS = D.flags, API = (JOIN_SB || SB) + '/rest/v1/transporter_applications', JKEY = JOIN_SB ? JOIN_KEY : KEY;
     var box = $('.q', form), bar = $('.progress span', form), count = $('.count', form), back = $('.back', form);
     var a = store.json(DRAFT) || {};
     var save = function () { store.set(DRAFT, JSON.stringify(a)); };
@@ -1802,7 +1807,8 @@ if (top !== self) top.location = location;
         ].map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1] || '') + '</dd></div>'; }).join('') + '</dl>'
           + '<label class="consent"><input type="checkbox" name="consent"' + (a.consent ? ' checked' : '') + '><span>' + J.consent + '</span></label>';
       }
-      if (s.type !== 'one') h += '<em class="err" data-for="_"></em><button type="submit" class="btn big next">' + esc(s.type === 'confirm' ? J.submit : J.next) + '</button>';
+      if (s.type !== 'one') h += '<em class="err" data-for="_"></em><button type="submit" class="btn big next">' + esc(s.type === 'confirm' ? J.submit : J.next) + '</button>'
+        + (s.type === 'confirm' ? '<p class="priv">' + J.privacy_line + '</p>' : '');
       else h += '<em class="err" data-for="_"></em>';
       var show = function () {
         box.innerHTML = h;
@@ -1864,7 +1870,7 @@ if (top !== self) top.location = location;
       ref = keptRef();
       if (ref) row.referral_code = ref.code;
       var post = function () {
-        return sbFetch(API, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) })
+        return joinFetch(API, { method: 'POST', headers: { apikey: JKEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) })
           .then(function (r) { return r.ok ? 0 : r.status; });
       };
       post().then(function (status) {
