@@ -27,21 +27,23 @@
 
   // Three transports of the made-up account: one looking for a company, one with a company
   // assigned (so its contact, code and cancel terms show) and one delivered (with its invoice).
+  // Pickup windows as the server stores them, both days counted (Saver 7, Standard 5, Priority the
+  // chosen day and the next); deliver-by as site.js's deliverBy() gives it for the route.
   function seed() {
     return [
       { id: 'a1c2d3e4-0000-4000-8000-000000000001', status: 'bidding', option: 'saver', car_make: 'VW Golf', car_size: 'car', car_runs: true, car_plate: 'K-JD 4821',
         pickup_address: 'Aachener Straße 12, Köln', pickup_city: 'Köln', pickup_country: 'DE', dropoff_address: 'Strada Memorandumului 8, Cluj-Napoca', dropoff_city: 'Cluj-Napoca', dropoff_country: 'RO',
-        pickup_at: iso(dayFrom(2)), pickup_until: iso(dayFrom(9)), pickup_tz: 'Europe/Berlin', deliver_by: iso(dayFrom(12)), notes: 'Keys with the neighbour at number 14.',
+        pickup_at: iso(dayFrom(2)), pickup_until: iso(dayFrom(8)), pickup_tz: 'Europe/Berlin', deliver_by: iso(dayFrom(12)), notes: 'Keys with the neighbour at number 14.',
         fare_cents: 64000, bid_started_at: iso(Date.now() - 2 * 3600e3), cancel_reason: null, cancel_fee_cents: 0, payout_on_hold: false, payout_release_at: null, payout_sent: false,
         refund_state: null, refunded_cents: 0, discount_cents: 0 },
       { id: 'a1c2d3e4-0000-4000-8000-000000000002', status: 'accepted', option: 'standard', car_make: 'BMW X3', car_size: 'suv', car_runs: true, car_plate: 'M-AB 1234',
         pickup_address: 'Leopoldstraße 40, München', pickup_city: 'München', pickup_country: 'DE', dropoff_address: 'Strada Nicolae Bălcescu 5, Sibiu', dropoff_city: 'Sibiu', dropoff_country: 'RO',
-        pickup_at: iso(dayFrom(1)), pickup_until: iso(dayFrom(6)), pickup_tz: 'Europe/Berlin', deliver_by: iso(dayFrom(8)), notes: '',
+        pickup_at: iso(dayFrom(1)), pickup_until: iso(dayFrom(5)), pickup_tz: 'Europe/Berlin', deliver_by: iso(dayFrom(8)), notes: '',
         fare_cents: 81000, bid_started_at: iso(Date.now() - 30 * 3600e3), cancel_reason: null, cancel_fee_cents: 0, payout_on_hold: false, payout_release_at: null, payout_sent: false,
         refund_state: null, refunded_cents: 0, discount_cents: 0 },
       { id: 'a1c2d3e4-0000-4000-8000-000000000003', status: 'completed', option: 'priority', car_make: 'Dacia Duster', car_size: 'suv', car_runs: false, car_plate: 'W-12345X',
         pickup_address: 'Praterstraße 3, Wien', pickup_city: 'Wien', pickup_country: 'AT', dropoff_address: 'Bulevardul Revoluției 1, Timișoara', dropoff_city: 'Timișoara', dropoff_country: 'RO',
-        pickup_at: iso(dayFrom(-12)), pickup_until: iso(dayFrom(-10)), pickup_tz: 'Europe/Vienna', deliver_by: iso(dayFrom(-8)), notes: '',
+        pickup_at: iso(dayFrom(-12)), pickup_until: iso(dayFrom(-11)), pickup_tz: 'Europe/Vienna', deliver_by: iso(dayFrom(-9)), notes: '',
         fare_cents: 67000, bid_started_at: iso(dayFrom(-13)), cancel_reason: null, cancel_fee_cents: 0, payout_on_hold: false, payout_release_at: iso(dayFrom(-7)), payout_sent: true,
         refund_state: null, refunded_cents: 0, discount_cents: 0 }
     ];
@@ -127,7 +129,8 @@
         car_runs: !(body.car && body.car.runs === false), car_plate: body.car && body.car.plateOrVin,
         pickup_address: body.pickup.address, pickup_city: body.pickup.city, pickup_country: body.pickup.country,
         dropoff_address: body.dropoff.address, dropoff_city: body.dropoff.city, dropoff_country: body.dropoff.country,
-        pickup_at: iso(ready), pickup_until: iso(ready + win * DAY), pickup_tz: null, deliver_by: iso(ready + (win + 3) * DAY), notes: body.notes || '',
+        pickup_at: iso(ready), pickup_until: iso(ready + (win - 1) * DAY), pickup_tz: null,
+        deliver_by: body.exampleDeliverBy || iso(ready + (win + 3) * DAY), notes: body.notes || '', // deliver-by: the date the price card showed
         fare_cents: body.exampleCents || 0, bid_started_at: null, cancel_reason: null, cancel_fee_cents: 0, payout_on_hold: false, payout_release_at: null, payout_sent: false,
         refund_state: null, refunded_cents: 0, discount_cents: 0 });
       x.paying = nid;

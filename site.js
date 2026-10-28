@@ -1175,7 +1175,7 @@ if (top !== self) top.location = location;
       $('.car-sum span', p).textContent = carLine(trip.car);
       OPTIONS.forEach(function (o) {
         var row = $('.oopt.' + o, p);
-        $('.ow', row).textContent = L['ow_' + o] + ' · ' + fill(L.deliver_by, { date: day(deliverBy(trip.ready, km, o)) });
+        $('.ow', row).textContent = L['ow_' + o] + '\u00a0· ' + fill(L.deliver_by, { date: day(deliverBy(trip.ready, km, o)) });
         $('.oprice', row).textContent = money(quote(A, B, trip.car, o).cents, L.lang);
       });
       setOption(option);
@@ -1213,6 +1213,7 @@ if (top !== self) top.location = location;
         car: { make: c.make, size: c.size, runs: c.runs, valueEuros: c.value, plateOrVin: c.plate },
         notes: notes.value.trim() || undefined,
         exampleCents: EXAMPLE_PRICES ? cents() : undefined, // the preview keeps the example total; the server prices it (phase 2)
+        exampleDeliverBy: EXAMPLE_PRICES ? deliverBy(trip.ready, quote(trip.from, trip.to, c, option).km, option).toISOString() : undefined, // and its deliver-by date
         payCountry: browserCountry(), // which local payment methods to show
         voucher: true, // the payment step shows an invite voucher's line
         terms: true // the visitor ticked "I have read the Terms ... and agree" above Pay (startPay waits for it)
@@ -1365,7 +1366,7 @@ if (top !== self) top.location = location;
       if (t) {
         var km = quote(t.from, t.to, t.car, option).km;
         rows.push([L.s_route, t.from.city + ' → ' + t.to.city], [L.s_car, t.car.make + (t.car.plate ? ' · ' + t.car.plate : '')],
-          [L.s_option, L['o_' + option]], [L.s_pickup, L['ow_' + option] + ' · ' + fill(L.deliver_by, { date: day(deliverBy(t.ready, km, option)) })]);
+          [L.s_option, L['o_' + option]], [L.s_pickup, L['ow_' + option] + '\u00a0· ' + fill(L.deliver_by, { date: day(deliverBy(t.ready, km, option)) })]);
       }
       if (order && order.cents) rows.push([L.s_paid, money(order.cents, L.lang)]);
       $('.done-sum', p).innerHTML = rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('');
