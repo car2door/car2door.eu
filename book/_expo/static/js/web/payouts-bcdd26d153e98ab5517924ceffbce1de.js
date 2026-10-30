@@ -1,0 +1,1 @@
+__d(function(g,r,i,a,m,e,d){"use strict";Object.defineProperty(e,'__esModule',{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return u}});var t=r(d[0]),n=r(d[1]),c=r(d[2]);function u(){const u=(0,t.c)(1);let o;return u[0]===Symbol.for("react.memo_cache_sentinel")?(o=(0,c.jsx)(n.Redirect,{href:"/payout-setup"}),u[0]=o):o=u[0],o}},798,[815,816,6]);

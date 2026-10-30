@@ -2,7 +2,7 @@
 (function (p, q) {
   var m = /^\/(?:(ro|pl|bg|hu|lt|lv|es|fr|de|nl|pt)\/)?(?:r\/([A-Za-z0-9]{4,12})|invite(?:\.html)?)\/?$/.exec(p), lang = m && m[1],
     code = m && (m[2] || (/[?&]r=([A-Za-z0-9]{4,12})(?:&|$)/.exec(q) || [])[1]);
-  if (!m) { location.replace('/'); return; }
+  if (!m) { if (!/^\/book(?:\/|$)/.test(p)) location.replace('/'); return; }
   try { var kept = localStorage.getItem('car2door.language'); if (/^(en|ro|pl|bg|hu|lt|lv|es|fr|de|nl|pt)$/.test(kept)) lang = kept; } catch (e) {}
   for (var ls = navigator.languages || [navigator.language || ''], i = 0; !lang && i < ls.length; i++) {
     var c = String(ls[i]).slice(0, 2).toLowerCase();
