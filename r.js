@@ -8,5 +8,5 @@
     var c = String(ls[i]).slice(0, 2).toLowerCase();
     if (/^(en|ro|pl|bg|hu|lt|lv|es|fr|de|nl|pt)$/.test(c)) lang = c;
   }
-  location.replace((lang && lang !== 'en' ? '/' + lang + '/' : '/') + (code ? '?r=' + code.toUpperCase() : ''));
+  location.replace((lang && lang !== 'en' ? '/' + lang + '/' : '/'));
 })(location.pathname, location.search);

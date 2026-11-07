@@ -12,7 +12,8 @@
  * a panel over the page (on computers a frame on the right, on phones the whole screen under the
  * header); their steps slide sideways inside it. The panel is the account card: Log in /
  * Create account (#login), Join Transporters (#join), the legal pages (#terms, ...) and Help.
- * The one sign-in is the client app's at /book: the card hands it the email, and My transports
+ * The one sign-in is the client app's at /book: the card hands it the email, or Google or Apple
+ * (D94), and My transports
  * (#trips, #trips/<id>), Profile and its steps (#login once signed in, #login/details, ...) open
  * there (bookPath). The header button (Log in, or the first name) opens the card or the app's
  * Profile.
@@ -26,14 +27,16 @@
  * and the page never changes. Its button hands the booking over to the app at
  * /book/?from=&to=&when= (D89's slides, E10's card saved there and charged when a transporter
  * accepts): nothing is booked or paid on this page, and it never loads Stripe or makes an order.
- * The prices are examples (quote() below) until phase 2's server quote.
+ * The prices are the server's own: the public quote function, as /book asks it (priceOf() below).
  *
  * Page modules: the booking card (home) and the Join Transporters form, started once for
  * each page as it is shown.
  *
- * Invite links (Share & Earn): a transport company's code (car2door.eu/r/CODE, sent home as
- * ?r=CODE by 404.html) shows an invite panel on the home page and keeps the code until the visitor
- * signs in, applies to drive or downloads the Car2Door Pro app (see "invite links" below).
+ * Invite links (Share & Earn): off since E14 (REFERRALS below, written by build.py). Off, an old
+ * link (car2door.eu/r/CODE or /invite?r=CODE) just opens the home page, and no code is kept, shown,
+ * checked or sent. On, a transport company's code shows an invite panel on the home page and is kept
+ * until the visitor signs in, applies to drive or downloads the Car2Door Pro app (see "invite links"
+ * below).
  *
  * Preview: with no backend in site/src/config.json (no project exists for the site yet), every
  * call to it is answered by preview.js with made-up data: nothing is sent, booked or charged
@@ -63,6 +66,8 @@ if (top !== self) top.location = location;
   var STORE = 'sb-preview-auth-token';
   var NAME = 'car2door-name', DRAFT = 'car2door-join-draft';
   var REF = 'car2door-referral'; // a Share & Earn invite code, same key as the apps
+  // Share & Earn on the site (E14.1: off). build.py writes it from its own REFERRALS on every build.
+  var REFERRALS = false;
   // Every call to the backend goes through here, so the preview can answer it.
   function sbFetch(url, o) { return PREVIEW ? window.C2dPreview.fetch(url, o) : fetch(url, o); }
   // Join Transporters alone can have its own backend (config.json join_supabase_url): then its
@@ -75,6 +80,7 @@ if (top !== self) top.location = location;
   // project's key; the site only reads it, to know who is signed in (the header's name, the phone's
   // home page). The app renews and ends it.
   var BOOK_SB = 'https://krscknuzrqhjfiryvqkc.supabase.co';
+  var BOOK_KEY = 'sb_publishable_fU_PwLGeh9IZxvl0g_ILEg_0hJo_ri-'; // publishable, as the apps': the quote function (prices)
   var BOOK_STORE = 'sb-' + ((/^https:\/\/([a-z0-9]+)\./.exec(BOOK_SB) || [])[1] || 'book') + '-auth-token';
   // name@domain.tld, with no empty parts (no '..', no dot at either end).
   var EMAIL_RE = /^[^@\s.]+(?:\.[^@\s.]+)*@[^@\s.]+(?:\.[^@\s.]+)+$/;
@@ -231,20 +237,25 @@ if (top !== self) top.location = location;
 
   // ---------------------------------------------------------------- prices
   //
-  // EXAMPLE PRICES until phase 2: the server will price every booking (blueprint §4: distance,
-  // the car's size, runner or not, the option and the lane), and that is what is paid. Until then
-  // the card shows these made-up totals so the steps can be seen; they are said to be examples.
+  // The card's totals are the server's (the quote function on /book's project, E14.3): the same
+  // model, settings in use and distance table as /book and the lane pages, for a private client's
+  // booking, so a route that isn't open says so here. Nothing on this page prices a trip.
 
   // The 27 EU members, either end (D5: EU only).
   var SERVED_CC = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT',
     'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'];
-  var MIN_KM = 100;
-  // The three options (D9): the pickup window in days from the day the car is ready, and the days on the road.
+  // The shortest trip, as the server (supabase/functions/_shared/pricing.ts: MIN_TRIP_KM), which measures again.
+  var MIN_KM = 150;
+  // The three options (D9).
   var OPTIONS = ['saver', 'standard', 'priority'];
-  var OPTION = { saver: { window: 7, factor: 0.88 }, standard: { window: 5, factor: 1 }, priority: { window: 2, factor: 1.32 } };
   var SIZES = ['car', 'suv', 'van'];
-  var EXAMPLE_PRICES = true; // false once the server prices every booking (phase 2): the card stops saying they are examples
-  var RATES = { road: 1.28, base: 150, km: 0.34, size: { car: 1, suv: 1.12, van: 1.3 }, nonRunner: 90, round: 10, kmPerDay: 650 };
+  // The car's value as /book asks it (E2): a band, and over €50,000 the whole euros up to €250,000
+  // (supabase/functions/_shared/car.ts: BAND_TOP_EUR, MAX_CAR_VALUE_EUR; site/src/check.mjs compares them).
+  var BANDS = ['low', 'mid', 'high'];
+  var BAND_TOP_EUR = { low: 15000, mid: 50000 };
+  var MAX_CAR_VALUE_EUR = 250000;
+  // Road km from the straight line, for the shortest-trip check before asking (as _shared/pricing.ts).
+  var ROAD = 1.28;
 
   function inList(list, c) { return list.indexOf(String(c).toUpperCase()) >= 0; }
   function routeOk(a, b) { return inList(SERVED_CC, a.country) && inList(SERVED_CC, b.country); }
@@ -255,18 +266,7 @@ if (top !== self) top.location = location;
     var dLat = toRad(b.lat - a.lat), dLng = toRad(b.lng - a.lng);
     var sLat = Math.sin(dLat / 2), sLng = Math.sin(dLng / 2); // not **: older Safari can't parse it
     var h = sLat * sLat + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * sLng * sLng;
-    return Math.round(2 * 6371 * Math.asin(Math.sqrt(h)) * RATES.road);
-  }
-  // An example total in cents for one car and one option.
-  function quote(a, b, car, option) {
-    var km = roadKm(a, b);
-    var raw = (RATES.base + RATES.km * km) * RATES.size[car.size] * OPTION[option].factor + (car.runs ? 0 : RATES.nonRunner);
-    return { km: km, cents: Math.round(raw / RATES.round) * RATES.round * 100 };
-  }
-  // The deliver-by day of an option: the end of its pickup window plus the days on the road.
-  function deliverBy(ready, km, option) {
-    var days = OPTION[option].window + Math.max(1, Math.ceil(km / RATES.kmPerDay));
-    return new Date(ready.getTime() + days * 864e5);
+    return Math.round(2 * 6371 * Math.asin(Math.sqrt(h)) * ROAD);
   }
 
   // Euros, dates and countries the way the page's language writes them.
@@ -613,6 +613,25 @@ if (top !== self) top.location = location;
       method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_app: 'website', p_platform: 'web', p_version: null, p_function: name, p_status: status, p_code: code })
     }).catch(function () {});
+  }
+
+  // The public quote function (anyone may ask, signed in or not) on /book's project: the booking
+  // card's three options. Its refusals come back as callFn's do ({ status, code, params }).
+  function quoteFn(body) {
+    var url = (BOOK_SB || SB) + '/functions/v1/quote';
+    var o = { method: 'POST', body: JSON.stringify(body), headers: { apikey: BOOK_SB ? BOOK_KEY : KEY, 'Content-Type': 'application/json' } };
+    return (BOOK_SB ? fetch(url, o) : sbFetch(url, o)).then(function (r) {
+      return r.text().then(function (txt) {
+        var j = {};
+        try { j = txt ? JSON.parse(txt) : {}; } catch (e) {}
+        if (r.ok) return j;
+        var e = new Error(j.error || 'HTTP ' + r.status);
+        e.status = r.status;
+        e.code = j.code;
+        e.params = j.params;
+        throw e;
+      });
+    });
   }
 
   // POST to one of the project's edge functions as the signed-in visitor.
@@ -969,7 +988,7 @@ if (top !== self) top.location = location;
         return '<label class="oopt ' + o + '"><input type="radio" name="option" value="' + o + '"><b>' + esc(L['o_' + o]) + '</b>'
           + '<span class="ow"></span><span class="oprice"></span></label>';
       }).join('') + '</div></fieldset>'
-      + '<p class="example-note"' + (EXAMPLE_PRICES ? '' : ' hidden') + '>' + esc(L.example) + '</p>'
+      + '<p class="example-note">' + esc(L.priced_now) + '</p>'
       + '<div class="msg" role="alert"></div>'
       + '</div><div class="book-foot"><p class="total"><span>' + esc(L.total) + '</span><b></b></p>'
       + '<label class="consent agree"><input type="checkbox" name="agree"><span>' + agreeText() + '</span></label>'
@@ -1033,6 +1052,10 @@ if (top !== self) top.location = location;
       if (!photo) el.photo.value = '';
     }
     el.photo.addEventListener('change', function () { setPhoto(el.photo.files && el.photo.files[0]); if (photo) msg(f, ''); });
+    // Over €50,000: its value in euros as well.
+    var valueEur = el.value.closest('label');
+    function bandShown() { valueEur.hidden = el.band.value !== 'high'; }
+    el.band.addEventListener('change', bandShown);
     Suggest(el.from);
     Suggest(el.to);
     // My location could not fill a field: why, where the form's messages go.
@@ -1042,10 +1065,11 @@ if (top !== self) top.location = location;
     f.addEventListener('submit', function (e) { e.preventDefault(); getPrice(); });
 
     function carNow() {
-      var value = String(el.value.value || '').trim();
+      var band = BANDS.indexOf(el.band.value) >= 0 ? el.band.value : '', value = String(el.value.value || '').trim();
       return {
         make: el.make.value.trim().replace(/\s+/g, ' '), size: SIZES.indexOf(el.size.value) >= 0 ? el.size.value : 'car',
-        runs: el.runs.value !== 'no', value: /^\d{1,6}$/.test(value) ? +value : NaN,
+        runs: el.runs.value !== 'no', band: band,
+        value: band === 'high' ? (/^\d{1,6}$/.test(value) ? +value : NaN) : BAND_TOP_EUR[band] || NaN,
         plate: el.plate.value.trim().toUpperCase().replace(/\s+/g, ' ')
       };
     }
@@ -1056,7 +1080,8 @@ if (top !== self) top.location = location;
       if (!b) return msg(f, L.err_to, el.to);
       if (!wall) return msg(f, L.err_when, when);
       if (car.make.length < 2) return msg(f, L.err_make, el.make);
-      if (!(car.value >= 1 && car.value <= 50000)) return msg(f, L.err_value, el.value);
+      if (!car.band) return msg(f, L.err_value, el.band);
+      if (car.band === 'high' && !(car.value > BAND_TOP_EUR.mid && car.value <= MAX_CAR_VALUE_EUR)) return msg(f, L.err_value, el.value);
       if (car.plate.length < 2) return msg(f, L.err_plate, el.plate);
       if (!photo) return msg(f, L.err_photo, el.photo);
       var btn = $('.go', f), e0 = ed;
@@ -1076,21 +1101,59 @@ if (top !== self) top.location = location;
         var zone = placeZone(r[0]);
         if (dayNum(wall) < dayNum(tomorrow(zone))) return msg(f, L.err_when, when);
         car.photo = photo.url;
-        trip = { from: r[0], to: r[1], ready: wallMoment({ year: wall.year, month: wall.month, day: wall.day, hour: 8, minute: 0 }, zone), car: car };
-        fillPrice();
-        go('price');
-        dirty = false; // after go: a field that loses focus there can still send its change
+        var next = { from: r[0], to: r[1], ready: wallMoment({ year: wall.year, month: wall.month, day: wall.day, hour: 8, minute: 0 }, zone), car: car };
+        return priceOf(next, wall).then(function (q) {
+          if (stale()) return;
+          if (!q.bookable) return closedRoute(q.closed);
+          if (!q.options || OPTIONS.some(function (o) { return !optionIn(q.options, o); })) return msg(f, L.err_quote);
+          next.km = q.distanceKm;
+          next.options = q.options;
+          trip = next;
+          fillPrice();
+          go('price');
+          dirty = false; // after go: a field that loses focus there can still send its change
+        }, function (e) { if (!stale()) msg(f, quoteError(e)); });
       }, function () { if (!stale()) msg(f, L.err_search); }).then(function () { busy = false; busyBtn(btn, false); });
+    }
+    // The three options for this car and day, as the server prices a private client's booking
+    // (/book asks again with what it learns, and prices the booking itself when it is made).
+    function priceOf(t, wall) {
+      var place = function (x) { return { address: x.address || x.city, city: x.city, country: x.country, lat: x.lat, lng: x.lng }; };
+      return quoteFn({
+        pickup: place(t.from), dropoff: place(t.to), car: { size: t.car.size, runs: t.car.runs },
+        pickupDate: wall.year + '-' + pad2(wall.month) + '-' + pad2(wall.day), customer: { type: 'consumer' }
+      });
+    }
+    function optionIn(list, o) { return list.filter(function (x) { return x.option === o; })[0]; }
+    // A route that takes no bookings (E14: a corridor opens with 3 transporters; or a country
+    // paused) says so on the trip step, with nothing priced.
+    function closedRoute(closed) {
+      msg(f, '');
+      if (closed === 'country') return msg(f, L.country_closed);
+      $('.msg', f).innerHTML = '<b>' + esc(L.route_closed_h) + '</b><br>' + esc(L.route_closed);
+    }
+    // The quote's refusal in the card's own words.
+    function quoteError(e) {
+      if (!e || !e.status) return L.err_quote;
+      if (e.code === 'route_too_short') return fill(L.err_short, { n: (e.params && e.params.km) || MIN_KM });
+      if (e.code === 'route_domestic') return L.err_domestic;
+      if (e.code === 'route_not_served') return L.err_route;
+      return rateLimited(e) ? T.err_rate : L.err_quote;
     }
 
     // ---- step 2: the price, with a choice of three options
-    function cents() { return quote(trip.from, trip.to, trip.car, option).cents; }
+    function cents() { var x = optionIn(trip.options, option); return x ? x.totalCents : 0; }
+    // A day the server gives ('YYYY-MM-DD') as the moment it starts on the pickup's clock, for day().
+    function serverDay(s) {
+      var x = String(s).slice(0, 10).split('-');
+      return wallMoment({ year: +x[0], month: +x[1], day: +x[2], hour: 12, minute: 0 }, placeZone(trip.from));
+    }
     function day(t) { return dayText(t, placeZone(trip.from), L.lang); }
     function carLine(c) {
-      return [L['sz_' + c.size], c.runs ? '' : L.runs_not, c.plate, money(c.value * 100, L.lang)].filter(Boolean).join(' · ');
+      return [L['sz_' + c.size], c.runs ? '' : L.runs_not, c.plate, c.band === 'high' ? money(c.value * 100, L.lang) : L['band_' + c.band]].filter(Boolean).join(' · ');
     }
     function fillPrice() {
-      var p = P.price, A = trip.from, B = trip.to, km = quote(A, B, trip.car, 'standard').km;
+      var p = P.price, A = trip.from, B = trip.to, km = trip.km;
       [['a', A], ['b', B]].forEach(function (x) {
         $('.' + x[0] + '-city', p).textContent = x[1].city + ', ' + countryName(x[1].country, L.lang);
         $('.' + x[0] + '-addr', p).textContent = x[1].address !== x[1].city ? x[1].address : '';
@@ -1107,8 +1170,9 @@ if (top !== self) top.location = location;
       $('.car-sum span', p).textContent = carLine(trip.car);
       OPTIONS.forEach(function (o) {
         var row = $('.oopt.' + o, p);
-        $('.ow', row).textContent = L['ow_' + o] + '\u00a0· ' + fill(L.deliver_by, { date: day(deliverBy(trip.ready, km, o)) });
-        $('.oprice', row).textContent = money(quote(A, B, trip.car, o).cents, L.lang);
+        var x = optionIn(trip.options, o);
+        $('.ow', row).textContent = L['ow_' + o] + '\u00a0· ' + fill(L.deliver_by, { date: day(serverDay(x.deliverBy)) });
+        $('.oprice', row).textContent = money(x.totalCents, L.lang);
       });
       setOption(option);
     }
@@ -1152,7 +1216,8 @@ if (top !== self) top.location = location;
       trip = null;
       option = 'standard';
       dirty = false;
-      el.from.value = el.to.value = el.make.value = el.value.value = el.plate.value = '';
+      el.from.value = el.to.value = el.make.value = el.band.value = el.value.value = el.plate.value = '';
+      bandShown();
       el.from._place = el.to._place = null;
       setPhoto(null);
       clockNote();
@@ -1611,6 +1676,7 @@ if (top !== self) top.location = location;
   var inv = null, applying = false, invN = 0; // inv: what the invite panel shows ({ step, ... })
 
   function keptRef() {
+    if (!REFERRALS) return null; // off: no code is shown, checked, applied or sent with Join
     var r = store.json(REF);
     return r && REF_CODE.test(r.code) && Date.now() - r.t < REF_DAYS * 864e5 ? r : null;
   }
@@ -1618,8 +1684,9 @@ if (top !== self) top.location = location;
   function refBy(r) { return (r && r.by) || T.inv_partner; }
 
   // Back from an invite link (?r=CODE): keep the code and clean the address. Run before the
-  // page starts, so the address it remembers has no ?r= either.
+  // page starts, so the address it remembers has no ?r= either. Off, a code kept earlier goes too.
   function takeRef() {
+    if (!REFERRALS) store.del(REF);
     if (!window.URLSearchParams) return;
     var q = new URLSearchParams(location.search);
     if (!q.has('r')) return;
@@ -1627,7 +1694,7 @@ if (top !== self) top.location = location;
     q.delete('r');
     var rest = q.toString();
     history.replaceState(history.state, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
-    if (!REF_CODE.test(code)) return;
+    if (!REFERRALS || !REF_CODE.test(code)) return;
     keepRef(code, had && had.code === code ? had.by : null);
     inv = { step: 'check' };
   }
@@ -2100,9 +2167,10 @@ if (top !== self) top.location = location;
           + (who.phone && telHref(who.phone) ? '<a class="btn big t-call" href="' + esc(telHref(who.phone)) + '">' + IC.call + '<span>' + esc(fill(L.call, { phone: who.phone })) + '</span></a>' : '')
           + '</section>';
       }
-      // Who carries a paid transport: Car2Door's company, and the transport company's once contact opens.
+      // Who carries a paid transport (D84): the transport company once contact opens, booked
+      // through Car2Door, the go-between.
       if (o.bid_started_at) {
-        h += '<p class="t-note t-carrier">' + esc(L.t_carrier + (who && who.company_name ? ' ' + fill(L.t_carried_by, { company: who.company_name }) : ''))
+        h += '<p class="t-note t-carrier">' + esc((who && who.company_name ? fill(L.t_carried_by, { company: who.company_name }) + ' ' : '') + L.t_carrier)
           + '</p>';
       }
       if (dt.code && (o.status === 'accepted' || o.status === 'en_route')) {
@@ -2366,10 +2434,27 @@ if (top !== self) top.location = location;
       + (type === 'email' ? ' inputmode="email" autocapitalize="off" spellcheck="false"' : ' autocapitalize="words"')
       + ' placeholder="' + esc(ph) + '"></label>';
   }
-  // No Google or Apple here: the app's Log in at /book, where the card leads, has only the email
-  // code on the web (src/lib/social-auth.ts).
+  // Google's multicolour G and the Apple logo, as their sign-in guidelines ask.
+  var GOOGLE = '<svg viewBox="0 0 48 48" aria-hidden="true">'
+    + '<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>'
+    + '<path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>'
+    + '<path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>'
+    + '<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>'
+    + '</svg>';
+  var APPLE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.4.8c1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1ZM13.9 5c.7-.8 1.2-2 1-3.2-1 0-2.3.7-3 1.5-.7.8-1.2 1.9-1.1 3.1 1.2.1 2.3-.6 3.1-1.4Z"/></svg>';
+  // Google and Apple first, then the email (D94): each goes on in the app's Log in at /book, the
+  // one sign-in (sendCode, oauth below). Inside the Facebook, Instagram and TikTok apps' own
+  // browsers Google refuses every sign-in, so its button stays out there (the app's
+  // src/lib/web-oauth.ts IN_APP_BROWSER, the same pattern).
+  var IN_APP_BROWSER = /FBAN|FBAV|FB_IAB|Instagram|TikTok|musical_ly|BytedanceWebview/;
+  var googleHere = !IN_APP_BROWSER.test(navigator.userAgent || '');
   function authPane(tab) {
     return '<div class="pane" data-pane="' + tab + '">'
+      + '<div class="sso">'
+      + (googleHere ? '<button type="button" class="sso-btn google" data-provider="google">' + GOOGLE + '<span>' + esc(T.google) + '</span></button>' : '')
+      + '<button type="button" class="sso-btn apple" data-provider="apple">' + APPLE + '<span>' + esc(T.apple) + '</span></button>'
+      + '</div>'
+      + '<div class="or" role="separator"><span>' + esc(T.or) + '</span></div>'
       + '<form class="em" novalidate>'
       + (tab === 'create' ? field('full_name', T.f_name, 'text', 'name', T.ph_name, TEXT_MAX.full_name) : '')
       + field('email', T.f_email, 'email', 'email', T.ph_email)
@@ -2420,6 +2505,8 @@ if (top !== self) top.location = location;
     if (x === 'help') return { pane: 'help', auth: 0 };
     if (x === 'report') return { pane: 'help', auth: 0 }; // a link to it is a mail (reportMail); an old address opens Help, which has it
     if (x === 'feedback') return { pane: 'feedback', auth: 0 };
+    // The invite-code form only while Share & Earn is on (E14.1); off, its old link opens Profile.
+    if (a === 'login' && x === 'invite' && !REFERRALS) return { pane: 'me', auth: 1 };
     if (a === 'login' && PSTEPS[x] != null) return { pane: x, auth: PSTEPS[x] };
     return null;
   }
@@ -2525,6 +2612,16 @@ if (top !== self) top.location = location;
       openBook('/book/sign-in', { signIn: { mode: t, email: em, name: nm } });
     }
     $$('form.em', el).forEach(function (f) { f.addEventListener('submit', function (e) { e.preventDefault(); sendCode(f); }); });
+    // Google and Apple the same way (D94): the app's Log in goes on to their page at once, and they
+    // send the visitor back to it.
+    function oauth(b) {
+      var p = b.dataset.provider, pane = b.closest('.pane');
+      if (b.disabled) return;
+      msg(pane, '');
+      busy(b, true, fill(T.redirecting, { provider: p === 'apple' ? 'Apple' : 'Google' }));
+      openBook('/book/sign-in', { signIn: { mode: pane.dataset.pane, provider: p } });
+    }
+    $$('.sso-btn', el).forEach(function (b) { b.addEventListener('click', function () { oauth(b); }); });
 
     // Tapping My trips or anything else in the card stops the automatic slide back, so the card
     // stays: its back arrow shows again (it is hidden during the welcome on a phone).
@@ -2561,7 +2658,7 @@ if (top !== self) top.location = location;
       token().then(function (t) {
         return Promise.all([
           rest('profiles?select=full_name,phone,billing_name,billing_vat_number,billing_address&id=eq.' + u, t),
-          rest('rpc/referral_window', t, {}).catch(nothing)
+          REFERRALS ? rest('rpc/referral_window', t, {}).catch(nothing) : null
         ]);
       }).then(function (r) {
         if (uid() !== u) return;
@@ -2582,7 +2679,7 @@ if (top !== self) top.location = location;
       $('.me-mail', P.me).textContent = nm ? u.email || '' : '';
       $('.pf-phone', P.me).textContent = (meFor === uid() && me && me.phone) || '';
       var inv = $('.pf-inv', P.me);
-      inv.hidden = !(meFor === uid() && inviteUntil);
+      inv.hidden = !(REFERRALS && meFor === uid() && inviteUntil);
       $('.pf-until', P.me).textContent = inviteUntil ? fill(T.pn_invite_by, { date: clockText(inviteUntil, null, SOON, T.lang) }) : '';
     }
 
@@ -2957,7 +3054,7 @@ if (top !== self) top.location = location;
     return {
       el: el, lang: T.lang, sync: sync, used: used,
       // Back from /book (the page kept by the browser): Log in's button is no longer on its way.
-      reset: function () { $$('form.em .go', el).forEach(function (b) { busy(b, false); }); },
+      reset: function () { $$('form.em .go, .sso-btn', el).forEach(function (b) { busy(b, false); }); },
       // Shows the view for a panel address (see viewOf). Signed out, Log in shows first where the
       // view needs an account, and the view comes once signed in. The heading takes the focus when
       // the card slides to another view.
@@ -3864,7 +3961,7 @@ if (top !== self) top.location = location;
     screen = page;
     if (!stage || !page) return;
     meta = metaOf(d);
-    var invited = /[?&]r=/.test(location.search); // for the language card (below), before takeRef takes it off
+    var invited = REFERRALS && /[?&]r=/.test(location.search); // for the language card (below), before takeRef takes it off
     takeRef();
     var fromApp = takeApp();
     curKey = location.pathname + location.search;

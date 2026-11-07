@@ -109,6 +109,12 @@ h1 { font-size: clamp(40px, 7vw, 64px); margin: 0 0 18px; letter-spacing: -0.035
 .card input::placeholder { color: rgba(226, 232, 240, .66); }
 .card input:focus { outline: none; border-color: var(--sky); background: rgba(255, 255, 255, .16); }
 .card input[aria-invalid] { border-color: #FF9B8A; }
+/* A choice as a field (the car's value band), the chevron drawn in. */
+.card select { font: inherit; font-size: 16px; color: #fff; background: var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%23E2E8F0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center / 16px; border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 12px; padding: 10px 32px 10px 12px; width: 100%; box-sizing: border-box; -webkit-appearance: none; appearance: none; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: border-color .15s, background-color .15s; }
+.card select:invalid { color: rgba(226, 232, 240, .66); }
+.card select option { color: #0F172A; background: #fff; }
+.card select:focus { outline: none; border-color: var(--sky); background-color: rgba(255, 255, 255, .16); }
+.card select[aria-invalid] { border-color: #FF9B8A; }
 .book-body { padding: 20px 22px 6px; display: grid; gap: 14px; }
 /* Segmented control: a white pill slides under the chosen side. */
 .kinds { position: relative; display: grid; grid-template-columns: 1fr 1fr; background: var(--tint); border: 1px solid rgba(255, 255, 255, .1); border-radius: 14px; padding: 4px; }
@@ -894,11 +900,13 @@ html.lgated { overflow: hidden; }
 .car .size { grid-column: 1 / 4; grid-row: 2; }
 .car .runs { grid-column: 1; grid-row: 3; }
 .car .value { grid-column: 2 / 4; grid-row: 3; }
-.car .runs, .car .value, .car .plate { min-width: 0; }
+.car .value-eur { grid-column: 1 / 4; grid-row: 4; }
+.car .value-eur[hidden] { display: none; }
+.car .runs, .car .value, .car .value-eur, .car .plate { min-width: 0; }
 .card .plate input { text-transform: uppercase; padding-left: 10px; padding-right: 8px; }
 .card .plate input::placeholder { text-transform: none; }
-.card .value input { -moz-appearance: textfield; }
-.card .value input::-webkit-inner-spin-button, .card .value input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.card .value-eur input { -moz-appearance: textfield; }
+.card .value-eur input::-webkit-inner-spin-button, .card .value-eur input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 /* Two or three choices side by side, the chosen one filled (the size, does it drive). */
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 3px; background: var(--tint); border: 1px solid rgba(255, 255, 255, .1); border-radius: 12px; }
 .seg label { position: relative; min-width: 0; }
@@ -914,8 +922,10 @@ html.lgated { overflow: hidden; }
   .car .plate { grid-column: 1 / 3; grid-row: 2; }
   .car .photo { grid-row: 1 / 3; }
   .car .size { grid-column: 1 / 4; grid-row: 3; }
-  .car .runs { grid-row: 4; }
-  .car .value { grid-row: 4; }
+  /* Each on its own row, so "No" and a band such as "15.000 € – 50.000 €" show whole. */
+  .car .runs { grid-column: 1 / 4; grid-row: 4; }
+  .car .value { grid-column: 1 / 4; grid-row: 5; }
+  .car .value-eur { grid-row: 6; }
 }
 /* The price step: the three options as rows, each with its window, deliver-by date and total. */
 .opick { border: 0; margin: 0; padding: 0; min-width: 0; }
