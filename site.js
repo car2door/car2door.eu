@@ -10,24 +10,22 @@
  * Panels, like the client app: the app's menu (New transport, My transports, Profile) floats at
  * the bottom, and My transports, Profile, Join Transporters, the legal pages and Help slide in as
  * a panel over the page (on computers a frame on the right, on phones the whole screen under the
- * header); their steps slide sideways inside it. The panel is the account card: Log in /
- * Create account (#login), Join Transporters (#join), the legal pages (#terms, ...) and Help.
- * The one sign-in is the client app's at /book: the card hands it the email, or Google or Apple
- * (D94), and My transports
- * (#trips, #trips/<id>), Profile and its steps (#login once signed in, #login/details, ...) open
- * there (bookPath). The header button (Log in, or the first name) opens the card or the app's
- * Profile.
+ * header); their steps slide sideways inside it. The panel is the account card: Join
+ * Transporters (#join), the legal pages (#terms, ...) and Help. The one sign-in is the client
+ * app's at /book: signed out, Log in / Create account (the header button, Profile in the menu, a
+ * #login link) is its Log in inside the home page's booking card (D114, frameLogin), and My
+ * transports (#trips, #trips/<id>), Profile and its steps (#login once signed in, #login/details,
+ * ...) open there (bookPath). The header button (Log in, or the first name) opens that Log in or
+ * the app's Profile.
  *
- * Phones (the one-column layout) open like the app: a signed-out visitor sees the account
- * card in the home page's spot first, and Book your transport and the menu once signed in.
+ * Phones (the one-column layout) open like the sister site: Book your transport first and its
+ * Log in only at Book (D114); the menu shows signed out too, and steps aside while the booking
+ * card is under it.
  *
- * Booking (home): Book your transport takes both addresses, the day the car is ready and the car
- * (its own card: make and model, size, drives or not, value, plate or VIN, one photo; D42a a) and
- * shows the three options with their totals (Saver, Standard, Priority; D9); each step slides in
- * and the page never changes. Its button hands the booking over to the app at
- * /book/?from=&to=&when= (D89's slides, E10's card saved there and charged when a transporter
- * accepts): nothing is booked or paid on this page, and it never loads Stripe or makes an order.
- * The prices are the server's own: the public quote function, as /book asks it (priceOf() below).
+ * Booking (home): Book your transport is the client app's own booking, /book, in a frame inside
+ * the card (BookFrame; D104, D114): its slides change inside the card and the page never leaves;
+ * a page that is no slide (the trip once booked) opens as the whole tab. Nothing is priced, booked
+ * or paid by this page's own code, and it never loads Stripe or makes an order.
  *
  * Page modules: the booking card (home) and the Join Transporters form, started once for
  * each page as it is shown.
@@ -49,8 +47,17 @@
  * from site/src/texts/<lang>.json); site/src/build.py writes the backend's address and public
  * keys below from site/src/config.json.
  */
-// Never inside another site's frame (clickjacking; public/_headers says so too).
-if (top !== self) top.location = location;
+// Never inside another site's frame (clickjacking; a meta tag can't say frame-ancestors, and GitHub
+// Pages sends no headers): the page hides itself and asks the browser to open it as the whole tab. In a
+// sandboxed frame that throws, so the rest of the script must still run (S32): hidden, it does.
+try {
+  if (top !== self) {
+    document.documentElement.style.display = 'none';
+    top.location = location;
+  }
+} catch (e) {
+  document.documentElement.style.display = 'none';
+}
 (function () {
   'use strict';
 
@@ -80,7 +87,6 @@ if (top !== self) top.location = location;
   // project's key; the site only reads it, to know who is signed in (the header's name, the phone's
   // home page). The app renews and ends it.
   var BOOK_SB = 'https://krscknuzrqhjfiryvqkc.supabase.co';
-  var BOOK_KEY = 'sb_publishable_fU_PwLGeh9IZxvl0g_ILEg_0hJo_ri-'; // publishable, as the apps': the quote function (prices)
   var BOOK_STORE = 'sb-' + ((/^https:\/\/([a-z0-9]+)\./.exec(BOOK_SB) || [])[1] || 'book') + '-auth-token';
   // name@domain.tld, with no empty parts (no '..', no dot at either end).
   var EMAIL_RE = /^[^@\s.]+(?:\.[^@\s.]+)*@[^@\s.]+(?:\.[^@\s.]+)+$/;
@@ -235,39 +241,7 @@ if (top !== self) top.location = location;
     b.onfinish = end;
   }
 
-  // ---------------------------------------------------------------- prices
-  //
-  // The card's totals are the server's (the quote function on /book's project, E14.3): the same
-  // model, settings in use and distance table as /book and the lane pages, for a private client's
-  // booking, so a route that isn't open says so here. Nothing on this page prices a trip.
-
-  // The 27 EU members, either end (D5: EU only).
-  var SERVED_CC = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT',
-    'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'];
-  // The shortest trip, as the server (supabase/functions/_shared/pricing.ts: MIN_TRIP_KM), which measures again.
-  var MIN_KM = 150;
-  // The three options (D9).
-  var OPTIONS = ['saver', 'standard', 'priority'];
-  var SIZES = ['car', 'suv', 'van'];
-  // The car's value as /book asks it (E2): a band, and over €50,000 the whole euros up to €250,000
-  // (supabase/functions/_shared/car.ts: BAND_TOP_EUR, MAX_CAR_VALUE_EUR; site/src/check.mjs compares them).
-  var BANDS = ['low', 'mid', 'high'];
-  var BAND_TOP_EUR = { low: 15000, mid: 50000 };
-  var MAX_CAR_VALUE_EUR = 250000;
-  // Road km from the straight line, for the shortest-trip check before asking (as _shared/pricing.ts).
-  var ROAD = 1.28;
-
-  function inList(list, c) { return list.indexOf(String(c).toUpperCase()) >= 0; }
-  function routeOk(a, b) { return inList(SERVED_CC, a.country) && inList(SERVED_CC, b.country); }
-  // No transports within one country at launch (D5).
-  function domesticClosed(a, b) { return String(a.country).toUpperCase() === String(b.country).toUpperCase(); }
-  function toRad(x) { return (x * Math.PI) / 180; }
-  function roadKm(a, b) {
-    var dLat = toRad(b.lat - a.lat), dLng = toRad(b.lng - a.lng);
-    var sLat = Math.sin(dLat / 2), sLng = Math.sin(dLng / 2); // not **: older Safari can't parse it
-    var h = sLat * sLat + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * sLng * sLng;
-    return Math.round(2 * 6371 * Math.asin(Math.sqrt(h)) * ROAD);
-  }
+  // ---------------------------------------------------------------- money and times
 
   // Euros, dates and countries the way the page's language writes them.
   function locale(lang) { return lang === 'en' ? 'en-GB' : lang === 'pt' ? 'pt-PT' : lang; }
@@ -297,8 +271,6 @@ if (top !== self) top.location = location;
     } catch (e) { return t.toISOString().slice(0, 16).replace('T', ' ') + ' UTC'; }
   }
   function dateText(t, lang) { return clockText(t, null, DATE_TIME, lang); }
-  // A pickup's zone: a place's (from the address search), or the one a trip keeps (my_trips()).
-  function placeZone(p) { return Z && p ? Z.tripZone(p.country, p.lat, p.lng) : null; }
   function tripZoneOf(o) { return Z ? o.pickup_tz || Z.tripZone(o.pickup_country) : null; }
   // A pickup on its own clock, "Mon 2 Nov, 07:30", and a Book-ahead pickup's 2-hour window from
   // the time chosen (as in the apps: PICKUP_WINDOW_HOURS in src/lib/format.ts),
@@ -313,288 +285,6 @@ if (top !== self) top.location = location;
   function dayText(t, zone, lang) { return clockText(t, zone, PICKUP_DAY, lang); }
   function countryName(cc, lang) {
     try { return new Intl.DisplayNames([locale(lang)], { type: 'region' }).of(cc) || cc; } catch (e) { return cc; }
-  }
-  function pad2(n) { return String(n).padStart(2, '0'); }
-  // The value of a datetime-local field: a clock reading, on no clock in particular
-  // ({ year, month, day, hour, minute }, as zones.js), and back.
-  function wallDT(x) { return x.year + '-' + pad2(x.month) + '-' + pad2(x.day) + 'T' + pad2(x.hour) + ':' + pad2(x.minute); }
-  function parseDT(v) {
-    var m = /^(\d{4})-(\d\d)-(\d\d)[T ](\d\d):(\d\d)/.exec(v || '');
-    if (!m) return null;
-    var x = { year: +m[1], month: +m[2], day: +m[3], hour: +m[4], minute: +m[5] };
-    var t = new Date(Date.UTC(x.year, x.month - 1, x.day, x.hour, x.minute));
-    return t.getUTCMonth() === x.month - 1 && t.getUTCDate() === x.day && t.getUTCHours() === x.hour ? x : null;
-  }
-  // The moment a reading stands for on the pickup's clock (the visitor's without a zone).
-  function wallMoment(x, zone) {
-    return zone && Z ? Z.wallToDate(zone, x) : new Date(x.year, x.month - 1, x.day, x.hour, x.minute);
-  }
-  // What a zone's clocks (the visitor's without one) show at a moment.
-  function wallOf(t, zone) {
-    return zone && Z ? Z.wallAt(zone, t)
-      : { year: t.getFullYear(), month: t.getMonth() + 1, day: t.getDate(), hour: t.getHours(), minute: t.getMinutes() };
-  }
-
-  // ---------------------------------------------------------------- address search
-  //
-  // The same search as the apps (src/lib/place-search.ts): Photon while the visitor types (towns,
-  // streets with numbers, postcodes, typos forgiven), Nominatim when Photon finds nothing. Both
-  // are OpenStreetMap based and need no key.
-
-  var EUROPE = { west: -25, south: 27, east: 45, north: 72 };
-  var PLACE_TYPES = ['city', 'town', 'village', 'locality', 'district'];
-  // The first of its arguments that is set (?? in the apps' code).
-  function pick() { for (var i = 0; i < arguments.length; i++) if (arguments[i] != null) return arguments[i]; }
-
-  function fromPhoton(f) {
-    var p = f.properties || {}, c = f.geometry && f.geometry.coordinates;
-    if (!p.countrycode || !c) return null;
-    var isPlace = PLACE_TYPES.indexOf(p.type) >= 0;
-    var city = pick(isPlace ? p.name : pick(p.city, p.locality, p.district), p.county, p.state, p.name, '');
-    var street = p.street ? [p.street, p.housenumber].filter(Boolean).join(' ') : '';
-    var parts = [
-      p.name && [p.street, p.postcode, city].indexOf(p.name) < 0 ? p.name : '',
-      street,
-      [p.postcode, city].filter(Boolean).join(' '),
-      isPlace || !city ? pick(p.county, p.state) : '',
-      p.country
-    ];
-    var label = parts.filter(function (s, i) { return s && parts.indexOf(s) === i; }).join(', ');
-    return { label: label, address: label, city: city, country: p.countrycode.toUpperCase(), lat: c[1], lng: c[0] };
-  }
-  function searchPlaces(q, signal) {
-    var E = EUROPE, url = 'https://photon.komoot.io/api/?limit=6&lang=en&bbox=' + [E.west, E.south, E.east, E.north].join(',') + '&q=' + encodeURIComponent(q);
-    return fetch(url, { headers: { Accept: 'application/json' }, signal: signal }).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    }).then(function (j) {
-      var seen = {};
-      return (j.features || []).map(fromPhoton).filter(function (s) {
-        if (!s || seen[s.label]) return false;
-        seen[s.label] = 1;
-        return true;
-      });
-    });
-  }
-  function searchNominatim(q) {
-    var E = EUROPE;
-    var url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&accept-language=en&viewbox='
-      + [E.west, E.north, E.east, E.south].join(',') + '&bounded=1&q=' + encodeURIComponent(q);
-    return fetch(url, { headers: { Accept: 'application/json' } }).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    }).then(function (rows) {
-      var hit = rows && rows[0], a = (hit && hit.address) || {};
-      if (!hit || !a.country_code) return null;
-      return {
-        address: q, city: pick(a.city, a.town, a.village, a.municipality, a.county, a.state, q),
-        country: a.country_code.toUpperCase(), lat: parseFloat(hit.lat), lng: parseFloat(hit.lon)
-      };
-    });
-  }
-  // Best match for typed text the visitor didn't pick from the suggestions: null when neither
-  // service knows it, an error when neither answered.
-  function findPlace(q) {
-    var down = 0;
-    return searchPlaces(q).then(function (r) { return r[0] ? Object.assign({}, r[0], { address: q }) : null; }, function () { down++; return null; })
-      .then(function (p) { return p || searchNominatim(q).catch(function () { down++; return null; }); })
-      .then(function (p) { if (!p && down === 2) throw new Error('Address search is down'); return p; });
-  }
-
-  // My location, as in the apps (src/lib/my-location.ts): the browser's position, read once when
-  // the visitor picks the row, becomes the address Photon finds there. A vague position (over
-  // 200 m: try again, or type) or one outside Europe goes nowhere; Photon gets the point rounded
-  // to about 10 m. The place fills the field like a picked suggestion, and the price checks it
-  // like any other (routeOk, domesticClosed). Nothing keeps the position, except that a booked
-  // trip keeps that point as its pickup or destination. Browsers give it only on https (and
-  // localhost). Answers { place } or { problem }, never fails.
-  var HERE_OK = !!(window.isSecureContext && navigator.geolocation);
-  var HERE_TEXT = {
-    denied: 'here_denied', blocked: 'here_blocked', vague: 'here_vague', timeout: 'here_timeout',
-    unavailable: 'here_unavailable', busy: 'err_search', not_found: 'here_not_found', not_served: 'here_not_served'
-  };
-  function hereRound(v) { return Math.round(v * 1e4) / 1e4; }
-  // What the browser says about location for the site: 'granted', 'prompt', 'denied', or '' when it doesn't tell.
-  function geoState() {
-    try {
-      return navigator.permissions.query({ name: 'geolocation' }).then(function (p) { return p.state; }, function () { return ''; });
-    } catch (e) { return Promise.resolve(''); }
-  }
-  // What Photon names at a point: the nearest house or street, else the nearest named place (a
-  // village), as addressAt in the apps (src/lib/place-search.ts).
-  function reverseAt(lat, lng, layers) {
-    return fetch('https://photon.komoot.io/reverse?lat=' + lat + '&lon=' + lng + '&lang=en&limit=1' + layers, { headers: { Accept: 'application/json' } })
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      }).then(function (j) {
-        var s = j.features && j.features[0] ? fromPhoton(j.features[0]) : null;
-        return s && { address: s.label, city: s.city, country: s.country, lat: lat, lng: lng };
-      });
-  }
-  function addressAt(lat, lng) {
-    return reverseAt(lat, lng, '&layer=house&layer=street').then(function (p) { return p || reverseAt(lat, lng, ''); });
-  }
-  function placeHere() {
-    return geoState().then(function (state) {
-      if (state === 'denied') return { problem: 'blocked' };
-      return new Promise(function (done) {
-        navigator.geolocation.getCurrentPosition(function (p) { done(p.coords); }, function (e) {
-          if (e.code !== 1) return done({ problem: e.code === 3 ? 'timeout' : 'unavailable' });
-          // A closed prompt can come again; Block only through the site settings.
-          geoState().then(function (s) { done({ problem: s === 'denied' ? 'blocked' : 'denied' }); });
-        }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
-      });
-    }).then(function (c) {
-      if (c.problem) return c;
-      if (c.accuracy > 200) return { problem: 'vague' };
-      var lat = hereRound(c.latitude), lng = hereRound(c.longitude), E = EUROPE;
-      if (lng < E.west || lng > E.east || lat < E.south || lat > E.north) return { problem: 'not_served' };
-      return addressAt(lat, lng).then(function (p) {
-        return !p ? { problem: 'not_found' } : inList(SERVED_CC, p.country) ? { place: p } : { problem: 'not_served' };
-      }, function () { return { problem: 'busy' }; });
-    }).catch(function () { return { problem: 'unavailable' }; });
-  }
-  var HERE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="1.9"/>'
-    + '<circle cx="12" cy="12" r="2.4" fill="currentColor"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
-
-  // Suggestions under an address field while the visitor types (a combobox: arrows, Enter, Escape).
-  // Picking one keeps that exact place on the field (input._place); typing again drops it.
-  // With HERE_OK, the first row while the field has the focus is My location; what stops it
-  // goes to the form as a dv-here event (its detail the text, '' to clear it).
-  // The X on the right empties the field as if the visitor had deleted it all, and the field keeps the focus.
-  var sgN = 0;
-  var CLEAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/>'
-    + '<path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#0A1222" stroke-width="2.2" stroke-linecap="round"/></svg>';
-  function Suggest(input) {
-    var label = input.closest('label'), box = d.createElement('div'), list = d.createElement('ul'), id = 'sg' + (++sgN);
-    var items = [], shown = [], active = -1, timer = 0, ctl = null, seq = 0;
-    // My location's row, and its answer only while nothing was typed since it was asked for.
-    var here = HERE_OK ? { here: true } : null, locating = false, hereN = 0;
-    var clear = d.createElement('button');
-    box.className = 'af';
-    label.parentNode.insertBefore(box, label);
-    box.appendChild(label);
-    box.appendChild(clear);
-    box.appendChild(list);
-    clear.type = 'button';
-    clear.className = 'clr';
-    clear.setAttribute('aria-label', T.clear_addr);
-    clear.title = T.clear_addr;
-    clear.innerHTML = CLEAR_ICON;
-    clear.addEventListener('mousedown', function (e) { e.preventDefault(); }); // the field keeps the focus (and a phone its keyboard)
-    clear.addEventListener('click', function () {
-      input.value = '';
-      input.dispatchEvent(new Event('input', { bubbles: true })); // drops the picked place; the form's trip is edited
-      input.focus({ preventScroll: true });
-    });
-    list.className = 'sugg';
-    list.id = id;
-    list.hidden = true;
-    list.setAttribute('role', 'listbox');
-    input.setAttribute('role', 'combobox');
-    input.setAttribute('aria-autocomplete', 'list');
-    input.setAttribute('aria-expanded', 'false');
-    input.setAttribute('aria-controls', id);
-    input.setAttribute('autocomplete', 'off'); // the browser's own list would cover ours
-
-    function close() {
-      list.hidden = true;
-      active = -1;
-      input.setAttribute('aria-expanded', 'false');
-      input.removeAttribute('aria-activedescendant');
-    }
-    function render() {
-      shown = (here && (locating || d.activeElement === input) ? [here] : []).concat(items);
-      list.innerHTML = shown.map(function (s, i) {
-        var a = '<li role="option" id="' + id + '-' + i + '" aria-selected="false" data-i="' + i + '"';
-        if (s.here) return a + ' class="here' + (locating ? ' busy' : '') + '"><b>' + HERE_ICON + esc(locating ? T.here_finding : T.here_row) + '</b></li>';
-        var parts = s.label.split(', ');
-        return a + '><b>' + esc(parts[0]) + '</b>'
-          + (parts.length > 1 ? '<span>' + esc(parts.slice(1).join(', ')) + '</span>' : '') + '</li>';
-      }).join('');
-      active = -1;
-      list.hidden = !shown.length;
-      input.setAttribute('aria-expanded', shown.length ? 'true' : 'false');
-    }
-    function mark(i) {
-      active = i;
-      $$('li', list).forEach(function (li, j) { li.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
-      input.setAttribute('aria-activedescendant', id + '-' + i);
-    }
-    function choose(i) {
-      var s = shown[i];
-      if (!s) return;
-      if (s.here) return locate();
-      input.value = s.label;
-      input._place = s;
-      close();
-      input.dispatchEvent(new CustomEvent('dv-pick', { bubbles: true }));
-    }
-    function tell(text) { input.dispatchEvent(new CustomEvent('dv-here', { bubbles: true, detail: text })); }
-    function locate() {
-      if (locating) return;
-      var n = ++hereN;
-      locating = true;
-      render();
-      tell('');
-      placeHere().then(function (r) {
-        if (n !== hereN) return;
-        locating = false;
-        if (!r.place) {
-          render();
-          return tell(T[HERE_TEXT[r.problem]] || T.here_unavailable);
-        }
-        input.value = r.place.address;
-        input._place = r.place;
-        items = [];
-        close();
-        // A new trip for the form (edited) and its clock (the pickup's zone).
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-        input.dispatchEvent(new CustomEvent('dv-pick', { bubbles: true }));
-      });
-    }
-    input.addEventListener('focus', function () {
-      if (input._place) items = [];
-      if (here) render();
-    });
-    input.addEventListener('input', function () {
-      input._place = null;
-      hereN++;
-      locating = false;
-      clearTimeout(timer);
-      var q = input.value.trim();
-      if (q.length < 3) { seq++; items = []; return here ? render() : close(); }
-      timer = setTimeout(function () {
-        var n = ++seq;
-        if (ctl) ctl.abort();
-        ctl = window.AbortController ? new AbortController() : null;
-        searchPlaces(q, ctl ? ctl.signal : undefined).then(function (r) {
-          if (n !== seq || d.activeElement !== input) return;
-          items = r.slice(0, 5);
-          render();
-        }, noop);
-      }, 220);
-    });
-    input.addEventListener('keydown', function (e) {
-      if (list.hidden) return;
-      var n = shown.length;
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        mark(e.key === 'ArrowDown' ? (active + 1) % n : active <= 0 ? n - 1 : active - 1);
-      } else if (e.key === 'Enter' && active >= 0) {
-        e.preventDefault();
-        choose(active);
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation(); // only the list closes
-        close();
-      }
-    });
-    input.addEventListener('blur', function () { setTimeout(function () { if (!locating) close(); }, 120); });
-    list.addEventListener('mousedown', function (e) { e.preventDefault(); }); // the field keeps the focus (and a phone its keyboard)
-    list.addEventListener('click', function (e) { var li = e.target.closest('li'); if (li) choose(+li.dataset.i); });
-    return { close: close };
   }
 
   // ---------------------------------------------------------------- the project's functions
@@ -613,25 +303,6 @@ if (top !== self) top.location = location;
       method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_app: 'website', p_platform: 'web', p_version: null, p_function: name, p_status: status, p_code: code })
     }).catch(function () {});
-  }
-
-  // The public quote function (anyone may ask, signed in or not) on /book's project: the booking
-  // card's three options. Its refusals come back as callFn's do ({ status, code, params }).
-  function quoteFn(body) {
-    var url = (BOOK_SB || SB) + '/functions/v1/quote';
-    var o = { method: 'POST', body: JSON.stringify(body), headers: { apikey: BOOK_SB ? BOOK_KEY : KEY, 'Content-Type': 'application/json' } };
-    return (BOOK_SB ? fetch(url, o) : sbFetch(url, o)).then(function (r) {
-      return r.text().then(function (txt) {
-        var j = {};
-        try { j = txt ? JSON.parse(txt) : {}; } catch (e) {}
-        if (r.ok) return j;
-        var e = new Error(j.error || 'HTTP ' + r.status);
-        e.status = r.status;
-        e.code = j.code;
-        e.params = j.params;
-        throw e;
-      });
-    });
   }
 
   // POST to one of the project's edge functions as the signed-in visitor.
@@ -665,12 +336,8 @@ if (top !== self) top.location = location;
   }
 
   // ---------------------------------------------------------------- booking card (home)
-  //
-  // Book your transport shows the price in place: its steps slide inside the card (trip, price)
-  // and the page never changes; its button hands the booking over to the app at /book (handOver).
-  // Each step is a history entry, so Back goes one step back.
 
-  var STEPS = { trip: 0, price: 1 };
+  // Icons the account card, My transports and the invite panel share.
   var IC = {
     cal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
     car: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15.5v-3l1.6-4.2A2 2 0 0 1 7.5 7h9a2 2 0 0 1 1.9 1.3l1.6 4.2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM4.5 12.5h15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="7.8" cy="16.6" r="1.7" fill="currentColor"/><circle cx="16.2" cy="16.6" r="1.7" fill="currentColor"/></svg>',
@@ -680,618 +347,41 @@ if (top !== self) top.location = location;
     doc: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h7.5l4.5 4.5v12.5h-12z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M14 3.5V8h4.5M9.5 12.5h5.5M9.5 16h5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
     call: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.6 4.2-2 1.4a11 11 0 0 0 6.1 6.1l1.4-2 4.2 1.6v2.6a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" fill="currentColor"/></svg>'
   };
-  // ---------------------------------------------------------------- the pickup's date and time
-  //
-  // The booking card's own date and time picker (batch 19; Martin: the browser's one "looks really
-  // raw"). Two buttons, as in the apps (src/components/wall-picker.tsx): the date opens a month,
-  // Monday first, in the page's language; the time a grid of quarter hours, an hour a row. On a
-  // computer each opens under its button, on a phone as a sheet from the bottom. The value stays
-  // the clock reading in the form's own "when" field, hidden now (wallDT, parseDT), on the pickup's
-  // clock (opts.zone()); what can be picked starts at earliestWall(). Without JavaScript the page
-  // keeps the browser's field.
-  var QUARTER = 15;
-  // The first pickup offered: 2 hours from now (what the booking function takes), on the next quarter hour
-  // of the pickup's clock (the visitor's while the pickup isn't known), as the apps' earliestPickup.
-  // In the hour the clocks go back a reading means its first time, so the first one late enough
-  // can be an hour on.
-  function earliestWall(zone, now) {
-    var step = QUARTER * 60e3, soonest = now + 2 * 3600e3;
-    for (var ms = Math.ceil(soonest / step) * step; ; ms += step) {
-      var w = wallOf(new Date(ms), zone);
-      if (wallMoment(w, zone).getTime() >= soonest) return w;
-    }
-  }
-  function dayNum(w) { return w.year * 1e4 + w.month * 100 + w.day; }
-  function wallNum(w) { return dayNum(w) * 1e4 + w.hour * 100 + w.minute; }
-  function numWall(n, hour, minute) { return { year: Math.floor(n / 1e4), month: Math.floor(n / 100) % 100, day: n % 100, hour: hour, minute: minute }; }
-  // A reading in the page's language: written as a UTC reading on UTC's clock, so it stays the reading.
-  function wallName(lang, parts, w) {
-    var t = new Date(Date.UTC(w.year, w.month - 1, w.day, w.hour || 0, w.minute || 0));
-    try { return new Intl.DateTimeFormat(locale(lang), Object.assign({ timeZone: 'UTC' }, parts)).format(t); } catch (e) { return wallDT(w).replace('T', ' '); }
-  }
-  function upFirst(s) { return s.charAt(0).toLocaleUpperCase() + s.slice(1); }
-  var WP_IC = {
-    clock: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    prev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    x: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
-  };
-  var DAY_SHORT = { weekday: 'short', day: 'numeric', month: 'short' };
-  var wpN = 0;
-  var DAY_LONG = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-  // opts.dateOnly: the day only (the car's ready day); opts.first(): the first reading that can be picked.
-  function WhenPicker(input, opts) {
-    var L = T, lang = L.lang, label = input.closest('label'), phone = window.matchMedia('(max-width: 860px)');
-    // The label becomes a group: it holds two buttons now, and a label names one control only.
-    var group = d.createElement('div'), cap = $('small', label), btns = d.createElement('div');
-    group.className = label.className;
-    group.setAttribute('role', 'group');
-    cap.id = 'wp-cap' + (++wpN);
-    group.setAttribute('aria-labelledby', cap.id);
-    label.parentNode.replaceChild(group, label);
-    input.type = 'hidden';
-    btns.className = 'wp-btns';
-    btns.innerHTML = '<button type="button" class="wp-btn wp-date" aria-haspopup="dialog" aria-expanded="false">' + IC.cal + '<span></span></button>'
-      + '<button type="button" class="wp-btn wp-time" aria-haspopup="dialog" aria-expanded="false">' + WP_IC.clock + '<span></span></button>';
-    group.appendChild(cap);
-    group.appendChild(btns);
-    group.appendChild(input);
-    var dateBtn = $('.wp-date', btns), timeBtn = $('.wp-time', btns);
-    if (opts.dateOnly) { timeBtn.hidden = true; btns.classList.add('wp-day-only'); }
-    var pop = null, scrim = null, mode = null, opener = null, view = null;
-
-    function zone() { return opts.zone(); }
-    function first() { return opts.first ? opts.first() : earliestWall(zone(), Date.now()); }
-    function value() { return parseDT(input.value) || first(); }
-    // The buttons say the reading, as the apps' do: the date without its year in this year.
-    function show() {
-      var w = parseDT(input.value), dt = '', tm = '';
-      if (w) {
-        dt = wallName(lang, w.year === new Date().getFullYear() ? DAY_SHORT : Object.assign({ year: 'numeric' }, DAY_SHORT), w);
-        tm = wallName(lang, TIME, w);
+  // Book your transport is the app's own booking, /book, in a frame inside the card (D104, D114):
+  // its slides change inside the card and the page never leaves, as on the sister site. The frame
+  // tells the page each slide's height (src/lib/site-frame.ts) and the card eases to it; a new slide
+  // brings the card's top back into view. Signed out, the header's Log in / Create account opens the
+  // frame's own Log in (frameLogin), asked once the app in it is up.
+  function BookFrame(card) {
+    var frame = $('.bk-frame', card), shown = null, up = false, ask = '';
+    function tell(go) { frame.contentWindow.postMessage({ type: 'car2door:site', go: go }, location.origin); }
+    function told(e) {
+      if (e.origin !== location.origin || !frame.contentWindow || e.source !== frame.contentWindow) return;
+      var m = e.data;
+      if (!m || m.type !== 'car2door:frame') return;
+      // Anything from the app says it is up: it listens before its first page reports a height.
+      if (!up) {
+        up = true;
+        if (ask) { tell(ask); ask = ''; }
       }
-      $('span', dateBtn).textContent = dt;
-      $('span', timeBtn).textContent = tm;
-      dateBtn.setAttribute('aria-label', L.wp_date + ': ' + dt);
-      timeBtn.setAttribute('aria-label', L.wp_time + ': ' + tm);
-    }
-    function set(w) {
-      input.value = wallDT(w);
-      show();
-      input.dispatchEvent(new Event('change', { bubbles: true })); // the form's trip is edited, its clock note redone
-    }
-
-    function head(title, sub) {
-      return '<div class="wp-head"><b>' + esc(title) + '</b>' + (sub ? '<span>' + esc(sub) + '</span>' : '')
-        + '<button type="button" class="wp-x" aria-label="' + esc(L.pn_close) + '">' + WP_IC.x + '</button></div>';
-    }
-    // The month in view: a button a day; days before the first pickup are off.
-    function drawDate(focus) {
-      var y = view.year, m = view.month, lead = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7;
-      var days = new Date(Date.UTC(y, m, 0)).getUTCDate(), min = dayNum(first()), today = dayNum(wallOf(new Date(), zone()));
-      var cur = parseDT(input.value), at = cur ? dayNum(cur) : 0, i;
-      var h = head(L.wp_date) + '<div class="wp-month">'
-        + '<button type="button" class="wp-nav" data-go="-1" aria-label="' + esc(L.wp_prev) + '"' + (y * 100 + m <= Math.floor(min / 100) ? ' disabled' : '') + '>' + WP_IC.prev + '</button>'
-        + '<h3 id="wp-month" aria-live="polite">' + esc(upFirst(wallName(lang, { month: 'long', year: 'numeric' }, { year: y, month: m, day: 1 }))) + '</h3>'
-        + '<button type="button" class="wp-nav" data-go="1" aria-label="' + esc(L.wp_next) + '">' + WP_IC.next + '</button></div>'
-        + '<table class="wp-grid" role="grid" aria-labelledby="wp-month"><thead><tr>';
-      for (i = 0; i < 7; i++) { // 1 January 2024 was a Monday
-        var wd = { year: 2024, month: 1, day: 1 + i };
-        h += '<th scope="col" abbr="' + esc(wallName(lang, { weekday: 'long' }, wd)) + '">' + esc(wallName(lang, { weekday: 'short' }, wd)) + '</th>';
+      if (m.height > 0) {
+        frame.style.height = Math.min(Math.ceil(m.height), 4000) + 'px';
+        card.classList.add('framed-ready');
+        clearCard();
       }
-      h += '</tr></thead><tbody>';
-      for (i = 0; i < Math.ceil((lead + days) / 7) * 7; i++) {
-        var dd = i - lead + 1, n = y * 1e4 + m * 100 + dd;
-        if (i % 7 === 0) h += '<tr>';
-        h += dd < 1 || dd > days ? '<td></td>' : '<td><button type="button" class="wp-day" tabindex="-1" data-n="' + n + '" aria-label="'
-          + esc(wallName(lang, DAY_LONG, numWall(n, 12, 0))) + '"' + (n === at ? ' aria-pressed="true"' : '') + (n === today ? ' aria-current="date"' : '')
-          + (n < min ? ' disabled' : '') + '>' + dd + '</button></td>';
-        if (i % 7 === 6) h += '</tr>';
-      }
-      pop.innerHTML = h + '</tbody></table>';
-      var to = $('.wp-day[data-n="' + (focus || at) + '"]:not(:disabled)', pop) || $('.wp-day:not(:disabled)', pop);
-      if (to) to.tabIndex = 0;
-      return to;
-    }
-    // The chosen day's quarter hours, an hour a row, from the first pickup on; a reading the
-    // clocks skip (the hour they go forward) is off.
-    function drawTime(focus) {
-      var w = value(), min = wallNum(first()), at = parseDT(input.value), atNum = at ? wallNum(at) : 0, z = zone();
-      var h = head(L.wp_time, upFirst(wallName(lang, DAY_SHORT, w))) + '<div class="wp-scroll"><table class="wp-grid wp-tg" role="grid" aria-label="'
-        + esc(L.wp_time) + '"><tbody>';
-      for (var hour = 0; hour < 24; hour++) {
-        if (wallNum({ year: w.year, month: w.month, day: w.day, hour: hour, minute: 59 }) < min) continue;
-        h += '<tr>';
-        for (var minute = 0; minute < 60; minute += QUARTER) {
-          var x = { year: w.year, month: w.month, day: w.day, hour: hour, minute: minute }, n = wallNum(x);
-          var real = wallNum(wallOf(wallMoment(x, z), z)) === n;
-          h += '<td><button type="button" class="wp-q" tabindex="-1" data-n="' + n + '"' + (n === atNum ? ' aria-pressed="true"' : '')
-            + (n < min || !real ? ' disabled' : '') + '>' + pad2(hour) + ':' + pad2(minute) + '</button></td>';
-        }
-        h += '</tr>';
-      }
-      pop.innerHTML = h + '</tbody></table></div>';
-      var to = $('.wp-q[data-n="' + (focus || atNum) + '"]:not(:disabled)', pop) || $('.wp-q:not(:disabled)', pop);
-      if (to) {
-        to.tabIndex = 0;
-        var box = $('.wp-scroll', pop), row = to.closest('tr');
-        box.scrollTop = Math.max(0, row.offsetTop - box.clientHeight / 2 + row.offsetHeight / 2);
-      }
-      return to;
-    }
-    function draw(focus) {
-      var to = mode === 'date' ? drawDate(focus) : drawTime(focus);
-      place();
-      return to;
-    }
-
-    // Under the buttons on a computer (above them if there is no room below); a sheet on a phone.
-    function place() {
-      if (!pop) return;
-      var sheet = phone.matches;
-      pop.classList.toggle('as-sheet', sheet);
-      if (scrim) scrim.hidden = !sheet;
-      if (sheet) { pop.style.left = pop.style.top = pop.style.width = ''; return; }
-      var r = btns.getBoundingClientRect(), w = Math.max(r.width, mode === 'date' ? 320 : 300);
-      pop.style.width = w + 'px';
-      pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)) + 'px';
-      var hgt = pop.offsetHeight, below = window.innerHeight - r.bottom - 14;
-      pop.style.top = Math.max(8, below >= hgt || below >= r.top ? r.bottom + 6 : r.top - hgt - 6) + 'px';
-    }
-    function open(which) {
-      close();
-      mode = which;
-      opener = which === 'date' ? dateBtn : timeBtn;
-      var w = value();
-      view = { year: w.year, month: w.month };
-      scrim = d.createElement('div');
-      scrim.className = 'wp-scrim';
-      pop = d.createElement('div');
-      pop.className = 'wp wp-for-' + which;
-      pop.setAttribute('role', 'dialog');
-      pop.setAttribute('aria-modal', 'true');
-      pop.setAttribute('aria-label', which === 'date' ? L.wp_date : L.wp_time);
-      pop.addEventListener('click', onClick);
-      pop.addEventListener('keydown', onKey);
-      scrim.addEventListener('click', function () { close(true); });
-      d.body.appendChild(scrim);
-      d.body.appendChild(pop);
-      opener.setAttribute('aria-expanded', 'true');
-      var to = draw();
-      if (to) to.focus({ preventScroll: true });
-      window.addEventListener('resize', place);
-      window.addEventListener('scroll', place, true);
-      window.addEventListener('popstate', away);
-      d.addEventListener('pointerdown', outside, true);
-    }
-    function close(back) {
-      if (!pop) return;
-      pop.remove();
-      scrim.remove();
-      pop = scrim = null;
-      dateBtn.setAttribute('aria-expanded', 'false');
-      timeBtn.setAttribute('aria-expanded', 'false');
-      window.removeEventListener('resize', place);
-      window.removeEventListener('scroll', place, true);
-      window.removeEventListener('popstate', away);
-      d.removeEventListener('pointerdown', outside, true);
-      if (back) opener.focus({ preventScroll: true });
-      mode = null;
-    }
-    function away() { close(); }
-    function outside(e) { if (pop && !pop.contains(e.target) && !btns.contains(e.target) && e.target !== scrim) close(); }
-
-    function onClick(e) {
-      var b = e.target.closest('button');
-      if (!b || b.disabled) return;
-      if (b.classList.contains('wp-x')) return close(true);
-      if (b.dataset.go) {
-        var k = view.month - 1 + +b.dataset.go;
-        view = { year: view.year + Math.floor(k / 12), month: ((k % 12) + 12) % 12 + 1 };
-        draw();
-        var again = $('[data-go="' + b.dataset.go + '"]', pop);
-        return (again && !again.disabled ? again : $('.wp-day[tabindex="0"]', pop)).focus();
-      }
-      var n = +b.dataset.n, w = value(), min = first(), next;
-      if (b.classList.contains('wp-day')) {
-        next = numWall(n, w.hour, w.minute);
-        if (wallNum(next) < wallNum(min)) next = min; // that day's time has gone by: the first one left
-      } else next = numWall(Math.floor(n / 1e4), Math.floor(n / 100) % 100, n % 100);
-      set(next);
-      close(true);
-    }
-    // Arrows move a day (a quarter hour), up and down a week (an hour); Home and End go to the row's
-    // ends; Page Up and Down a month (with Shift a year). Escape closes; Tab stays inside.
-    function onKey(e) {
-      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); return close(true); }
-      if (e.key === 'Tab') {
-        var all = $$('button:not(:disabled)', pop).filter(function (b) { return b.tabIndex >= 0; });
-        var i = all.indexOf(d.activeElement), j = e.shiftKey ? (i <= 0 ? all.length - 1 : i - 1) : (i + 1) % all.length;
-        e.preventDefault();
-        return all[j] && all[j].focus();
-      }
-      var b = e.target.closest('.wp-day, .wp-q');
-      if (!b) return;
-      var to = mode === 'date' ? dayKey(+b.dataset.n, e.key, e.shiftKey) : timeKey(b, e.key);
-      if (to === false) return;
-      e.preventDefault();
-      if (to) to.focus();
-    }
-    function dayKey(n, key, shift) {
-      var t = Date.UTC(Math.floor(n / 1e4), Math.floor(n / 100) % 100 - 1, n % 100), day = 864e5, wd = (new Date(t).getUTCDay() + 6) % 7;
-      var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7, Home: -wd, End: 6 - wd }[key];
-      if (step !== undefined) t += step * day;
-      else if (key === 'PageUp' || key === 'PageDown') {
-        var x = new Date(t), k = x.getUTCMonth() + (key === 'PageUp' ? -1 : 1) * (shift ? 12 : 1);
-        var y = x.getUTCFullYear() + Math.floor(k / 12), mo = ((k % 12) + 12) % 12;
-        t = Date.UTC(y, mo, Math.min(x.getUTCDate(), new Date(Date.UTC(y, mo + 1, 0)).getUTCDate()));
-      } else return false;
-      var at = new Date(t), to = Math.max(at.getUTCFullYear() * 1e4 + (at.getUTCMonth() + 1) * 100 + at.getUTCDate(), dayNum(first()));
-      var there = $('.wp-day[data-n="' + to + '"]', pop);
-      if (!there) {
-        view = { year: Math.floor(to / 1e4), month: Math.floor(to / 100) % 100 };
-        return draw(to);
-      }
-      $$('.wp-day', pop).forEach(function (x) { x.tabIndex = -1; });
-      there.tabIndex = 0;
-      return there;
-    }
-    function timeKey(b, key) {
-      var all = $$('.wp-q', pop), i = all.indexOf(b), col = i % 4;
-      var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -4, ArrowDown: 4, Home: -col, End: 3 - col, PageUp: -16, PageDown: 16 }[key];
-      if (step === undefined) return false;
-      var j = Math.max(0, Math.min(all.length - 1, i + step)), dir = step < 0 ? -1 : 1;
-      while (all[j] && all[j].disabled) j += dir; // past the times already gone (or skipped by the clocks)
-      if (!all[j]) return null;
-      all.forEach(function (x) { x.tabIndex = -1; });
-      all[j].tabIndex = 0;
-      return all[j];
-    }
-
-    dateBtn.addEventListener('click', function () { if (mode === 'date') close(true); else open('date'); });
-    timeBtn.addEventListener('click', function () { if (mode === 'time') close(true); else open('time'); });
-    return { show: show, close: close };
-  }
-
-  function Book(card, main) {
-    var L = T, f = $('form.bk-trip', card), el = f.elements, panes = $('.panes', card), h2 = $('h2', card);
-    var title0 = h2.textContent, P = { trip: f }, cur = f, step = 'trip';
-    var trip = null, option = 'standard', dirty = false, ed = 0, photo = null, busy = false, afterLogin = null;
-    f.noValidate = true; // our own messages, in the page's language
-
-    // The back arrow in the card's header row, shown after the first step.
-    var back = d.createElement('button');
-    back.type = 'button';
-    back.className = 'back-btn';
-    back.title = L.back;
-    back.setAttribute('aria-label', L.back);
-    back.innerHTML = CHEV;
-    h2.parentNode.insertBefore(back, h2.parentNode.firstChild);
-    h2.setAttribute('tabindex', '-1');
-
-    function pane(name, html) {
-      var p = d.createElement('div');
-      p.className = 'pane bk-' + name;
-      p.dataset.pane = name;
-      p.innerHTML = html;
-      setOn(p, false);
-      panes.appendChild(p);
-      return (P[name] = p);
-    }
-    function leg(k, cls) {
-      return '<div class="leg"><span class="' + cls + '" aria-hidden="true"></span><p><b class="' + k + '-city"></b><span class="' + k + '-addr"></span></p></div>';
-    }
-    pane('price', '<div class="book-body">'
-      + '<div class="trip-sum"><div class="legs">' + leg('a', 'start') + leg('b', 'ring') + '</div><p class="facts"></p></div>'
-      + '<div class="car-sum"><img alt=""><p><b></b><span></span></p></div>'
-      + '<fieldset class="opick"><legend><small>' + esc(L.opt_h) + '</small></legend><div class="oopts">' + OPTIONS.map(function (o) {
-        return '<label class="oopt ' + o + '"><input type="radio" name="option" value="' + o + '"><b>' + esc(L['o_' + o]) + '</b>'
-          + '<span class="ow"></span><span class="oprice"></span></label>';
-      }).join('') + '</div></fieldset>'
-      + '<p class="example-note">' + esc(L.priced_now) + '</p>'
-      + '<div class="msg" role="alert"></div>'
-      + '</div><div class="book-foot"><p class="total"><span>' + esc(L.total) + '</span><b></b></p>'
-      + '<label class="consent agree"><input type="checkbox" name="agree"><span>' + agreeText() + '</span></label>'
-      + '<button class="btn big go" type="button"></button><p class="fine"></p></div>');
-    var priceBtn = $('.go', P.price);
-    // "I have read the Terms ... and agree", unticked above Continue booking: the button waits for
-    // it, and the tick holds only for the transport, option, price and person it was given for
-    // (another option, transport or account: tick again). /book asks it again before Book.
-    var agree = $('[name=agree]', P.price), agreedTo = null;
-    function agreeKey() { return trip ? option + ' ' + cents() + ' ' + (signedInAs() || '') : null; }
-    function agreedNow() { return !!agreedTo && agreedTo.trip === trip && agreedTo.key === agreeKey(); }
-    agree.addEventListener('change', function () { agreedTo = agree.checked ? { trip: trip, key: agreeKey() } : null; syncPrice(); });
-    // The box's words, with the terms and the privacy policy opening on this page, in its language.
-    function agreeText() {
-      return esc(L.bk_agree).replace('{terms}', '<a href="#terms">' + esc(L.pn_terms) + '</a>')
-        .replace('{privacy}', '<a href="#privacy">' + esc(L.pn_privacy) + '</a>');
-    }
-
-    function msg(p, text, input) {
-      $('.msg', p).textContent = text || '';
-      $$('[aria-invalid]', p).forEach(function (i) { i.removeAttribute('aria-invalid'); });
-      $$('.photo.bad', p).forEach(function (x) { x.classList.remove('bad'); });
-      if (input) {
-        input.setAttribute('aria-invalid', 'true');
-        if (input.type === 'file') input.closest('.photo').classList.add('bad');
-        input.focus({ preventScroll: true });
+      if (m.slide && m.slide !== shown) {
+        var first = shown === null, top = card.getBoundingClientRect().top, under = headerH();
+        shown = m.slide;
+        if (!first && top < under) window.scrollTo({ top: window.scrollY + top - under - 12, behavior: calm() ? 'auto' : 'smooth' });
       }
     }
-
-    // ---- step 1: the transport and the car
-    // The day the car is ready, on the pickup's clock (tomorrow to start with), picked with the
-    // card's own picker (WhenPicker, the date only).
-    var when = el.when;
-    function pickupZone() { return placeZone(el.from._place); }
-    function tomorrow(zone) { var t = wallOf(new Date(Date.now() + 864e5), zone); return { year: t.year, month: t.month, day: t.day, hour: 8, minute: 0 }; }
-    var whenPick = WhenPicker(when, { form: f, dateOnly: true, zone: pickupZone, first: function () { return tomorrow(pickupZone()); } });
-    function morning() { when.value = wallDT(tomorrow(null)); }
-    morning();
-    function clockNote() { whenPick.show(); } // the reading may have come from elsewhere (a transport kept from before)
-    f.addEventListener('dv-pick', clockNote);
-    clockNote();
-    // Every change to the transport: the price shown is no longer for this form.
-    function edited() { dirty = true; ed++; }
-    f.addEventListener('input', edited);
-    f.addEventListener('change', edited);
-    $('.swap', f).addEventListener('click', function () {
-      var a = el.from, b = el.to, v = a.value, p = a._place;
-      a.value = b.value; b.value = v;
-      a._place = b._place; b._place = p;
-      edited();
-      clockNote();
-      msg(f, '');
-    });
-    // The car's photo: shown in its tile at once; it stays in this browser (phase 2 uploads it with the booking).
-    var photoBox = $('.photo', f);
-    function setPhoto(file) {
-      if (photo) URL.revokeObjectURL(photo.url);
-      photo = file && /^image\//.test(file.type) ? { file: file, url: URL.createObjectURL(file) } : null;
-      $('.ph-box', photoBox).style.backgroundImage = photo ? 'url("' + photo.url + '")' : '';
-      photoBox.classList.toggle('has', !!photo);
-      if (!photo) el.photo.value = '';
-    }
-    el.photo.addEventListener('change', function () { setPhoto(el.photo.files && el.photo.files[0]); if (photo) msg(f, ''); });
-    // Over €50,000: its value in euros as well.
-    var valueEur = el.value.closest('label');
-    function bandShown() { valueEur.hidden = el.band.value !== 'high'; }
-    el.band.addEventListener('change', bandShown);
-    Suggest(el.from);
-    Suggest(el.to);
-    // My location could not fill a field: why, where the form's messages go.
-    f.addEventListener('dv-here', function (e) { msg(f, e.detail); });
-    // Picked the pickup: on to the delivery address if it is still empty.
-    f.addEventListener('dv-pick', function (e) { if (e.target === el.from && !el.to.value.trim()) el.to.focus({ preventScroll: true }); });
-    f.addEventListener('submit', function (e) { e.preventDefault(); getPrice(); });
-
-    function carNow() {
-      var band = BANDS.indexOf(el.band.value) >= 0 ? el.band.value : '', value = String(el.value.value || '').trim();
-      return {
-        make: el.make.value.trim().replace(/\s+/g, ' '), size: SIZES.indexOf(el.size.value) >= 0 ? el.size.value : 'car',
-        runs: el.runs.value !== 'no', band: band,
-        value: band === 'high' ? (/^\d{1,6}$/.test(value) ? +value : NaN) : BAND_TOP_EUR[band] || NaN,
-        plate: el.plate.value.trim().toUpperCase().replace(/\s+/g, ' ')
-      };
-    }
-    function getPrice() {
-      if (busy) return;
-      var a = el.from.value.trim(), b = el.to.value.trim(), wall = parseDT(when.value), car = carNow();
-      if (!a) return msg(f, L.err_from, el.from);
-      if (!b) return msg(f, L.err_to, el.to);
-      if (!wall) return msg(f, L.err_when, when);
-      if (car.make.length < 2) return msg(f, L.err_make, el.make);
-      if (!car.band) return msg(f, L.err_value, el.band);
-      if (car.band === 'high' && !(car.value > BAND_TOP_EUR.mid && car.value <= MAX_CAR_VALUE_EUR)) return msg(f, L.err_value, el.value);
-      if (car.plate.length < 2) return msg(f, L.err_plate, el.plate);
-      if (!photo) return msg(f, L.err_photo, el.photo);
-      var btn = $('.go', f), e0 = ed;
-      // Edited, or gone, while the addresses were looked up: that answer is for an older transport.
-      var stale = function () { return ed !== e0 || step !== 'trip' || !card.isConnected; };
-      msg(f, '');
-      busy = true;
-      busyBtn(btn, true, L.checking);
-      Promise.all([el.from._place || findPlace(a), el.to._place || findPlace(b)]).then(function (r) {
-        if (stale()) return;
-        if (!r[0]) return msg(f, fill(L.err_not_found, { q: a }), el.from);
-        if (!r[1]) return msg(f, fill(L.err_not_found, { q: b }), el.to);
-        if (!routeOk(r[0], r[1])) return msg(f, L.err_route);
-        if (domesticClosed(r[0], r[1])) return msg(f, L.err_domestic);
-        if (roadKm(r[0], r[1]) < MIN_KM) return msg(f, fill(L.err_short, { n: MIN_KM }));
-        // The day is on the pickup's clock: from tomorrow there.
-        var zone = placeZone(r[0]);
-        if (dayNum(wall) < dayNum(tomorrow(zone))) return msg(f, L.err_when, when);
-        car.photo = photo.url;
-        var next = { from: r[0], to: r[1], ready: wallMoment({ year: wall.year, month: wall.month, day: wall.day, hour: 8, minute: 0 }, zone), car: car };
-        return priceOf(next, wall).then(function (q) {
-          if (stale()) return;
-          if (!q.bookable) return closedRoute(q.closed);
-          if (!q.options || OPTIONS.some(function (o) { return !optionIn(q.options, o); })) return msg(f, L.err_quote);
-          next.km = q.distanceKm;
-          next.options = q.options;
-          trip = next;
-          fillPrice();
-          go('price');
-          dirty = false; // after go: a field that loses focus there can still send its change
-        }, function (e) { if (!stale()) msg(f, quoteError(e)); });
-      }, function () { if (!stale()) msg(f, L.err_search); }).then(function () { busy = false; busyBtn(btn, false); });
-    }
-    // The three options for this car and day, as the server prices a private client's booking
-    // (/book asks again with what it learns, and prices the booking itself when it is made).
-    function priceOf(t, wall) {
-      var place = function (x) { return { address: x.address || x.city, city: x.city, country: x.country, lat: x.lat, lng: x.lng }; };
-      return quoteFn({
-        pickup: place(t.from), dropoff: place(t.to), car: { size: t.car.size, runs: t.car.runs },
-        pickupDate: wall.year + '-' + pad2(wall.month) + '-' + pad2(wall.day), customer: { type: 'consumer' }
-      });
-    }
-    function optionIn(list, o) { return list.filter(function (x) { return x.option === o; })[0]; }
-    // A route that takes no bookings (E14: a corridor opens with 3 transporters; or a country
-    // paused) says so on the trip step, with nothing priced.
-    function closedRoute(closed) {
-      msg(f, '');
-      if (closed === 'country') return msg(f, L.country_closed);
-      $('.msg', f).innerHTML = '<b>' + esc(L.route_closed_h) + '</b><br>' + esc(L.route_closed);
-    }
-    // The quote's refusal in the card's own words.
-    function quoteError(e) {
-      if (!e || !e.status) return L.err_quote;
-      if (e.code === 'route_too_short') return fill(L.err_short, { n: (e.params && e.params.km) || MIN_KM });
-      if (e.code === 'route_domestic') return L.err_domestic;
-      if (e.code === 'route_not_served') return L.err_route;
-      return rateLimited(e) ? T.err_rate : L.err_quote;
-    }
-
-    // ---- step 2: the price, with a choice of three options
-    function cents() { var x = optionIn(trip.options, option); return x ? x.totalCents : 0; }
-    // A day the server gives ('YYYY-MM-DD') as the moment it starts on the pickup's clock, for day().
-    function serverDay(s) {
-      var x = String(s).slice(0, 10).split('-');
-      return wallMoment({ year: +x[0], month: +x[1], day: +x[2], hour: 12, minute: 0 }, placeZone(trip.from));
-    }
-    function day(t) { return dayText(t, placeZone(trip.from), L.lang); }
-    function carLine(c) {
-      return [L['sz_' + c.size], c.runs ? '' : L.runs_not, c.plate, c.band === 'high' ? money(c.value * 100, L.lang) : L['band_' + c.band]].filter(Boolean).join(' · ');
-    }
-    function fillPrice() {
-      var p = P.price, A = trip.from, B = trip.to, km = trip.km;
-      [['a', A], ['b', B]].forEach(function (x) {
-        $('.' + x[0] + '-city', p).textContent = x[1].city + ', ' + countryName(x[1].country, L.lang);
-        $('.' + x[0] + '-addr', p).textContent = x[1].address !== x[1].city ? x[1].address : '';
-      });
-      var fact = function (icon, text, label) {
-        return '<span class="fact"' + (label ? ' title="' + esc(label) + '"' : '') + '>' + icon
-          + (label ? '<span class="sr-only">' + esc(label) + ': </span>' : '') + esc(text) + '</span>';
-      };
-      $('.facts', p).innerHTML = fact(IC.cal, day(trip.ready), L.f_when) + fact(IC.km, fill(L.km, { n: km }));
-      var img = $('.car-sum img', p);
-      img.hidden = !trip.car.photo;
-      if (trip.car.photo) img.src = trip.car.photo;
-      $('.car-sum b', p).textContent = trip.car.make;
-      $('.car-sum span', p).textContent = carLine(trip.car);
-      OPTIONS.forEach(function (o) {
-        var row = $('.oopt.' + o, p);
-        var x = optionIn(trip.options, o);
-        $('.ow', row).textContent = L['ow_' + o] + '\u00a0· ' + fill(L.deliver_by, { date: day(serverDay(x.deliverBy)) });
-        $('.oprice', row).textContent = money(x.totalCents, L.lang);
-      });
-      setOption(option);
-    }
-    function setOption(o) {
-      option = o;
-      $$('[name=option]', P.price).forEach(function (r) { r.checked = r.value === o; r.parentNode.classList.toggle('on', r.checked); });
-      syncPrice();
-    }
-    function syncPrice() {
-      if (!trip) return;
-      var price = money(cents(), L.lang), label = L.go_book;
-      $('.total b', P.price).textContent = price;
-      if (priceBtn._label != null) priceBtn._label = label; // busy: shown once it is done
-      else priceBtn.textContent = label;
-      if (!agreedNow()) { agree.checked = false; agreedTo = null; }
-      if (priceBtn._label == null) priceBtn.disabled = !agree.checked; // busy: busyBtn keeps it off
-      $('.fine', P.price).textContent = L.fine_print;
-    }
-    P.price.addEventListener('change', function (e) {
-      if (e.target.name === 'option') setOption(e.target.value);
-    });
-    function signedInAs() { var s = getSession(); return s ? uidOf(s) : null; }
-    // Continue booking: the booking goes on in the app at /book (its own folder on the host, hence
-    // /book/) from these two addresses and the car's first day (on the pickup's clock); the car, its
-    // paper, the contacts and the card are asked there, and the card is charged only when a
-    // transport company accepts (E10).
-    function handOver() {
-      if (busy || !trip || !agree.checked) return;
-      cancelAutoClose();
-      location.assign('/book/' + tripQuery());
-    }
-    // ?from=&to=&when= for the app, once the trip is given ('' before).
-    function tripQuery() {
-      if (!trip) return '';
-      var at = function (x) { return encodeURIComponent(x.address || x.city); };
-      var day = wallDT(wallOf(trip.ready, placeZone(trip.from))).slice(0, 10);
-      return '?from=' + at(trip.from) + '&to=' + at(trip.to) + '&when=' + day;
-    }
-    priceBtn.addEventListener('click', handOver);
-    function reset() {
-      trip = null;
-      option = 'standard';
-      dirty = false;
-      el.from.value = el.to.value = el.make.value = el.band.value = el.value.value = el.plate.value = '';
-      bandShown();
-      el.from._place = el.to._place = null;
-      setPhoto(null);
-      clockNote();
-      msg(f, '');
-    }
-    // Log out: the transport typed here goes too (addresses, day, car, photo: a shared computer),
-    // and the card starts over as the page came.
-    function forget() {
-      ed++; // an address lookup still on its way is for the transport that went
-      afterLogin = null;
-      reset();
-      f.reset();
-      morning();
-      clockNote();
-      msg(P.price, '');
-      if (step !== 'trip') go('trip', { history: false });
-      if (routing && history.state && history.state.bk) history.replaceState(Object.assign({}, history.state, { bk: null, bkp: null }), '');
-    }
-
-    // ---- moving between steps
-    function push(name) {
-      if (!routing) return;
-      history.replaceState(Object.assign({}, history.state, { y: window.scrollY }), '');
-      history.pushState({ dv: stamp(), y: window.scrollY, bk: name, bkp: 1 }, ''); // bkp: the entry before is the step before
-    }
-    function go(name, o) {
-      o = o || {};
-      var to = P[name];
-      if (to === cur) return;
-      var fwd = STEPS[name] > STEPS[step], hidden = !card.isConnected || card.classList.contains('off');
-      step = name;
-      card.dataset.stage = name;
-      h2.textContent = name === 'trip' ? title0 : L['h_' + name];
-      swap(panes, cur, to, fwd ? 1 : -1, o.instant || hidden);
-      cur = to;
-      if (o.history !== false && fwd) {
-        if (loginOpen) afterLogin = name; // pushed once the account card has gone (loginClosed)
-        else push(name);
-      }
-      if (!hidden && !o.instant) {
-        if (fwd) reveal(card);
-        h2.focus({ preventScroll: true });
-      }
-    }
-    back.addEventListener('click', function () {
-      var st = history.state || {};
-      if (routing && st.bk === step && st.bkp) return history.back(); // popstate takes it back a step
-      go('trip', { history: false });
-      if (routing) history.replaceState(Object.assign({}, st, { bk: null, bkp: null }), '');
-    });
-    // Reloaded on the price step: the card starts on the transport, and this entry says so.
-    if (routing && history.state && history.state.bk) history.replaceState(Object.assign({}, history.state, { bk: null, bkp: null }), '');
-
+    window.addEventListener('message', told);
     return {
-      // The session changed: the terms tick holds only for the person it was given for.
-      auth: syncPrice,
-      // The account card has gone.
-      loginClosed: function () {
-        var n = afterLogin;
-        afterLogin = null;
-        if (n && n === step) push(n);
-      },
-      // Back or Forward between this page's entries: true when the card took it.
-      pop: function (target) {
-        if (!P[target] || target === step) return false;
-        if (STEPS[target] < STEPS[step]) { go(target, { history: false }); return true; }
-        if (target === 'price' && trip && !dirty) { go('price', { history: false }); return true; } // Forward again, nothing changed
-        // The card stays: this entry now says so, so its back arrow goes the right way.
-        history.replaceState(Object.assign({}, history.state, { bk: step === 'trip' ? null : step, bkp: null }), '');
-        return true;
-      },
-      forget: forget,
-      // The trip so far, for a link to /book (openBook).
-      query: tripQuery
+      signIn: function () { if (up) tell('sign-in'); else ask = 'sign-in'; },
+      // The rest of the page asks these of the card; the app in the frame keeps its own steps.
+      auth: noop, loginClosed: noop, forget: noop,
+      pop: function () { return false; },
+      query: function () { return ''; }
     };
   }
 
@@ -1593,7 +683,9 @@ if (top !== self) top.location = location;
         company_name: a.company_name, reg_number: a.reg_number, vat_number: a.vat_number,
         licence: a.licence, vehicle_kinds: a.vehicle_kinds, units: num(a.units), car_slots: num(a.car_slots),
         destinations: a.destinations, cmr_insurance: a.cmr_insurance, papers: a.papers,
-        full_name: a.full_name, phone: phoneValue({ cc: a.phone_cc || null, number: a.phone }), email: a.email
+        full_name: a.full_name, phone: phoneValue({ cc: a.phone_cc || null, number: a.phone }), email: a.email,
+        // The consent box was ticked (checked above): the database keeps its own time of it.
+        consented_at: new Date().toISOString()
       };
       ref = keptRef();
       if (ref) row.referral_code = ref.code;
@@ -1648,7 +740,7 @@ if (top !== self) top.location = location;
     main._dv = true;
     try {
       var kind = main.getAttribute('data-page');
-      if (kind === 'home' && $('#book', main)) $('#book', main)._bk = Book($('#book', main), main);
+      if (kind === 'home' && $('#book .bk-frame', main)) $('#book', main)._bk = BookFrame($('#book', main));
       if (kind === 'join' && $('#join', main) && $('#join-data', main)) initJoin($('#join', main), JSON.parse($('#join-data', main).textContent));
     } catch (err) { setTimeout(function () { throw err; }); }
     if (arrived) $$('script', main).forEach(function (old) {
@@ -3263,8 +2355,10 @@ if (top !== self) top.location = location;
     if (!instant) fit(deck, h0);
     relayoutMap();
   }
-  // Signed out on a phone: the home page shows Log in / Create account first, like the app.
-  function gated() { return PHONE.matches && !bookSession(); }
+  // Signed out on a phone, the home page showed Log in / Create account first, like the app. No
+  // more (D114): Book your transport is /book's frame in every language, the questions come first and
+  // its own Log in at Book, inside the card; the menu shows on every page.
+  function gated() { return false; }
   // Puts the right card in the home page's spot: the account card while a phone visitor hasn't
   // signed in (or is being welcomed there), else Book your trip. Run when the page is shown,
   // when the session changes and when the window crosses the phone width. While the card is in
@@ -3315,11 +2409,30 @@ if (top !== self) top.location = location;
     }
   }
 
+  // Signed out, Log in / Create account (#login: the header button, Profile in the menu, a link)
+  // is the booking frame's own Log in, inside the home page's card (D114): true when it took the
+  // view. The address loses its #login, an open panel closes and the card comes into view; from
+  // another page it goes home first, where #login comes here again.
+  function frameLogin(h) {
+    if (h !== '#login' || bookSession() || getSession()) return false;
+    var deck = deckOf(page), book = deck && $('.book', deck), bk = book && book._bk;
+    if (!bk || !bk.signIn) {
+      if (routing) navigate(T.home + '#login', { push: true, dir: -1 }); else location.assign(T.home + '#login');
+      return true;
+    }
+    if (acctHash() === '#login') history.replaceState(Object.assign({}, history.state, { au: null, ac: null }), '', here());
+    if (loginOpen) closeLogin({ ui: true, focus: false });
+    reveal(book);
+    bk.signIn();
+    return true;
+  }
+
   // The panel on a view (Profile, or Log in, unless o.view says otherwise). On a phone before
   // signing in, a view that needs an account shows Log in in the home page's spot.
   function openLogin(o) {
     o = o || {};
     var deck = deckOf(page), h = o.view || '#login', v = viewOf(h);
+    if (frameLogin(h)) return;
     if (bookPath(h)) return openBook(bookPath(h), { replace: o.fromUrl });
     if (loginOpen) return o.fromUrl ? routeView(h) : goAccount(h);
     var inDeck = !!deck && gated() && v.auth && !inSheet();
@@ -3394,6 +2507,7 @@ if (top !== self) top.location = location;
   // panel if it is closed.
   function goAccount(h) {
     if (bookPath(h)) return openBook(bookPath(h));
+    if (frameLogin(h)) return;
     if (!loginOpen) return openLogin({ view: h });
     var now = acctHash(), st = history.state || {};
     if (h !== now && routing) {
@@ -3458,6 +2572,7 @@ if (top !== self) top.location = location;
   // The URL changed (Back, Forward, a typed #hash): the panel follows it.
   function syncLogin() {
     var h = acctHash();
+    if (frameLogin(h)) return;
     if (h && bookPath(h)) openBook(bookPath(h), { replace: true });
     else if (h && !loginOpen) openLogin({ fromUrl: true, view: h });
     else if (!h && loginOpen) closeLogin();
@@ -3519,16 +2634,17 @@ if (top !== self) top.location = location;
   // On a computer the bar slides away while it would lie over the booking card (or the account
   // card in its place), as when the home page opens on a screen up to about 900 px tall, and comes
   // back once the card has scrolled clear of it. An open panel keeps it: the panel ends above it.
-  // Phones keep it where it is (the pages leave room under their last line: .has-tabs #stage).
+  // Phones keep it where it is (the pages leave room under their last line: .has-tabs #stage),
+  // except over the booking frame (D114), whose Continue is at the card's foot.
   var clearing = 0;
   function clearCard() {
     if (clearing) return;
     clearing = requestAnimationFrame(function () {
       clearing = 0;
       if (!tabbar) return;
-      var deck = !PHONE.matches && !(loginOpen && inSheet()) && page && deckOf(page), over = false;
+      var deck = !(loginOpen && inSheet()) && page && deckOf(page), over = false;
       var card = deck && $$('.card', deck).filter(function (c) { return !c.classList.contains('off') && c.getClientRects().length; })[0];
-      if (card) {
+      if (card && (!PHONE.matches || card.classList.contains('framed'))) {
         var r = card.getBoundingClientRect(), w = Math.min(400, window.innerWidth - 32), left = (window.innerWidth - w) / 2;
         var top = window.innerHeight - 16 - 68; // where the bar rests (landing.css .tabbar)
         over = r.bottom > top && r.top < window.innerHeight - 16 && r.left < left + w && r.right > left;
