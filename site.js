@@ -367,6 +367,7 @@ try {
       if (m.height > 0) {
         frame.style.height = Math.min(Math.ceil(m.height), 4000) + 'px';
         card.classList.add('framed-ready');
+        card._sized = Date.now(); // the app's menu waits for the card to keep a height (placeBar)
         clearCard();
       }
       if (m.slide && m.slide !== shown) {
@@ -2636,21 +2637,33 @@ try {
   // back once the card has scrolled clear of it. An open panel keeps it: the panel ends above it.
   // Phones keep it where it is (the pages leave room under their last line: .has-tabs #stage),
   // except over the booking frame (D114), whose Continue is at the card's foot.
-  var clearing = 0;
+  // The frame eases to each slide's height (BookFrame), so the card is judged by the height it is
+  // easing to, and an aside bar comes back only once the card has kept its height for QUIET ms:
+  // the app's first slide grows as it loads, and the bar had come out under the card for about two
+  // seconds of each load and gone again, or stayed aside although the card ended above it.
+  var clearing = 0, resting = 0, QUIET = 700;
   function clearCard() {
     if (clearing) return;
-    clearing = requestAnimationFrame(function () {
-      clearing = 0;
-      if (!tabbar) return;
-      var deck = !(loginOpen && inSheet()) && page && deckOf(page), over = false;
-      var card = deck && $$('.card', deck).filter(function (c) { return !c.classList.contains('off') && c.getClientRects().length; })[0];
-      if (card && (!PHONE.matches || card.classList.contains('framed'))) {
-        var r = card.getBoundingClientRect(), w = Math.min(400, window.innerWidth - 32), left = (window.innerWidth - w) / 2;
-        var top = window.innerHeight - 16 - 68; // where the bar rests (landing.css .tabbar)
-        over = r.bottom > top && r.top < window.innerHeight - 16 && r.left < left + w && r.right > left;
-      }
-      tabbar.classList.toggle('aside', over);
-    });
+    clearing = requestAnimationFrame(function () { clearing = 0; placeBar(); });
+  }
+  function placeBar() {
+    if (!tabbar) return;
+    var deck = !(loginOpen && inSheet()) && page && deckOf(page), over = false, wait = 0;
+    var card = deck && $$('.card', deck).filter(function (c) { return !c.classList.contains('off') && c.getClientRects().length; })[0];
+    if (card && (!PHONE.matches || card.classList.contains('framed'))) {
+      var r = card.getBoundingClientRect(), bottom = r.bottom, frame = card.classList.contains('framed') && $('.bk-frame', card);
+      if (frame && frame.style.height) bottom += parseFloat(frame.style.height) - frame.getBoundingClientRect().height;
+      if (frame && card._sized) wait = card._sized + QUIET - Date.now();
+      var w = Math.min(400, window.innerWidth - 32), left = (window.innerWidth - w) / 2;
+      var top = window.innerHeight - 16 - 68; // where the bar rests (landing.css .tabbar)
+      over = bottom > top && r.top < window.innerHeight - 16 && r.left < left + w && r.right > left;
+    }
+    if (!over && wait > 0 && tabbar.classList.contains('aside')) {
+      over = true;
+      clearTimeout(resting);
+      resting = setTimeout(clearCard, wait);
+    }
+    tabbar.classList.toggle('aside', over);
   }
   window.addEventListener('scroll', clearCard, { passive: true });
   window.addEventListener('resize', clearCard);
@@ -3093,6 +3106,7 @@ try {
     initPage(page, false);
     tabbar = d.createElement('nav');
     tabbar.className = 'tabbar';
+    placeBar(); // aside from the start where the card lies under it, not sliding away as the page opens
     d.body.appendChild(tabbar);
     authChanged(true);
     syncDeck(true);
