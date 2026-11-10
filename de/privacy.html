@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.stripe.com https://*.link.com; font-src 'self'; connect-src 'self' https://krscknuzrqhjfiryvqkc.supabase.co https://api.stripe.com https://r.stripe.com https://link.com https://*.link.com https://photon.komoot.io https://nominatim.openstreetmap.org; frame-src 'self' https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://m.stripe.network https://link.com https://*.link.com https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://krscknuzrqhjfiryvqkc.supabase.co https://*.stripe.com https://*.link.com; font-src 'self'; connect-src 'self' https://krscknuzrqhjfiryvqkc.supabase.co wss://krscknuzrqhjfiryvqkc.supabase.co https://api.stripe.com https://r.stripe.com https://link.com https://*.link.com https://photon.komoot.io https://nominatim.openstreetmap.org; frame-src 'self' https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://m.stripe.network https://link.com https://*.link.com https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Datenschutzerklärung | Car2Door</title>
 <meta name="description" content="Wie Car2Door und Car2Door Pro personenbezogene Daten erheben und nutzen.">
@@ -14,11 +14,6 @@
 <link rel="alternate" hreflang="hu" href="https://car2door.eu/hu/privacy">
 <link rel="alternate" hreflang="lt" href="https://car2door.eu/lt/privacy">
 <link rel="alternate" hreflang="lv" href="https://car2door.eu/lv/privacy">
-<link rel="alternate" hreflang="es" href="https://car2door.eu/es/privacy">
-<link rel="alternate" hreflang="fr" href="https://car2door.eu/fr/privacy">
-<link rel="alternate" hreflang="de" href="https://car2door.eu/de/privacy">
-<link rel="alternate" hreflang="nl" href="https://car2door.eu/nl/privacy">
-<link rel="alternate" hreflang="pt" href="https://car2door.eu/pt/privacy">
 <link rel="alternate" hreflang="x-default" href="https://car2door.eu/privacy">
 <meta name="theme-color" content="#050B18">
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -26,8 +21,7 @@
 <link rel="stylesheet" href="/landing.css?v=2ffdb9ba">
 <script src="/zones.js?v=ae55f024" defer></script>
 
-<script src="/preview.js?v=b1460c83" defer></script>
-<script src="/site.js?v=91436074" defer></script>
+<script src="/site.js?v=077c4051" defer></script>
 <script src="/hero-net.js?v=ca533a10" defer></script>
 </head>
 <body>
@@ -63,11 +57,11 @@
 
 <header class="top">
   <div class="wrap bar">
-    <a class="brand" href="/de/"><span class="logo"><svg><use href="#mark"/></svg></span><span class="word">Car<span class="n2">2</span>Door</span></a>
+    <a class="brand" href="/"><span class="logo"><svg><use href="#mark"/></svg></span><span class="word">Car<span class="n2">2</span>Door</span></a>
     <nav>
-      <a href="/de/#how">So geht's</a>
-      <a href="/de/#cars">Autos</a>
-      <a class="btn small shiny" href="/de/join" data-driver-app><span class="long">Transporteur werden</span><span class="short">Transporteure</span></a>
+      <a href="/#how">So geht's</a>
+      <a href="/#cars">Autos</a>
+      <a class="btn small shiny" href="/join" data-driver-app><span class="long">Transporteur werden</span><span class="short">Transporteure</span></a>
       <details class="lang">
         <summary aria-label="Sprache"><span class="earth" aria-hidden="true"></span><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#000000"/><rect x="0" y="0.667" width="3" height="0.667" fill="#DD0000"/><rect x="0" y="1.333" width="3" height="0.667" fill="#FFCE00"/></svg>DE</summary>
         <div class="menu">
@@ -78,11 +72,6 @@
         <a href="/hu/privacy" hreflang="hu" lang="hu"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#CD2A3E"/><rect x="0" y="0.667" width="3" height="0.667" fill="#FFFFFF"/><rect x="0" y="1.333" width="3" height="0.667" fill="#436F4D"/></svg><span>Magyar</span><b>HU</b></a>
         <a href="/lt/privacy" hreflang="lt" lang="lt"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#FDB913"/><rect x="0" y="0.667" width="3" height="0.667" fill="#006A44"/><rect x="0" y="1.333" width="3" height="0.667" fill="#C1272D"/></svg><span>Lietuvių</span><b>LT</b></a>
         <a href="/lv/privacy" hreflang="lv" lang="lv"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.800" fill="#9E3039"/><rect x="0" y="0.800" width="3" height="0.400" fill="#FFFFFF"/><rect x="0" y="1.200" width="3" height="0.800" fill="#9E3039"/></svg><span>Latviešu</span><b>LV</b></a>
-        <a href="/es/privacy" hreflang="es" lang="es"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.500" fill="#AA151B"/><rect x="0" y="0.500" width="3" height="1.000" fill="#F1BF00"/><rect x="0" y="1.500" width="3" height="0.500" fill="#AA151B"/></svg><span>Español</span><b>ES</b></a>
-        <a href="/fr/privacy" hreflang="fr" lang="fr"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0.000" y="0" width="1.000" height="2" fill="#002654"/><rect x="1.000" y="0" width="1.000" height="2" fill="#FFFFFF"/><rect x="2.000" y="0" width="1.000" height="2" fill="#CE1126"/></svg><span>Français</span><b>FR</b></a>
-        <a href="/de/privacy" hreflang="de" lang="de" aria-current="page"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#000000"/><rect x="0" y="0.667" width="3" height="0.667" fill="#DD0000"/><rect x="0" y="1.333" width="3" height="0.667" fill="#FFCE00"/></svg><span>Deutsch</span><b>DE</b></a>
-        <a href="/nl/privacy" hreflang="nl" lang="nl"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#AE1C28"/><rect x="0" y="0.667" width="3" height="0.667" fill="#FFFFFF"/><rect x="0" y="1.333" width="3" height="0.667" fill="#21468B"/></svg><span>Nederlands</span><b>NL</b></a>
-        <a href="/pt/privacy" hreflang="pt" lang="pt"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#FF0000"/><rect width="1.2" height="2" fill="#006600"/><circle cx="1.2" cy="1" r=".42" fill="#FFCC00"/><path d="M.98.76h.44v.34q0 .2-.22.26Q.98 1.3.98 1.1z" fill="#FF0000"/><path d="M1.09.86h.22v.24q0 .11-.11.15-.11-.04-.11-.15z" fill="#fff"/></svg><span>Português</span><b>PT</b></a>
         </div>
       </details>
       <a class="btn small login" href="#login" data-login><span class="long">Anmelden / Konto erstellen</span><span class="short">Anmelden</span></a>
@@ -94,39 +83,304 @@
 <main id="page" class="page page-legal" data-page="legal">
 <div class="wrap legal-wrap">
 <article class="card legal" lang="de">
-<h1>Datenschutzerklärung</h1>
-
-<p class="meta">Für die Apps Car2Door und Car2Door Pro und car2door.eu, betrieben von der StepsNest B.V.</p>
-
-<h2 id="join-applications">Bewerbungen bei Join Transporters</h2>
-
+<div lang="en">
+<h1>Privacy Policy</h1>
+<p class="meta">For the Car2Door and Car2Door Pro apps and car2door.eu, run by StepsNest B.V.<br>Last updated: 9 November 2026</p>
+<h2>1. Who is responsible</h2>
+<p>StepsNest B.V. ("Car2Door", "we"), Weert, the Netherlands, KvK 42105882 (its registered office under Company details below), is the controller for the personal data in this policy. Questions or requests: <a href="mailto:support@car2door.eu">support@car2door.eu</a>. We have no data protection officer; the law doesn't require one for a business of our size and kind.</p>
+<p>Two others decide about some of the same data themselves, as separate controllers:</p>
+<ul>
+<li><strong>The transporter</strong> that accepts a trip, for the job data it gets (section 6). Its own privacy notice applies to what it does with it.</li>
+<li><strong>Stripe</strong>, for its payment, fraud and identity checks (section 6).</li>
+</ul>
+<h2>2. Whose data, and where it comes from</h2>
+<ul>
+<li><strong>Clients</strong> who book, from what they enter.</li>
+<li><strong>Contacts at pickup and delivery</strong> (for example the seller and the recipient): the client gives us their name and phone; they add their signature and a code at the handover.</li>
+<li><strong>Transporters</strong> and the person who signs up for them, from what they enter, the company registers, VIES and Stripe.</li>
+<li><strong>Drivers</strong>, from their transporter and from what they do in the app.</li>
+<li><strong>Visitors</strong> of car2door.eu, and people who send the Join Transporters form.</li>
+</ul>
+<h2>3. What we use, why, and on what basis</h2>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Why</th>
+<th>Legal basis (GDPR Art. 6(1))</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Account: email, name, phone (confirmed by a text code when the app asks), sign-in ids (Apple, Google), language, profile photo</td>
+<td>your account and its security</td>
+<td>contract (b); security: legitimate interest (f)</td>
+</tr>
+<tr>
+<td>Booking: addresses and map points, dates, notes, option, price, contacts</td>
+<td>the booking and the transport</td>
+<td>contract (b)</td>
+</tr>
+<tr>
+<td>The car: make, model, VIN, value band, whether it drives, one photo</td>
+<td>the booking, the consignment note, checks against stolen cars and fraud</td>
+<td>contract (b); checks: legitimate interest (f)</td>
+</tr>
+<tr>
+<td>The registration paper's vehicle side (Part I), name covered</td>
+<td>the car's VIN and data</td>
+<td>contract (b)</td>
+</tr>
+<tr>
+<td>Photos at pickup and delivery, damage close-ups, signatures, the consignment note, damage reports</td>
+<td>evidence of the car's condition for the client and the transporter</td>
+<td>contract (b); for contacts: legitimate interest (f)</td>
+</tr>
+<tr>
+<td>Payments: Stripe ids, the card's fingerprint (not its number), refunds</td>
+<td>payment, refunds, fraud</td>
+<td>contract (b); fraud: legitimate interest (f)</td>
+</tr>
+<tr>
+<td>Business clients: VAT number, name and address</td>
+<td>invoices</td>
+<td>legal duty (c)</td>
+</tr>
+<tr>
+<td>Invoices, credit notes and receipts</td>
+<td>tax law</td>
+<td>legal duty (c)</td>
+</tr>
+<tr>
+<td>Chat and its translation, support messages, reviews, reports</td>
+<td>the trip, help, safety, the EU's Digital Services Act</td>
+<td>contract (b); legal duty (c); legitimate interest (f)</td>
+</tr>
+<tr>
+<td>Transporter company, documents, register and VIES results, the signer's identity check result</td>
+<td>approval and our duty to check transporters</td>
+<td>contract (b); legitimate interest (f)</td>
+</tr>
+<tr>
+<td>Transporter's bank, payouts, tax details (TIN, address)</td>
+<td>payouts; the EU's DAC7 report to the tax office</td>
+<td>contract (b); legal duty (c)</td>
+</tr>
+<tr>
+<td>Ratings, give-backs, trust level, signs of fraud (company age, a free email domain, a changed bank or device)</td>
+<td>offering jobs safely, preventing fraud</td>
+<td>legitimate interest (f)</td>
+</tr>
+<tr>
+<td>Drivers: name, licence class and expiry, plates per job, signature, location from the way to pickup until delivery (section 5)</td>
+<td>the handover and our checks</td>
+<td>legitimate interest (f)</td>
+</tr>
+<tr>
+<td>Sanctions screening of names</td>
+<td>EU sanctions law</td>
+<td>legal duty (c)</td>
+</tr>
+<tr>
+<td>Error reports without names, push tokens</td>
+<td>the apps' quality and security; notifications</td>
+<td>legitimate interest (f); contract (b)</td>
+</tr>
+<tr>
+<td>Website: language choice, the Join form</td>
+<td>the site; your application</td>
+<td>legitimate interest (f); steps before a contract (b)</td>
+</tr>
+</tbody>
+</table>
+<p>Where we rely on legitimate interest, you may object (section 10).</p>
+<h2>4. Photos, the registration paper, plates and VINs</h2>
+<ol>
+<li><strong>The registration paper:</strong> only the vehicle side (Part I), with the holder's name and address covered; never Part II. Only our staff see the photo; the transporter gets the VIN, make, model and weight read from it. The photo is deleted 30 days after delivery, or when the booking is cancelled.</li>
+<li><strong>The four corner photos</strong> at pickup and delivery are taken with the app's camera, with time and place. The client, the transporter and their insurers see them. Faces and plates may show; we do no face recognition.</li>
+<li><strong>VINs and plates</strong> are personal data while they can be linked to a person. We use them for the booking, the consignment note and checks against stolen cars and duplicate bookings.</li>
+<li><strong>The car's papers read on the phone:</strong> when the app fills the booking from a photo of the registration paper, the reading happens on your phone; that photo doesn't leave it for the reading.</li>
+</ol>
+<h2>5. Location during a transport</h2>
+<ol>
+<li>While the driver heads to the pickup, Car2Door Pro shares the driver's position with that client, so they see the driver coming, also when the phone is locked.</li>
+<li>From pickup to delivery it goes on, but the client, and the recipient on the delivery link page, see only the kilometres left, rounded to 50 km (to 10 km in the last 100 km), never a town, and the exact point only within the last 30 km before delivery. The client also sees the day the car is expected to arrive, worked out from the kilometres left: an estimate, not a promise; the deliver-by date stays the commitment. A van that stands still sends nothing: after 20 minutes without a new position they see only "On a break". Car2Door Pro tells the driver when the position is shared.</li>
+<li>We keep only the latest position, never a trail of where the car has been. It is deleted at delivery, when the trip is given back or cancelled, or 3 hours after the last one.</li>
+<li>The client's app asks for location only when you choose to use your position for an address.</li>
+</ol>
+<h2>6. Who we share it with</h2>
+<p><strong>Separate controllers</strong></p>
+<ul>
+<li><strong>The transporter</strong> that accepts a trip: before it accepts, the cities, the dates, the car's make, model and value band, and a small photo of the car; after, the addresses, the contacts' names and phones, the VIN and the car's data, the photos and the chat. It uses them for the job and its own legal duties (such as its tax records and the consignment note).</li>
+<li><strong>Stripe</strong> (Stripe Payments Europe Ltd., Ireland, and Stripe, Inc., USA): payments, refunds and payouts, and the identity check of the person who signs up a transporter. Stripe uses the data also for its own fraud and legal checks, under its own privacy policy.</li>
+<li><strong>Apple and Google</strong>, when you sign in with them.</li>
+<li><strong>Tax offices and authorities</strong>, when the law requires: the Dutch tax office (DAC7, invoices), and others on a lawful request.</li>
+</ul>
+<p><strong>Processors, who work for us under a data processing agreement</strong></p>
+<ul>
+<li><strong>Supabase</strong> (Supabase, Inc.): our database, sign-in, file storage and server functions, on servers in Frankfurt, Germany.</li>
+<li><strong>Sentry</strong> (Functional Software, Inc.), EU region: error reports, sent without names, emails or ids.</li>
+<li><strong>Lettermint</strong> (Lettermint B.V., the Netherlands): the emails the apps send.</li>
+<li><strong>GatewayAPI</strong> (Denmark), once the phone code is on: the text messages with your phone code.</li>
+<li><strong>Google</strong> (Google Ireland Ltd. and Google LLC): our mailbox <a href="mailto:support@car2door.eu">support@car2door.eu</a> (Google Workspace); the translation of chat messages when it is on (Google Cloud Translation, EU endpoint); the encrypted copy of our backups (Google Drive).</li>
+<li><strong>Expo</strong> (650 Industries, Inc., USA): app updates, and push notifications together with <strong>Apple</strong> (iPhone) and <strong>Google</strong> (Android).</li>
+<li><strong>GitHub</strong> (GitHub, Inc., USA): hosts car2door.eu and keeps visitors' IP addresses in its logs for security.</li>
+</ul>
+<p><strong>Services your phone or browser calls directly</strong></p>
+<ul>
+<li><strong>Address search:</strong> Photon (Komoot GmbH, Germany) and, as a fallback, Nominatim (the OpenStreetMap Foundation, United Kingdom) get the address you type, or your position when you ask for it.</li>
+<li><strong>Maps:</strong> in the apps, Apple Maps on iPhone and Google Maps on Android load the map around the points shown. On car2door.eu the map is an OpenStreetMap frame (the OpenStreetMap Foundation), which gets the map area shown, including the driver's position when you follow a trip.</li>
+<li><strong>Stripe.js:</strong> Stripe's card form, loaded only on the card step; Stripe reads signals from your browser or phone against fraud.</li>
+<li><strong>Navigation:</strong> a driver who taps Navigate leaves the app for Google Maps, Apple Maps or Waze.</li>
+</ul>
+<p><strong>Registers we look things up in:</strong> the EU's VIES (VAT numbers); Romania's ANAF; Poland's KRS and its VAT white list; Lithuania's and Latvia's open company data; the EU and Dutch sanctions lists, downloaded so no name is sent out.</p>
+<p>We never sell personal data and we show no ads.</p>
+<h2>7. Transfers outside the EU</h2>
+<p>Supabase, Stripe, Sentry, Expo, Apple, Google and GitHub are US companies or use US services. Each transfer rests on the EU-US Data Privacy Framework where the company is certified, or on the EU's standard contractual clauses. The OpenStreetMap Foundation is in the United Kingdom, which the EU recognises as protecting data adequately. Ask us for a copy of the safeguards.</p>
+<h2>8. How long we keep it</h2>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Kept</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Your account</td>
+<td>until you delete it, and 28 days after that unless you choose "Delete now" (section 11)</td>
+</tr>
+<tr>
+<td>That your account was deleted, and when (without your name or address)</td>
+<td>1 year after the deletion</td>
+</tr>
+<tr>
+<td>Sign-in log (email, IP address)</td>
+<td>90 days</td>
+</tr>
+<tr>
+<td>A booking never paid for: its addresses, map points, notes, plate and photo</td>
+<td>30 days</td>
+</tr>
+<tr>
+<td>A trip's evidence: photos, signatures, inspections, the consignment note, damage reports, and the driver and vehicle named for it</td>
+<td>13 months after delivery or cancellation; longer while a damage report, a held payout, a dispute or a legal hold keeps it</td>
+</tr>
+<tr>
+<td>The contacts' names and phones on a booking, and the notes for the handovers</td>
+<td>30 days after delivery, or at cancellation</td>
+</tr>
+<tr>
+<td>A paid trip's addresses, map points, dates, price and the car's data</td>
+<td>no end date set yet: they stay with the trip, which its invoices (7 years) refer to; we will name the end here when we set it</td>
+</tr>
+<tr>
+<td>The registration paper's photo</td>
+<td>30 days after delivery, or at cancellation</td>
+</tr>
+<tr>
+<td>Chat messages and their translations</td>
+<td>1 year after the trip ends; readable for 30 days after it</td>
+</tr>
+<tr>
+<td>Support messages; reports about content and our decisions</td>
+<td>1 year</td>
+</tr>
+<tr>
+<td>Questions the help assistant could not answer</td>
+<td>1 year after we have dealt with them</td>
+</tr>
+<tr>
+<td>Invoices, credit notes and the payment records behind them</td>
+<td>7 years (Dutch tax law)</td>
+</tr>
+<tr>
+<td>Transporters' DAC7 tax details</td>
+<td>7 years from the end of the last year reported</td>
+</tr>
+<tr>
+<td>Transporters' document photos</td>
+<td>1 year after the transporter last used Car2Door Pro; at once when its account is deleted</td>
+</tr>
+<tr>
+<td>The record of each check of a transporter (what, when, the source, the result)</td>
+<td>no end date set yet; when the account is deleted, the document numbers and the registers' answers go</td>
+</tr>
+<tr>
+<td>Sanctions hits and what staff decided</td>
+<td>no end date set yet; when the account is deleted, the name that was screened goes, except from a confirmed hit, which keeps it as proof of the screening sanctions law requires</td>
+</tr>
+<tr>
+<td>The driver's position (the latest one only)</td>
+<td>until delivery, or 3 hours after the last one</td>
+</tr>
+<tr>
+<td>Error reports</td>
+<td>90 days after the error was last seen; the error texts in our staff's activity log 90 days too</td>
+</tr>
+<tr>
+<td>That an email was sent (not its text or address)</td>
+<td>1 year</td>
+</tr>
+<tr>
+<td>Feedback</td>
+<td>1 year after it was handled</td>
+</tr>
+<tr>
+<td>Push tokens</td>
+<td>until you sign out</td>
+</tr>
+<tr>
+<td>Join Transporters applications</td>
+<td>2 years (section 13)</td>
+</tr>
+<tr>
+<td>A phone's id used with an invite code</td>
+<td>1 year</td>
+</tr>
+<tr>
+<td>Copies of the database taken at each release (on our own computer and encrypted in Google Drive)</td>
+<td>30 days, the newest always kept; longer only while an incident it is needed for is open. After a restore, the deletions made since that copy are applied again before the database is used.</td>
+</tr>
+</tbody>
+</table>
+<h2>9. Automated decisions</h2>
+<p>Our fraud signals, the register checks and the counters of a transporter's late give-backs only flag: a person on our team decides whether any hold, pause or refusal goes on, and you can ask for the reasons and for a review.</p>
+<p>A few steps are automatic, because a law, a fact or your own step decides them, not our judgement:</p>
+<ul>
+<li>a possible match on a sanctions list holds the booking, the transporter's jobs or the payout until a person on our team clears it: sanctions law forbids making money available to a listed person;</li>
+<li>a transporter gets no new jobs while a paper has expired or is missing, while it has not accepted the current terms, or while its company is outside the EU, and a VAT number VIES no longer knows stops counting for its country: these are facts we must check, or the transporter's own step;</li>
+<li>Stripe's own checks can stop a payment or a payout: that is Stripe's decision (section 6).</li>
+</ul>
+<p>A person on our team looks at any of them when you ask, in the app's chat or at <a href="mailto:support@car2door.eu">support@car2door.eu</a>.</p>
+<h2>10. Your rights</h2>
+<p>You can ask to see, correct or delete your data, to restrict or object to its use, and for a copy to take elsewhere: in the app's chat, or at <a href="mailto:support@car2door.eu">support@car2door.eu</a>. We answer within one month. You can complain to the Dutch Data Protection Authority, the Autoriteit Persoonsgegevens (<a href="https://autoriteitpersoonsgegevens.nl" rel="noopener">autoriteitpersoonsgegevens.nl</a>), or to the authority where you live.</p>
+<h2>11. Deleting your account</h2>
+<ol>
+<li>In the app: Profile › Delete account. If you can't sign in, email <a href="mailto:support@car2door.eu">support@car2door.eu</a> from your account's email address.</li>
+<li>Your account is frozen at once: you are signed out everywhere, your profile is hidden, and no new bookings, jobs or marketing reach you. It is deleted by itself 28 days later.</li>
+<li>We email you at once with that date, what we keep and why (point 5), and a link to undo it. Until that date you can undo it, or choose "Delete now" to skip the wait. When it is done, we email you again.</li>
+<li>If a trip of yours is under way, a payout, a refund or an invoice is still due, or a damage report or a payment dispute (chargeback) about one of your trips is open, nothing is deleted before the deletion day either: until then the account is only frozen, and "Keep my account" brings all of it back. On that day (day 28, or at once with "Delete now") we delete what can go, and what the trip, payout, refund, invoice, report or dispute still needs when it ends (for a report or a dispute, as the law allows for a legal claim). We tell you within one month what was done and what waits.</li>
+<li>What we keep after deletion, and why (section 8): invoices and their payment records (7 years, tax law); DAC7 details (7 years); a trip's evidence while a claim can still be made, and a paid trip's details with its invoices; reports about content and our decisions (1 year); a phone's id used with an invite code (1 year); the record that the account was deleted (1 year, so that a restored backup can't bring it back); our staff's decisions on a transporter's checks; and sanctions hits: a confirmed hit with the name, as proof of the screening sanctions law requires, any other without it.</li>
+</ol>
+<h2>12. Security</h2>
+<p>Your data is stored encrypted in Frankfurt. Only staff who need it see it, with two-step sign-in, and staff actions are logged. Card numbers stay with Stripe. If a breach puts you at risk, we tell you.</p>
+</div>
+<div lang="de">
+<h2 id="join-applications">13. Bewerbungen bei Join Transporters</h2>
 <p>Dieser Teil gilt bereits. Er betrifft, was Sie mit dem Formular Join Transporters auf car2door.eu senden.</p>
-
 <ul><li><strong>Verantwortlich:</strong> StepsNest B.V., Sprangstraat 10, 6004 XD Weert, Niederlande, KvK 42105882; <a href="mailto:support@car2door.eu">support@car2door.eu</a>.</li><li><strong>Was wir erheben:</strong> Ihr Land; Name, Registernummer und USt-IdNr. des Unternehmens; ob Sie eine Transportlizenz und eine CMR-Versicherung haben und welche Papiere Sie haben (die Papiere laden Sie später in der App hoch); Ihre Fahrzeugarten, Einheiten und Autoplätze; die Länder, in die Sie fahren; Ihren Namen, Ihre Telefonnummer und E-Mail; und die Sprache des Formulars. Bis Sie es senden, speichert das Formular Ihre Antworten nur in Ihrem Browser.</li><li><strong>Wozu:</strong> um Ihre Bewerbung zu prüfen und Sie dazu zu kontaktieren, und um Ihre Anmeldung bei Car2Door Pro auszufüllen, wenn Sie sich mit dieser E-Mail registrieren.</li><li><strong>Rechtsgrundlage:</strong> Schritte vor einem Vertrag, die Sie anfragen (DSGVO, Art. 6 Abs. 1 lit. b).</li><li><strong>Wer sie verarbeitet:</strong> Supabase speichert sie für uns in Frankfurt, Deutschland. Geht sie ein, erhalten die Telefone unserer Mitarbeiter eine Mitteilung mit Firmenname, Land und Fahrzeugzahlen, über den Push-Dienst von Expo und Apple oder Google. Wir schreiben Ihnen von <a href="mailto:support@car2door.eu">support@car2door.eu</a> (Google Workspace). Expo, Apple und Google können Daten außerhalb der EU verarbeiten.</li><li><strong>Gegen Missbrauch:</strong> um zu begrenzen, wie oft das Formular gesendet wird, werden Ihre IP-Adresse und E-Mail zusätzlich etwa einen Tag lang in codierter Form gespeichert.</li><li><strong>Wie lange:</strong> zwei Jahre nach Ihrer Bewerbung werden Name, Telefon, E-Mail, Firmenname, Register- und USt-Nummer sowie unsere Notizen dazu automatisch gelöscht, es sei denn, Sie haben bis dahin ein Car2Door- oder Car2Door-Pro-Konto mit dieser E-Mail; Ihre übrigen Antworten bleiben ohne diese Angaben. Löschen Sie Ihr Konto, werden sie ebenfalls gelöscht, und Sie können uns bitten, sie früher zu löschen. Kopien der Datenbank, bei jeder Veröffentlichung angelegt, eine auf unserem eigenen Computer und eine verschlüsselte in Google Drive, behalten die Daten, bis diese Kopien gelöscht werden.</li><li><strong>Ihre Rechte:</strong> Sie können Auskunft, Berichtigung oder Löschung verlangen, die Einschränkung der Nutzung oder Widerspruch, und eine Kopie zur Mitnahme: schreiben Sie an <a href="mailto:support@car2door.eu">support@car2door.eu</a>. Sie können sich bei der niederländischen Datenschutzbehörde beschweren, der Autoriteit Persoonsgegevens (autoriteitpersoonsgegevens.nl).</li></ul>
+</div>
+<div lang="en">
 
-<p class="draft">Diese Seite wird gerade geschrieben. Der vollständige Text folgt, bevor Car2Door die erste Buchung annimmt.</p>
+<h2 id="drivers">14. Drivers</h2>
 
-<h2>1. Wer verantwortlich ist</h2>
-
-<h2>2. Welche Daten wir erheben und warum</h2>
-
-<h2>3. Fotos des Autos, Kennzeichen und FIN</h2>
-
-<h2>4. Standort während eines Transports</h2>
-
-<h2>5. Mit wem wir Daten teilen</h2>
-
-<h2>6. Übermittlungen außerhalb der EU</h2>
-
-<h2>7. Wie lange wir Daten speichern</h2>
-
-<h2>8. Ihre Rechte</h2>
-
-<h2>9. Sicherheit</h2>
-
-<h2>10. Kinder</h2>
-
-<h2>11. Änderungen</h2>
+<p>If you drive for a transporter: your transporter gives us your name, licence class and expiry, and a photo of your licence; we check them before you get jobs. The client and their contacts see your name and the plates 24 hours before pickup. From the way to the pickup until delivery, the app shares your position with that client; between pickup and the last 30 km the client and the recipient see only the kilometres left, and nothing while the van stands still. Only the latest position is kept (section 5). Your signature and the photos you take go into the trip's record. Your rights are in section 10.</p>
+<h2>15. Children</h2>
+<p>Car2Door is for people of 18 and over.</p>
+<h2>16. Changes</h2>
+<p>We tell you about important changes in the app or by email before they apply.</p>
+</div>
 
 <section class="company" id="company">
 <h2>Firmendaten</h2>
@@ -135,12 +389,13 @@
 </section>
 
 <nav class="links">
-<a href="/de/">Car2Door</a>
-<a href="/de/terms">Bedingungen für Kunden</a>
-<a href="/de/transporter-terms">Bedingungen für Transporteure</a>
-<a href="/de/privacy" aria-current="page">Datenschutzerklärung</a>
-<a href="/de/cookies">Cookie-Richtlinie</a>
-<a href="/de/delete-account">Konto löschen</a>
+<a href="/">Car2Door</a>
+<a href="/terms">Bedingungen für Kunden</a>
+<a href="/transporter-terms">Bedingungen für Transporteure</a>
+<a href="/transport-conditions">Transport conditions</a>
+<a href="/privacy" aria-current="page">Datenschutzerklärung</a>
+<a href="/cookies">Cookie-Richtlinie</a>
+<a href="/delete-account">Konto löschen</a>
 </nav>
 </article>
 </div>
@@ -148,17 +403,17 @@
 <footer class="foot">
   <div class="wrap foot-grid">
     <div class="proof">
-      <a class="brand" href="/de/"><span class="logo"><svg><use href="#mark"/></svg></span><span class="word">Car<span class="n2">2</span>Door</span></a>
+      <a class="brand" href="/"><span class="logo"><svg><use href="#mark"/></svg></span><span class="word">Car<span class="n2">2</span>Door</span></a>
       <p>Car2Door ist ein Angebot der <b>StepsNest B.V.</b>, Weert, Niederlande.<br>Handelskammer (KvK) <a href="https://www.kvk.nl/zoeken/?source=all&amp;q=42105882" rel="noopener">42105882</a>.</p>
       <p class="never">Wir bitten Sie nie um Geld. Buchen und bezahlen Sie nur auf car2door.eu.</p>
       <p class="never car-price">Car2Door nimmt nie den Kaufpreis des Autos entgegen.</p>
     </div>
     <nav>
-      <a href="/de/terms">Bedingungen für Kunden</a>
-      <a href="/de/transporter-terms">Bedingungen für Transporteure</a>
-      <a href="/de/privacy">Datenschutzerklärung</a>
-      <a href="/de/cookies">Cookie-Richtlinie</a>
-      <a href="/de/delete-account">Konto löschen</a>
+      <a href="/terms">Bedingungen für Kunden</a>
+      <a href="/transporter-terms">Bedingungen für Transporteure</a>
+      <a href="/privacy">Datenschutzerklärung</a>
+      <a href="/cookies">Cookie-Richtlinie</a>
+      <a href="/delete-account">Konto löschen</a>
       <a href="#feedback">Feedback</a>
       <a href="#report">Inhalt melden</a>
       <a href="mailto:support@car2door.eu">support@car2door.eu</a>
@@ -170,6 +425,6 @@
 </main>
 </div>
 
-<script type="application/json" id="dv-t">{"lang": "de", "home": "/de/", "acct_h": "Dein Konto", "back": "Zurück", "tab_login": "Anmelden", "tab_create": "Konto erstellen", "google": "Weiter mit Google", "apple": "Weiter mit Apple", "redirecting": "{provider} wird geöffnet …", "signing_in": "Du wirst angemeldet …", "f_name": "Vollständiger Name", "ph_name": "Vor- und Nachname", "f_email": "E-Mail", "ph_email": "du@beispiel.de", "hint": "Wir schicken dir einen Einmalcode per E-Mail. Kein Passwort nötig.", "send": "Anmeldecode senden", "sending": "Wird gesendet …", "code_h": "Schau in deine E-Mails", "code_sent": "Wir haben einen Code an {email} gesendet", "f_code": "Code aus deiner E-Mail", "verify": "Weiter", "verifying": "Wird geprüft …", "change_email": "E-Mail ändern", "resend": "Neuen Code senden", "resend_in": "Neuer Code in {s} s", "resent": "Wir haben dir einen neuen Code geschickt.", "legal": "Wenn du fortfährst, stimmst du den <a href=\"/de/terms\">Nutzungsbedingungen<\/a> und der <a href=\"/de/privacy\">Datenschutzerklärung<\/a> zu.", "welcome": "Du bist angemeldet", "signed_in_as": "Angemeldet als", "my_trips": "Meine Transporte", "logout": "Abmelden", "my_account": "Mein Konto", "err_email": "Gib eine gültige E-Mail-Adresse ein.", "err_name": "Bitte gib deinen Namen ein.", "err_code": "Gib den Code aus der E-Mail ein.", "err_bad_code": "Dieser Code ist falsch oder abgelaufen. Prüf die E-Mail oder fordere einen neuen Code an.", "no_account": "Mit dieser E-Mail gibt es noch kein Konto.", "create_instead": "Konto erstellen", "err_rate": "Zu viele Versuche. Warte eine Minute und versuch es dann erneut.", "err_wait": "Bitte warte kurz, bevor du einen neuen Code anforderst.", "err_network": "Car2Door ist nicht erreichbar. Prüf deine Verbindung und versuch es erneut.", "err_generic": "Etwas ist schiefgelaufen. Bitte versuch es erneut.", "err_oauth": "Die Anmeldung mit {provider} hat nicht geklappt. Versuch es erneut oder nutze deine E-Mail.", "err_oauth_off": "Die Anmeldung mit {provider} ist noch nicht verfügbar. Bitte nutze deine E-Mail.", "h_price": "Dein Preis", "checking": "Deine Strecke wird geprüft …", "err_from": "Gib die Abholadresse ein.", "err_to": "Gib die Lieferadresse ein.", "err_not_found": "Wir finden „{q}“ nicht. Versuch es mit Ort und Land oder einer PLZ.", "err_search": "Die Adresssuche antwortet gerade nicht. Versuch es gleich noch einmal.", "err_route": "Car2Door bucht Autotransporte innerhalb der EU.", "err_domestic": "Car2Door bucht noch keine Transporte innerhalb eines Landes. Transporte von einem Land in ein anderes sind möglich.", "err_short": "Transporte müssen mindestens {n} km lang sein.", "err_when": "Wähl einen Tag ab morgen.", "err_make": "Wähl die Marke aus der Liste.", "err_model": "Wähl das Modell aus der Liste.", "err_vin": "Gib die VIN (FIN) ein: 17 Buchstaben und Ziffern aus der Zulassungsbescheinigung (Feld E), kein I, O oder Q.", "err_vin_old": "Gib die VIN (FIN) ein oder, bei einem Auto von vor 1981, die Fahrgestellnummer: 5 bis 16 Buchstaben und Ziffern.", "vin_letters": "Nur Buchstaben und Ziffern, kein I, O oder Q", "vin_maker": "Herstellercode: {make}", "vin_other": "Dieser Herstellercode gehört nicht zu {make}. Ein Auto, das ein anderer Hersteller gebaut hat, trägt dessen Code: Prüf die VIN und die Marke und mach dann weiter.", "vin_check": "Prüf die VIN noch einmal: Ihre Prüfziffer stimmt nicht. Manche Hersteller verwenden keine, du kannst also weitermachen.", "vin_unknown": "Diesen Herstellercode kennen wir noch nicht. Die VIN wird bei der Abholung mit der Zulassungsbescheinigung abgeglichen.", "err_value": "Wähle den Wert des Autos: eine der Stufen oder, über 50.000 €, den Wert in ganzen Euro bis 250.000 €.", "err_plate": "Prüf das Kennzeichen oder lass es leer, wenn das Auto nicht zugelassen ist.", "err_photo": "Füg ein Foto vom ganzen Auto von der Seite hinzu.", "opt_h": "Wähl deine Option", "ow_saver": "Abholung innerhalb von 7 Tagen", "ow_standard": "Abholung innerhalb von 5 Tagen", "ow_priority": "Abholung an deinem Wunschtag oder am Folgetag", "deliver_by": "Geliefert bis {date}", "runs_not": "Fährt nicht", "km": "≈ {n} km", "total": "Gesamt", "go_book": "Weiter zur Buchung", "fine_print": "Als Nächstes: die Daten deines Autos und deine Karte. Belastet wird erst, wenn ein Transportunternehmen annimmt.", "s_car": "Auto", "s_paid": "Bezahlt", "s_price": "Preis", "s_voucher": "Einladungsgutschein", "retry": "Erneut versuchen", "here_row": "Mein Standort", "here_finding": "Dein Standort wird gesucht…", "here_denied": "Damit wir eintragen können, wo du bist, erlaube Car2Door den Standortzugriff. Oder gib die Adresse ein.", "here_blocked": "Dein Browser blockiert den Standort für diese Website. Erlaube ihn in den Website-Einstellungen oder gib die Adresse ein.", "here_vague": "Dein Standort ist gerade nicht genau genug. Versuch es gleich noch einmal oder gib die Adresse ein.", "here_timeout": "Die Suche nach deinem Standort hat zu lange gedauert. Versuch es noch einmal oder gib die Adresse ein.", "here_unavailable": "Dein Standort lässt sich gerade nicht finden. Versuch es noch einmal oder gib die Adresse ein.", "here_not_found": "An deinem Standort wurde keine Adresse gefunden. Gib die Adresse ein.", "here_not_served": "Du bist außerhalb der Länder, die Car2Door bedient. Gib die Adresse ein.", "clear_addr": "Adresse löschen", "route_closed_h": "Diese Strecke ist noch nicht offen", "route_closed": "Für diese Strecke nimmt Car2Door noch keine Buchungen an. Sie öffnet, sobald genug Transporteure sie fahren. Versuch einen anderen Abhol- oder Lieferort oder schau später wieder vorbei.", "country_closed": "Car2Door nimmt gerade keine Buchungen aus diesem oder in dieses Land an.", "err_quote": "Die Preise konnten nicht geladen werden. Prüf deine Verbindung und versuch es erneut.", "priced_now": "Die heutigen Preise für ein Auto wie deins. Den genauen Preis für dein Auto siehst du beim Buchen.", "book_trip": "Transport buchen", "trip_h": "Dein Transport", "up_h": "Anstehend", "past_h": "Vergangen", "none_h": "Noch keine Transporte", "none_p": "Transporte, die du buchst, erscheinen hier.", "err_trips": "Deine Transporte konnten nicht geladen werden. Prüf deine Verbindung und versuch es erneut.", "gone": "Wir finden diesen Transport nicht in deinem Konto.", "st_pending_payment": "Buchung nicht abgeschlossen", "st_bidding": "Transportunternehmen wird gesucht", "st_accepted": "Transportunternehmen zugewiesen", "st_en_route": "Auf dem Weg zur Abholung", "st_picked_up": "Unterwegs", "st_completed": "Geliefert", "st_cancelled": "Storniert", "t_note": "Dein Hinweis", "t_window": "Abholfenster", "t_deliver": "Geliefert bis", "t_to_charge": "Abgebucht, sobald ein Unternehmen annimmt", "t_to_confirm": "Zahlung zu bestätigen", "t_not_charged": "Nichts abgebucht", "n_bidding": "Dein Transport wird jetzt Transportunternehmen auf deiner Strecke angeboten.", "n_card_later": "Deine Karte wird erst belastet, wenn eines davon annimmt.", "n_pending": "Diese Buchung ist noch nicht abgeschlossen. Schließ sie in der App Car2Door oder auf car2door.eu/book ab: Es wird nichts abgebucht, bis ein Transportunternehmen annimmt.", "n_held": "Ein Transportunternehmen hat angenommen, und deine Bank bittet dich, die Zahlung zu bestätigen. Bestätige sie bis {time} in der App Car2Door oder auf car2door.eu/book, sonst wird der Transport kostenlos storniert.", "n_locked": "Daten und Telefonnummer des Transportunternehmens erscheinen am {date}, 24 Stunden vor der Abholung.", "tr_h": "Dein Transportunternehmen", "slots": "{n} Stellplätze", "call": "{phone} anrufen", "pc_h": "Übergabecode", "pc_p": "Nenn dem Fahrer diesen Code bei der Lieferung, nachdem du das Auto geprüft hast.", "t_carrier": "Gebucht über Car2Door.", "t_carried_by": "Durchgeführt von {company}.", "cancel": "Transport stornieren", "cancel_q": "Transport stornieren? Du bekommst den vollen Betrag zurück.", "cancel_q_free": "Diese Buchung stornieren? Es wurde noch nichts abgebucht, die Stornierung kostet dich also nichts.", "cancel_yes": "Ja, stornieren", "cancel_no": "Transport behalten", "cancelling": "Wird storniert …", "err_cancel": "Ein Transportunternehmen hat diesen Transport schon angenommen. Schreib an support@car2door.eu, um ihn zu stornieren.", "cx_free": "Kostenlos stornierbar bis {date}.", "cx_free_any": "Kostenlos stornierbar.", "cx_part": "Wenn du jetzt stornierst, bekommst du {pct} ({amount}) zurück.", "cx_none": "Wenn du jetzt stornierst, bekommst du nichts zurück.", "cx_then_part": "Ab {date} sind es {pct}.", "cx_then_none": "Ab {date} gibt es keine Erstattung mehr.", "cx_q_part": "Transport stornieren? Du bekommst {amount} zurück, {pct} deiner Zahlung.", "cx_q_none": "Transport stornieren? Für eine Erstattung ist es zu kurz vor der Abholung, du bekommst also nichts zurück.", "cx_late": "Transportunternehmen verspätet oder kommt nicht? Schreib stattdessen an support@car2door.eu.", "n_cx_none": "Du hast diesen Transport kurz vor der Abholung storniert, daher wurde deine Zahlung nicht erstattet.", "n_why_none": "Kein Transportunternehmen hat diesen Transport rechtzeitig übernommen.", "n_why_you": "Du hast diesen Transport storniert.", "n_why_in_time": "Du hast diesen Transport rechtzeitig storniert, daher fällt keine Stornogebühr an.", "n_why_fee": "Du hast diesen Transport weniger als 48 Stunden vor der Abholung storniert, daher wurden {fee} seines Preises einbehalten.", "n_why_unpaid": "Diese Buchung wurde storniert, weil die Zahlung nicht rechtzeitig eingegangen ist.", "n_why_payment_failed": "Dieser Transport wurde storniert, weil die Zahlung nach der Annahme durch ein Transportunternehmen nicht rechtzeitig bestätigt wurde. Es wurde nichts abgebucht.", "n_why_no_paper": "Diese Buchung wurde storniert, weil die Zulassungsbescheinigung nicht rechtzeitig kam. Es wurde nichts abgebucht.", "n_why_checked": "Dieser Transport wurde storniert, nachdem Car2Door ihn geprüft hat.", "n_why_fraud": "Dieser Transport wurde storniert: Deine Bank hat die Kartenzahlung gemeldet.", "n_why_disputed": "Dieser Transport wurde storniert, weil seine Zahlung bei deiner Bank angefochten wird. Deine Bank entscheidet, ob du Geld zurückbekommst.", "n_why_no_show": "Das Auto war bei der Abholung nicht da, daher wurde dieser Transport storniert und deine Zahlung wird nicht erstattet.", "n_why_carrier_no_show": "Car2Door hat diesen Transport storniert, weil das Transportunternehmen nicht gekommen ist. Du bekommst deine ganze Zahlung zurück.", "n_why_staff": "Car2Door hat diesen Transport storniert. Du bekommst deine ganze Zahlung zurück.", "n_why_other": "Dieser Transport wurde storniert.", "n_ref_full": "Deine Zahlung von {amount} wurde vollständig auf die Karte oder das Konto erstattet, mit dem du bezahlt hast. Bis sie ankommt, kann es 5 bis 10 Werktage dauern.", "n_ref_part": "{amount} wurde auf die Karte oder das Konto erstattet, mit dem du bezahlt hast. Bis der Betrag ankommt, kann es 5 bis 10 Werktage dauern.", "n_ref_pending": "Deine Erstattung wird gerade ausgeführt. Das Geld geht auf die Karte oder das Konto zurück, mit dem du bezahlt hast, das kann 5 bis 10 Werktage dauern.", "n_ref_retrying": "Deine Erstattung hat noch nicht geklappt. Car2Door versucht es automatisch erneut, du musst nichts tun.", "n_ref_failed": "Deine Erstattung konnte nicht automatisch ausgeführt werden. Der Car2Door-Support kümmert sich darum. Fragen? Schreib an support@car2door.eu.", "err_cx_changed": "Was du beim Stornieren zurückbekommst, hat sich gerade geändert. Prüf es und versuch es erneut.", "err_cx_started": "Dieser Transport kann hier nicht mehr storniert werden. Schreib an support@car2door.eu.", "report": "Problem melden", "report_until": "Stimmt etwas mit diesem Transport nicht? Du kannst es bis {date} melden.", "report_ph": "Was ist passiert?", "report_send": "Meldung senden", "report_done": "Du hast ein Problem mit diesem Transport gemeldet. Wir melden uns deswegen bei dir.", "err_report_empty": "Erzähl uns, was passiert ist.", "err_report_closed": "Die Frist, um ein Problem mit diesem Transport zu melden, ist abgelaufen. Schreib an support@car2door.eu.", "invoices_h": "Rechnungen", "invoice_trip": "Rechnung {n}", "invoice_credit": "Rechnungskorrektur {n}", "inv_by": "{name} hat dich zu Car2Door eingeladen", "inv_partner": "Ein Car2Door-Transportunternehmen", "inv_choose": "Wie möchtest du Car2Door nutzen?", "inv_travel": "Ich möchte ein Auto verschicken", "inv_travel_s": "25 € Rabatt auf deinen ersten Transport ab 300 €", "inv_driver": "Ich bin Transporteur", "inv_driver_s": "Bezahlte Autotransporte auf deiner Strecke bekommen", "inv_saved": "Eingeladen von {name}", "inv_code": "Einladungscode {code}", "inv_saved_p": "Deine Einladung wird deinem Konto hinzugefügt, wenn du dich anmeldest oder registrierst.", "inv_drv_h": "Hol dir die App Car2Door Pro", "inv_drv_ios": "Wenn du auf den Button tippst, kopieren wir deinen Einladungscode {code}. Tippe in der App auf dem Registrierungsbildschirm auf „Einsetzen“.", "inv_drv_android": "Dein Einladungscode {code} kommt beim Download automatisch mit.", "inv_drv_btn": "Car2Door Pro laden", "inv_drv_web": "Oder auf der Website bewerben", "inv_ok": "Die Einladung ist jetzt in deinem Konto.", "inv_h": "Einladungscode", "inv_bad": "Dieser Einladungslink ist nicht mehr gültig. Du kannst Car2Door trotzdem wie gewohnt nutzen.", "inv_too_late": "Einladungscodes kannst du nur in den ersten 7 Tagen nach deiner Registrierung hinzufügen.", "inv_already": "Dein Konto hat schon eine Einladung.", "inv_booked": "Einladungscodes kannst du nur vor deiner ersten Buchung hinzufügen.", "inv_own": "Du kannst deinen eigenen Einladungscode nicht verwenden.", "inv_close": "Schließen", "inv_join_done": "Registriere dich in der App Car2Door Pro mit {email}, dann wird deine Einladung automatisch hinzugefügt.", "pn_help": "Hilfe", "pn_site": "Website", "pn_saved": "Gespeichert.", "pn_help_more": "Noch Fragen? Schreib uns an {email}. Rechtswidrige Inhalte melden: {report}. Behörden: {legal} (auf Englisch oder Niederländisch).", "pn_rep_p": "Sag uns Bescheid, wenn du bei Car2Door Inhalte findest, die du für rechtswidrig hältst oder die gegen unsere Bedingungen verstoßen: eine Chatnachricht, eine Bewertung, eine Unternehmensseite, ein Profilfoto oder -name oder etwas auf dieser Website. Du brauchst kein Konto.", "pn_rep_reason": "Warum meldest du es?", "pn_rep_illegal": "Es ist rechtswidrig", "pn_rep_terms": "Es verstößt gegen die Bedingungen von Car2Door", "pn_rep_where": "Wo ist es?", "pn_rep_where_ph": "Ein Link oder wer es geschrieben hat, bei welchem Transport und wann", "pn_rep_details": "Erklär, warum", "pn_rep_law": "Gegen welches Gesetz verstößt es? (optional)", "pn_rep_name": "Dein Name (optional)", "pn_rep_email": "Deine E-Mail-Adresse (optional: für eine Bestätigung und unsere Entscheidung)", "pn_rep_faith": "Ich bin in gutem Glauben überzeugt, dass meine Meldung richtig und vollständig ist.", "pn_rep_send": "Meldung senden", "pn_rep_sending": "Wird gesendet…", "pn_rep_done": "Danke. Wir haben deine Meldung erhalten und prüfen sie. Wenn du deine E-Mail-Adresse angegeben hast, schicken wir dir eine Bestätigung und unsere Entscheidung.", "pn_rep_again": "Etwas anderes melden", "pn_rep_112": "Ist gerade jemand in Gefahr? Ruf zuerst die 112 an.", "pn_rep_err_where": "Gib an, wo der Inhalt ist.", "pn_rep_err_details": "Erklär, warum du es meldest.", "pn_rep_err_faith": "Setz das Häkchen, um zu bestätigen, dass du in gutem Glauben meldest.", "pn_rep_err_email": "Prüf deine E-Mail-Adresse.", "pn_rep_err_long": "Das ist zu lang: höchstens {max} Zeichen.", "pn_rep_err": "Deine Meldung konnte nicht gesendet werden. Prüf deine Verbindung und versuch es noch einmal oder schreib an support@car2door.eu.", "pn_fb_p": "Sag uns, was dir gefällt, was fehlt oder was nicht funktioniert. Jede Nachricht liest eine Person aus dem Car2Door-Team. Du brauchst kein Konto.", "pn_fb_email": "Deine E-Mail-Adresse (optional: wenn du eine Antwort möchtest)", "pn_fb_done": "Danke! Wir haben dein Feedback erhalten. Eine Person aus unserem Team liest jede Nachricht und antwortet bei Bedarf, wenn du deine E-Mail-Adresse angegeben hast.", "pn_fb_again": "Weiteres Feedback senden", "pn_fb_err": "Dein Feedback konnte nicht gesendet werden. Prüf deine Verbindung und versuch es noch einmal.", "pn_delete_yes": "Ja, mein Konto löschen", "pn_deleting": "Wird gelöscht…", "pn_new": "Neuer Transport", "pn_trips": "Meine Transporte", "pn_profile": "Profil", "pn_account": "Konto", "pn_details": "Persönliche Daten", "pn_invoices": "Rechnungen", "pn_invite": "Einladungscode", "pn_invite_by": "Bis {date} hinzufügen", "pn_language": "Sprache", "pn_terms": "Nutzungsbedingungen", "pn_privacy": "Datenschutzerklärung", "pn_close": "Schließen", "pn_save": "Speichern", "pn_cancel": "Abbrechen", "pn_delete": "Konto löschen", "pn_delete_q": "Konto löschen?", "pn_delete_p": "Deine Daten, dein Foto und dein Support-Chat werden gelöscht, und du kannst dich mit diesem Konto nicht mehr anmelden. Frühere Transporte bleiben ohne deinen Namen in unseren Unterlagen, wie es das Gesetz für Rechnungen verlangt.", "pn_name": "Vollständiger Name", "pn_phone": "Telefon", "pn_bill_h": "Rechnungsdaten (optional)", "pn_bill_p": "Für geschäftliche Transporte: Deine Firma steht dann auf deinen Rechnungen.", "pn_bill_name": "Firmenname", "pn_bill_vat": "USt-IdNr.", "pn_bill_addr": "Rechnungsadresse", "pn_bill_addr_ph": "Straße, PLZ, Ort, Land", "pn_inv_none": "Deine Rechnungen erscheinen hier, sobald ein Transport abgeschlossen ist.", "bk_agree": "Ich habe die {terms} und die {privacy} gelesen und bin mit dem Preis und den Bedingungen einverstanden.", "pn_code_add": "Einladungscode hinzufügen", "pn_code_until": "Vom Transportunternehmen oder Freund, der dich eingeladen hat. Du kannst ihn bis {date} hinzufügen, vor deiner ersten Buchung.", "pn_code_short": "Einladungscodes haben 6 Buchstaben und Ziffern.", "pn_feedback": "Feedback und Vorschläge", "pn_fb_kind": "Worum geht es?", "pn_fb_suggestion": "Vorschlag", "pn_fb_problem": "Problem", "pn_fb_praise": "Lob", "pn_fb_other": "Sonstiges", "pn_fb_message": "Deine Nachricht", "pn_fb_message_ph": "Deine Idee, oder was wo nicht geklappt hat", "pn_fb_send": "Feedback senden", "pn_fb_err_message": "Schreib zuerst dein Feedback.", "pn_fb_err_long": "Das ist zu lang: höchstens {max} Zeichen.", "pn_fb_err_email": "Prüf die E-Mail-Adresse oder lass das Feld leer.", "ph_code": "Ländervorwahl", "ph_pick": "Vorwahl", "ph_first": "Wähle zuerst die Ländervorwahl.", "ph_invalid": "Prüfe die Nummer: Die Länge passt nicht zum Land ({country}).", "sr_title": "Noch kein Transportunternehmen", "sr_text": "Noch hat niemand deinen Transport übernommen. Wir suchen weiter bis {date}. Übernimmt ihn bis dahin niemand, endet die Buchung, ohne dass dir Kosten entstehen.", "sr_keeping": "Wir suchen weiter bis {date}. Übernimmt bis dahin niemand deinen Transport, endet die Buchung, ohne dass dir Kosten entstehen.", "sr_keep": "Weitersuchen", "sr_stop": "Suche beenden", "sr_stop_q": "Suche beenden und die Buchung stornieren?", "sr_stop_p": "Dein Transport wird storniert und du bekommst alles zurück, was du bezahlt hast.", "sr_stop_p_free": "Deine Buchung ist storniert. Deine Karte wurde nie belastet.", "sr_taken": "Ein Transportunternehmen hat deinen Transport gerade übernommen.", "sr_closed": "Dieser Transport wartet nicht mehr auf ein Transportunternehmen.", "wp_date": "Datum", "wp_time": "Uhrzeit", "wp_prev": "Voriger Monat", "wp_next": "Nächster Monat", "sz_car": "Auto", "sz_suv": "SUV", "sz_van": "Transporter", "f_size": "Größe", "f_when": "Abholbereit ab", "band_low": "Bis 15.000 €", "band_mid": "15.000 € – 50.000 €", "band_high": "Über 50.000 €", "o_saver": "Sparpreis", "o_standard": "Standard", "o_priority": "Priorität", "pn_join": "Transporteur werden", "pn_doc_terms": "Bedingungen für Kunden", "pn_doc_tterms": "Bedingungen für Transporteure", "pn_doc_privacy": "Datenschutzerklärung", "pn_doc_cookies": "Cookie-Richtlinie", "pn_doc_delete": "Konto löschen", "pn_report": "Inhalt melden", "or": "oder", "refusals": {"rate_limited": "Zu viele Versuche. Warte eine Weile und versuch es dann erneut.", "trip_in_progress": "Du hast einen laufenden Transport. Schließ ihn ab oder storniere ihn, bevor du dein Konto löschst.", "payout_due": "Eine Auszahlung an dich ist noch unterwegs (sie geht 48 Stunden nach der Lieferung raus). Du kannst dein Konto löschen, sobald sie bezahlt ist. Fragen? Schreib uns über Hilfe und Support.", "refund_due": "Eine Rückerstattung an dich läuft noch. Du kannst dein Konto löschen, sobald deine Rückerstattung erfolgt ist. Fragen? Schreib uns über Hilfe und Support.", "invoice_due": "Deine letzte Rechnung wird gerade noch erstellt. Versuch es in 15 Minuten noch einmal."}, "gate_q": {"en": "What language?", "ro": "Ce limbă preferi?", "pl": "Wybierz język", "bg": "На какъв език?", "hu": "Válassz nyelvet", "lt": "Kuria kalba?", "lv": "Kurā valodā?", "es": "¿Qué idioma prefieres?", "fr": "Quelle langue ?", "de": "Welche Sprache?", "nl": "Welke taal?", "pt": "Que idioma?"}}</script>
+<script type="application/json" id="dv-t">{"lang": "de", "home": "/", "acct_h": "Dein Konto", "back": "Zurück", "tab_login": "Anmelden", "tab_create": "Konto erstellen", "google": "Weiter mit Google", "apple": "Weiter mit Apple", "redirecting": "{provider} wird geöffnet …", "signing_in": "Du wirst angemeldet …", "f_name": "Vollständiger Name", "ph_name": "Vor- und Nachname", "f_email": "E-Mail", "ph_email": "du@beispiel.de", "hint": "Wir schicken dir einen Einmalcode per E-Mail. Kein Passwort nötig.", "send": "Anmeldecode senden", "sending": "Wird gesendet …", "code_h": "Schau in deine E-Mails", "code_sent": "Wir haben einen Code an {email} gesendet", "f_code": "Code aus deiner E-Mail", "verify": "Weiter", "verifying": "Wird geprüft …", "change_email": "E-Mail ändern", "resend": "Neuen Code senden", "resend_in": "Neuer Code in {s} s", "resent": "Wir haben dir einen neuen Code geschickt.", "legal": "Wenn du fortfährst, stimmst du den <a href=\"/terms\">Nutzungsbedingungen<\/a> und der <a href=\"/privacy\">Datenschutzerklärung<\/a> zu.", "welcome": "Du bist angemeldet", "signed_in_as": "Angemeldet als", "my_trips": "Meine Transporte", "logout": "Abmelden", "my_account": "Mein Konto", "err_email": "Gib eine gültige E-Mail-Adresse ein.", "err_name": "Bitte gib deinen Namen ein.", "err_code": "Gib den Code aus der E-Mail ein.", "err_bad_code": "Dieser Code ist falsch oder abgelaufen. Prüf die E-Mail oder fordere einen neuen Code an.", "no_account": "Mit dieser E-Mail gibt es noch kein Konto.", "create_instead": "Konto erstellen", "err_rate": "Zu viele Versuche. Warte eine Minute und versuch es dann erneut.", "err_wait": "Bitte warte kurz, bevor du einen neuen Code anforderst.", "err_network": "Car2Door ist nicht erreichbar. Prüf deine Verbindung und versuch es erneut.", "err_generic": "Etwas ist schiefgelaufen. Bitte versuch es erneut.", "err_oauth": "Die Anmeldung mit {provider} hat nicht geklappt. Versuch es erneut oder nutze deine E-Mail.", "err_oauth_off": "Die Anmeldung mit {provider} ist noch nicht verfügbar. Bitte nutze deine E-Mail.", "h_price": "Dein Preis", "checking": "Deine Strecke wird geprüft …", "err_from": "Gib die Abholadresse ein.", "err_to": "Gib die Lieferadresse ein.", "err_not_found": "Wir finden „{q}“ nicht. Versuch es mit Ort und Land oder einer PLZ.", "err_search": "Die Adresssuche antwortet gerade nicht. Versuch es gleich noch einmal.", "err_route": "Car2Door bucht Autotransporte innerhalb der EU.", "err_domestic": "Car2Door bucht noch keine Transporte innerhalb eines Landes. Transporte von einem Land in ein anderes sind möglich.", "err_short": "Transporte müssen mindestens {n} km lang sein.", "err_when": "Wähl einen Tag ab morgen.", "err_make": "Wähl die Marke aus der Liste.", "err_model": "Wähl das Modell aus der Liste.", "err_vin": "Gib die VIN (FIN) ein: 17 Buchstaben und Ziffern aus der Zulassungsbescheinigung (Feld E), kein I, O oder Q.", "err_vin_old": "Gib die VIN (FIN) ein oder, bei einem Auto von vor 1981, die Fahrgestellnummer: 5 bis 16 Buchstaben und Ziffern.", "vin_letters": "Nur Buchstaben und Ziffern, kein I, O oder Q", "vin_maker": "Herstellercode: {make}", "vin_other": "Dieser Herstellercode gehört nicht zu {make}. Ein Auto, das ein anderer Hersteller gebaut hat, trägt dessen Code: Prüf die VIN und die Marke und mach dann weiter.", "vin_check": "Prüf die VIN noch einmal: Ihre Prüfziffer stimmt nicht. Manche Hersteller verwenden keine, du kannst also weitermachen.", "vin_unknown": "Diesen Herstellercode kennen wir noch nicht. Die VIN wird bei der Abholung mit der Zulassungsbescheinigung abgeglichen.", "err_value": "Wähle den Wert des Autos: eine der Stufen oder, über 50.000 €, den Wert in ganzen Euro bis 250.000 €.", "err_plate": "Prüf das Kennzeichen oder lass es leer, wenn das Auto nicht zugelassen ist.", "err_photo": "Füg ein Foto vom ganzen Auto von der Seite hinzu.", "opt_h": "Wähl deine Option", "ow_saver": "Abholung innerhalb von 7 Tagen", "ow_standard": "Abholung innerhalb von 5 Tagen", "ow_priority": "Abholung an deinem Wunschtag oder am Folgetag", "deliver_by": "Geliefert bis {date}", "runs_not": "Fährt nicht", "km": "≈ {n} km", "total": "Gesamt", "go_book": "Weiter zur Buchung", "fine_print": "Als Nächstes: die Daten deines Autos und deine Karte. Belastet wird erst, wenn ein Transportunternehmen annimmt.", "s_car": "Auto", "s_paid": "Bezahlt", "s_price": "Preis", "s_voucher": "Einladungsgutschein", "retry": "Erneut versuchen", "here_row": "Mein Standort", "here_finding": "Dein Standort wird gesucht…", "here_denied": "Damit wir eintragen können, wo du bist, erlaube Car2Door den Standortzugriff. Oder gib die Adresse ein.", "here_blocked": "Dein Browser blockiert den Standort für diese Website. Erlaube ihn in den Website-Einstellungen oder gib die Adresse ein.", "here_vague": "Dein Standort ist gerade nicht genau genug. Versuch es gleich noch einmal oder gib die Adresse ein.", "here_timeout": "Die Suche nach deinem Standort hat zu lange gedauert. Versuch es noch einmal oder gib die Adresse ein.", "here_unavailable": "Dein Standort lässt sich gerade nicht finden. Versuch es noch einmal oder gib die Adresse ein.", "here_not_found": "An deinem Standort wurde keine Adresse gefunden. Gib die Adresse ein.", "here_not_served": "Du bist außerhalb der Länder, die Car2Door bedient. Gib die Adresse ein.", "clear_addr": "Adresse löschen", "route_closed_h": "Diese Strecke ist noch nicht offen", "route_closed": "Für diese Strecke nimmt Car2Door noch keine Buchungen an. Sie öffnet, sobald genug Transporteure sie fahren. Versuch einen anderen Abhol- oder Lieferort oder schau später wieder vorbei.", "country_closed": "Car2Door nimmt gerade keine Buchungen aus diesem oder in dieses Land an.", "err_quote": "Die Preise konnten nicht geladen werden. Prüf deine Verbindung und versuch es erneut.", "priced_now": "Die heutigen Preise für ein Auto wie deins. Den genauen Preis für dein Auto siehst du beim Buchen.", "book_trip": "Transport buchen", "trip_h": "Dein Transport", "up_h": "Anstehend", "past_h": "Vergangen", "none_h": "Noch keine Transporte", "none_p": "Transporte, die du buchst, erscheinen hier.", "err_trips": "Deine Transporte konnten nicht geladen werden. Prüf deine Verbindung und versuch es erneut.", "gone": "Wir finden diesen Transport nicht in deinem Konto.", "st_pending_payment": "Buchung nicht abgeschlossen", "st_bidding": "Transportunternehmen wird gesucht", "st_accepted": "Transportunternehmen zugewiesen", "st_en_route": "Auf dem Weg zur Abholung", "st_picked_up": "Unterwegs", "st_completed": "Geliefert", "st_cancelled": "Storniert", "t_note": "Dein Hinweis", "t_window": "Abholfenster", "t_deliver": "Geliefert bis", "t_to_charge": "Abgebucht, sobald ein Unternehmen annimmt", "t_to_confirm": "Zahlung zu bestätigen", "t_not_charged": "Nichts abgebucht", "n_bidding": "Dein Transport wird jetzt Transportunternehmen auf deiner Strecke angeboten.", "n_card_later": "Deine Karte wird erst belastet, wenn eines davon annimmt.", "n_pending": "Diese Buchung ist noch nicht abgeschlossen. Schließ sie in der App Car2Door oder auf car2door.eu/book ab: Es wird nichts abgebucht, bis ein Transportunternehmen annimmt.", "n_held": "Ein Transportunternehmen hat angenommen, und deine Bank bittet dich, die Zahlung zu bestätigen. Bestätige sie bis {time} in der App Car2Door oder auf car2door.eu/book, sonst wird der Transport kostenlos storniert.", "n_locked": "Daten und Telefonnummer des Transportunternehmens erscheinen am {date}, 24 Stunden vor der Abholung.", "tr_h": "Dein Transportunternehmen", "slots": "{n} Stellplätze", "call": "{phone} anrufen", "pc_h": "Übergabecode", "pc_p": "Nenn dem Fahrer diesen Code bei der Lieferung, nachdem du das Auto geprüft hast.", "t_carrier": "Gebucht über Car2Door.", "t_carried_by": "Durchgeführt von {company}.", "cancel": "Transport stornieren", "cancel_q": "Transport stornieren? Du bekommst den vollen Betrag zurück.", "cancel_q_free": "Diese Buchung stornieren? Es wurde noch nichts abgebucht, die Stornierung kostet dich also nichts.", "cancel_yes": "Ja, stornieren", "cancel_no": "Transport behalten", "cancelling": "Wird storniert …", "err_cancel": "Ein Transportunternehmen hat diesen Transport schon angenommen. Schreib an support@car2door.eu, um ihn zu stornieren.", "cx_free": "Kostenlos stornierbar bis {date}.", "cx_free_any": "Kostenlos stornierbar.", "cx_part": "Wenn du jetzt stornierst, bekommst du {pct} ({amount}) zurück.", "cx_none": "Wenn du jetzt stornierst, bekommst du nichts zurück.", "cx_then_part": "Ab {date} sind es {pct}.", "cx_then_none": "Ab {date} gibt es keine Erstattung mehr.", "cx_q_part": "Transport stornieren? Du bekommst {amount} zurück, {pct} deiner Zahlung.", "cx_q_none": "Transport stornieren? Für eine Erstattung ist es zu kurz vor der Abholung, du bekommst also nichts zurück.", "cx_late": "Transportunternehmen verspätet oder kommt nicht? Schreib stattdessen an support@car2door.eu.", "n_cx_none": "Du hast diesen Transport kurz vor der Abholung storniert, daher wurde deine Zahlung nicht erstattet.", "n_why_none": "Kein Transportunternehmen hat diesen Transport rechtzeitig übernommen.", "n_why_you": "Du hast diesen Transport storniert.", "n_why_in_time": "Du hast diesen Transport rechtzeitig storniert, daher fällt keine Stornogebühr an.", "n_why_fee": "Du hast diesen Transport weniger als 48 Stunden vor der Abholung storniert, daher wurden {fee} seines Preises einbehalten.", "n_why_unpaid": "Diese Buchung wurde storniert, weil die Zahlung nicht rechtzeitig eingegangen ist.", "n_why_payment_failed": "Dieser Transport wurde storniert, weil die Zahlung nach der Annahme durch ein Transportunternehmen nicht rechtzeitig bestätigt wurde. Es wurde nichts abgebucht.", "n_why_no_paper": "Diese Buchung wurde storniert, weil die Zulassungsbescheinigung nicht rechtzeitig kam. Es wurde nichts abgebucht.", "n_why_checked": "Dieser Transport wurde storniert, nachdem Car2Door ihn geprüft hat.", "n_why_fraud": "Dieser Transport wurde storniert: Deine Bank hat die Kartenzahlung gemeldet.", "n_why_disputed": "Dieser Transport wurde storniert, weil seine Zahlung bei deiner Bank angefochten wird. Deine Bank entscheidet, ob du Geld zurückbekommst.", "n_why_no_show": "Das Auto war bei der Abholung nicht da, daher wurde dieser Transport storniert und deine Zahlung wird nicht erstattet.", "n_why_carrier_no_show": "Car2Door hat diesen Transport storniert, weil das Transportunternehmen nicht gekommen ist. Du bekommst deine ganze Zahlung zurück.", "n_why_staff": "Car2Door hat diesen Transport storniert. Du bekommst deine ganze Zahlung zurück.", "n_why_other": "Dieser Transport wurde storniert.", "n_ref_full": "Deine Zahlung von {amount} wurde vollständig auf die Karte oder das Konto erstattet, mit dem du bezahlt hast. Bis sie ankommt, kann es 5 bis 10 Werktage dauern.", "n_ref_part": "{amount} wurde auf die Karte oder das Konto erstattet, mit dem du bezahlt hast. Bis der Betrag ankommt, kann es 5 bis 10 Werktage dauern.", "n_ref_pending": "Deine Erstattung wird gerade ausgeführt. Das Geld geht auf die Karte oder das Konto zurück, mit dem du bezahlt hast, das kann 5 bis 10 Werktage dauern.", "n_ref_retrying": "Deine Erstattung hat noch nicht geklappt. Car2Door versucht es automatisch erneut, du musst nichts tun.", "n_ref_failed": "Deine Erstattung konnte nicht automatisch ausgeführt werden. Der Car2Door-Support kümmert sich darum. Fragen? Schreib an support@car2door.eu.", "err_cx_changed": "Was du beim Stornieren zurückbekommst, hat sich gerade geändert. Prüf es und versuch es erneut.", "err_cx_started": "Dieser Transport kann hier nicht mehr storniert werden. Schreib an support@car2door.eu.", "report": "Problem melden", "report_until": "Stimmt etwas mit diesem Transport nicht? Du kannst es bis {date} melden.", "report_ph": "Was ist passiert?", "report_send": "Meldung senden", "report_done": "Du hast ein Problem mit diesem Transport gemeldet. Wir melden uns deswegen bei dir.", "err_report_empty": "Erzähl uns, was passiert ist.", "err_report_closed": "Die Frist, um ein Problem mit diesem Transport zu melden, ist abgelaufen. Schreib an support@car2door.eu.", "invoices_h": "Rechnungen", "invoice_trip": "Rechnung {n}", "invoice_credit": "Rechnungskorrektur {n}", "inv_by": "{name} hat dich zu Car2Door eingeladen", "inv_partner": "Ein Car2Door-Transportunternehmen", "inv_choose": "Wie möchtest du Car2Door nutzen?", "inv_travel": "Ich möchte ein Auto verschicken", "inv_travel_s": "25 € Rabatt auf deinen ersten Transport ab 300 €", "inv_driver": "Ich bin Transporteur", "inv_driver_s": "Bezahlte Autotransporte auf deiner Strecke bekommen", "inv_saved": "Eingeladen von {name}", "inv_code": "Einladungscode {code}", "inv_saved_p": "Deine Einladung wird deinem Konto hinzugefügt, wenn du dich anmeldest oder registrierst.", "inv_drv_h": "Hol dir die App Car2Door Pro", "inv_drv_ios": "Wenn du auf den Button tippst, kopieren wir deinen Einladungscode {code}. Tippe in der App auf dem Registrierungsbildschirm auf „Einsetzen“.", "inv_drv_android": "Dein Einladungscode {code} kommt beim Download automatisch mit.", "inv_drv_btn": "Car2Door Pro laden", "inv_drv_web": "Oder auf der Website bewerben", "inv_ok": "Die Einladung ist jetzt in deinem Konto.", "inv_h": "Einladungscode", "inv_bad": "Dieser Einladungslink ist nicht mehr gültig. Du kannst Car2Door trotzdem wie gewohnt nutzen.", "inv_too_late": "Einladungscodes kannst du nur in den ersten 7 Tagen nach deiner Registrierung hinzufügen.", "inv_already": "Dein Konto hat schon eine Einladung.", "inv_booked": "Einladungscodes kannst du nur vor deiner ersten Buchung hinzufügen.", "inv_own": "Du kannst deinen eigenen Einladungscode nicht verwenden.", "inv_close": "Schließen", "inv_join_done": "Registriere dich in der App Car2Door Pro mit {email}, dann wird deine Einladung automatisch hinzugefügt.", "pn_help": "Hilfe", "pn_site": "Website", "pn_saved": "Gespeichert.", "pn_help_more": "Noch Fragen? Schreib uns an {email}. Rechtswidrige Inhalte melden: {report}. Behörden: {legal} (auf Englisch oder Niederländisch).", "pn_rep_p": "Sag uns Bescheid, wenn du bei Car2Door Inhalte findest, die du für rechtswidrig hältst oder die gegen unsere Bedingungen verstoßen: eine Chatnachricht, eine Bewertung, eine Unternehmensseite, ein Profilfoto oder -name oder etwas auf dieser Website. Du brauchst kein Konto.", "pn_rep_reason": "Warum meldest du es?", "pn_rep_illegal": "Es ist rechtswidrig", "pn_rep_terms": "Es verstößt gegen die Bedingungen von Car2Door", "pn_rep_where": "Wo ist es?", "pn_rep_where_ph": "Ein Link oder wer es geschrieben hat, bei welchem Transport und wann", "pn_rep_details": "Erklär, warum", "pn_rep_law": "Gegen welches Gesetz verstößt es? (optional)", "pn_rep_name": "Dein Name (optional)", "pn_rep_email": "Deine E-Mail-Adresse (optional: für eine Bestätigung und unsere Entscheidung)", "pn_rep_faith": "Ich bin in gutem Glauben überzeugt, dass meine Meldung richtig und vollständig ist.", "pn_rep_send": "Meldung senden", "pn_rep_sending": "Wird gesendet…", "pn_rep_done": "Danke. Wir haben deine Meldung erhalten und prüfen sie. Wenn du deine E-Mail-Adresse angegeben hast, schicken wir dir eine Bestätigung und unsere Entscheidung.", "pn_rep_again": "Etwas anderes melden", "pn_rep_112": "Ist gerade jemand in Gefahr? Ruf zuerst die 112 an.", "pn_rep_err_where": "Gib an, wo der Inhalt ist.", "pn_rep_err_details": "Erklär, warum du es meldest.", "pn_rep_err_faith": "Setz das Häkchen, um zu bestätigen, dass du in gutem Glauben meldest.", "pn_rep_err_email": "Prüf deine E-Mail-Adresse.", "pn_rep_err_long": "Das ist zu lang: höchstens {max} Zeichen.", "pn_rep_err": "Deine Meldung konnte nicht gesendet werden. Prüf deine Verbindung und versuch es noch einmal oder schreib an support@car2door.eu.", "pn_fb_p": "Sag uns, was dir gefällt, was fehlt oder was nicht funktioniert. Jede Nachricht liest eine Person aus dem Car2Door-Team. Du brauchst kein Konto.", "pn_fb_email": "Deine E-Mail-Adresse (optional: wenn du eine Antwort möchtest)", "pn_fb_done": "Danke! Wir haben dein Feedback erhalten. Eine Person aus unserem Team liest jede Nachricht und antwortet bei Bedarf, wenn du deine E-Mail-Adresse angegeben hast.", "pn_fb_again": "Weiteres Feedback senden", "pn_fb_err": "Dein Feedback konnte nicht gesendet werden. Prüf deine Verbindung und versuch es noch einmal.", "pn_delete_yes": "Ja, mein Konto löschen", "pn_deleting": "Wird gelöscht…", "pn_new": "Neuer Transport", "pn_trips": "Meine Transporte", "pn_profile": "Profil", "pn_account": "Konto", "pn_details": "Persönliche Daten", "pn_invoices": "Rechnungen", "pn_invite": "Einladungscode", "pn_invite_by": "Bis {date} hinzufügen", "pn_language": "Sprache", "pn_terms": "Nutzungsbedingungen", "pn_privacy": "Datenschutzerklärung", "pn_close": "Schließen", "pn_save": "Speichern", "pn_cancel": "Abbrechen", "pn_delete": "Konto löschen", "pn_delete_q": "Konto löschen?", "pn_delete_p": "Dein Konto wird sofort eingefroren und nach 28 Tagen gelöscht. Bis dahin kannst du es über die E-Mail, die wir dir schicken, rückgängig machen oder es sofort löschen. Rechnungen und Steuerangaben bleiben 7 Jahre, und der Bericht zu einem Transport, solange noch ein Anspruch gestellt werden kann, wie es das Gesetz verlangt.", "pn_name": "Vollständiger Name", "pn_phone": "Telefon", "pn_bill_h": "Rechnungsdaten (optional)", "pn_bill_p": "Für geschäftliche Transporte: Deine Firma steht dann auf deinen Rechnungen.", "pn_bill_name": "Firmenname", "pn_bill_vat": "USt-IdNr.", "pn_bill_addr": "Rechnungsadresse", "pn_bill_addr_ph": "Straße, PLZ, Ort, Land", "pn_inv_none": "Deine Rechnungen erscheinen hier, sobald ein Transport abgeschlossen ist.", "bk_agree": "Ich habe die {terms} und die {privacy} gelesen und bin mit dem Preis und den Bedingungen einverstanden.", "pn_code_add": "Einladungscode hinzufügen", "pn_code_until": "Vom Transportunternehmen oder Freund, der dich eingeladen hat. Du kannst ihn bis {date} hinzufügen, vor deiner ersten Buchung.", "pn_code_short": "Einladungscodes haben 6 Buchstaben und Ziffern.", "pn_feedback": "Feedback und Vorschläge", "pn_fb_kind": "Worum geht es?", "pn_fb_suggestion": "Vorschlag", "pn_fb_problem": "Problem", "pn_fb_praise": "Lob", "pn_fb_other": "Sonstiges", "pn_fb_message": "Deine Nachricht", "pn_fb_message_ph": "Deine Idee, oder was wo nicht geklappt hat", "pn_fb_send": "Feedback senden", "pn_fb_err_message": "Schreib zuerst dein Feedback.", "pn_fb_err_long": "Das ist zu lang: höchstens {max} Zeichen.", "pn_fb_err_email": "Prüf die E-Mail-Adresse oder lass das Feld leer.", "ph_code": "Ländervorwahl", "ph_pick": "Vorwahl", "ph_first": "Wähle zuerst die Ländervorwahl.", "ph_invalid": "Prüfe die Nummer: Die Länge passt nicht zum Land ({country}).", "sr_title": "Noch kein Transportunternehmen", "sr_text": "Noch hat niemand deinen Transport übernommen. Wir suchen weiter bis {date}. Übernimmt ihn bis dahin niemand, endet die Buchung, ohne dass dir Kosten entstehen.", "sr_keeping": "Wir suchen weiter bis {date}. Übernimmt bis dahin niemand deinen Transport, endet die Buchung, ohne dass dir Kosten entstehen.", "sr_keep": "Weitersuchen", "sr_stop": "Suche beenden", "sr_stop_q": "Suche beenden und die Buchung stornieren?", "sr_stop_p": "Dein Transport wird storniert und du bekommst alles zurück, was du bezahlt hast.", "sr_stop_p_free": "Deine Buchung ist storniert. Deine Karte wurde nie belastet.", "sr_taken": "Ein Transportunternehmen hat deinen Transport gerade übernommen.", "sr_closed": "Dieser Transport wartet nicht mehr auf ein Transportunternehmen.", "wp_date": "Datum", "wp_time": "Uhrzeit", "wp_prev": "Voriger Monat", "wp_next": "Nächster Monat", "sz_car": "Auto", "sz_suv": "SUV", "sz_van": "Transporter", "f_size": "Größe", "f_when": "Abholbereit ab", "band_low": "Bis 15.000 €", "band_mid": "15.000 € – 50.000 €", "band_high": "Über 50.000 €", "o_saver": "Sparpreis", "o_standard": "Standard", "o_priority": "Priorität", "pn_join": "Transporteur werden", "pn_doc_terms": "Bedingungen für Kunden", "pn_doc_tterms": "Bedingungen für Transporteure", "pn_doc_privacy": "Datenschutzerklärung", "pn_doc_cookies": "Cookie-Richtlinie", "pn_doc_delete": "Konto löschen", "pn_report": "Inhalt melden", "or": "oder", "refusals": {"rate_limited": "Zu viele Versuche. Warte eine Weile und versuch es dann erneut.", "trip_in_progress": "Schließ zuerst deinen angenommenen Transport ab oder gib ihn zurück. Danach kannst du dein Konto löschen.", "payout_due": "Eine Auszahlung an dich ist noch unterwegs (sie geht 48 Stunden nach der Lieferung raus). Du kannst dein Konto löschen, sobald sie bezahlt ist. Fragen? Schreib uns über Hilfe und Support.", "refund_due": "Eine Rückerstattung an dich läuft noch. Du kannst dein Konto löschen, sobald deine Rückerstattung erfolgt ist. Fragen? Schreib uns über Hilfe und Support.", "invoice_due": "Deine letzte Rechnung wird gerade noch erstellt. Versuch es in 15 Minuten noch einmal."}, "gate_q": {"en": "What language?", "ro": "Ce limbă preferi?", "pl": "Wybierz język", "bg": "На какъв език?", "hu": "Válassz nyelvet", "lt": "Kuria kalba?", "lv": "Kurā valodā?"}}</script>
 </body>
 </html>

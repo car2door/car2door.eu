@@ -61,9 +61,11 @@ try {
 (function () {
   'use strict';
 
-  var SB = '';
-  var KEY = ''; // the project's publishable key, public by design, the same as the apps'
-  // No backend yet: preview.js answers every call (made-up data, nothing leaves the browser).
+  var SB = 'https://krscknuzrqhjfiryvqkc.supabase.co';
+  var KEY = 'sb_publishable_fU_PwLGeh9IZxvl0g_ILEg_0hJo_ri-'; // the project's publishable key, public by design, the same as the apps'
+  // The site's backend (site/src/config.json supabase_url): production's since b8d. Without one,
+  // preview.js answers every call (made-up data, nothing leaves the browser); build.py then puts it
+  // in every page.
   var PREVIEW = !SB && !!window.C2dPreview;
   if (!SB) SB = 'https://preview.invalid';
   // The site keeps no session of its own: the one sign-in is /book's (BOOK_STORE below, read only).
@@ -98,7 +100,7 @@ try {
   };
   var EASE = 'cubic-bezier(.22, .8, .24, 1)';
   // The other eleven languages, each at /<code>/ (D6, D1a; site/src/build.py LANGS, site/src/check.mjs compares).
-  var LANGS = 'ro|pl|bg|hu|lt|lv|es|fr|de|nl|pt';
+  var LANGS = 'ro|pl|bg|hu|lt|lv';
   // Phones: the one-column layout (landing.css). The home page opens on Log in / Create account
   // there. The Transporters buttons go to the driver app's store page instead of /join on phones
   // and on touch screens too short for the one-column layout (a big phone turned sideways).
@@ -440,7 +442,7 @@ try {
     { cc: 'UA', dial: '380', min: 9, max: 9 },
     { cc: 'XK', dial: '383', min: 8, max: 9 }
   ];
-  var LANGUAGE_COUNTRY = { ro: 'RO', pl: 'PL', bg: 'BG', hu: 'HU', es: 'ES', fr: 'FR', de: 'DE', nl: 'NL', pt: 'PT' };
+  var LANGUAGE_COUNTRY = { ro: 'RO', pl: 'PL', bg: 'BG', hu: 'HU', fr: 'FR', de: 'DE', nl: 'NL' };
   function dialCode(cc) {
     for (var i = 0; i < DIAL_CODES.length; i++) if (DIAL_CODES[i].cc === cc) return DIAL_CODES[i];
     return undefined;

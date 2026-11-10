@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://krscknuzrqhjfiryvqkc.supabase.co https://*.stripe.com https://*.link.com; font-src 'self'; connect-src 'self' https://krscknuzrqhjfiryvqkc.supabase.co wss://krscknuzrqhjfiryvqkc.supabase.co https://api.stripe.com https://r.stripe.com https://link.com https://*.link.com https://photon.komoot.io https://nominatim.openstreetmap.org; frame-src 'self' https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://m.stripe.network https://link.com https://*.link.com https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>RO e-Factura · Car2Door</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: #050B18; color: #E2E8F0; font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; -webkit-font-smoothing: antialiased; }
+main { max-width: 440px; margin: 0 auto; padding: 40px 16px 48px; display: grid; gap: 16px; }
+.head { display: grid; justify-items: center; gap: 8px; margin-bottom: 8px; color: #A7B4C8; font-size: 14px; }
+.logo { width: 56px; height: 56px; border-radius: 16px; background: #FF6A13; box-shadow: 0 0 0 1px #ffffff22; overflow: hidden; }
+.logo svg { display: block; width: 100%; height: 100%; }
+.card { padding: 22px 22px 24px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 28px 14px 28px 14px; background: #16203A; }
+.card h1 { margin: 14px 0 8px; font-size: 21px; line-height: 1.3; color: #fff; }
+.card p { margin: 0; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px 3px 8px; border-radius: 999px; font-size: 14px; font-weight: 800; }
+.badge svg { width: 18px; height: 18px; }
+.ok .badge { background: rgba(18, 161, 80, .22); color: #8BE0AE; }
+.not .badge { background: rgba(255, 90, 90, .18); color: #FFA8A8; }
+.notice { display: flex; gap: 14px; margin: 0; padding: 16px 18px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 14px; background: #1E2433; font-size: 15.5px; }
+.notice svg { flex: none; width: 22px; height: 22px; margin-top: 2px; color: #A7B4C8; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="head">
+    <span class="logo"><svg viewBox="0 0 1024 1024" aria-hidden="true">
+      <circle cx="650" cy="370" r="190" fill="#0E1726"/>
+      <path d="M580 494V344a70 70 0 0 1 140 0v150z" fill="#FF6A13"/>
+      <circle cx="686.4" cy="401.6" r="11.9" fill="#0E1726"/>
+      <circle cx="355" cy="671" r="26" fill="#0E1726"/><circle cx="415" cy="610" r="26" fill="#0E1726"/><circle cx="476" cy="548" r="26" fill="#0E1726"/>
+      <circle cx="260" cy="768" r="54" fill="#FF6A13" stroke="#0E1726" stroke-width="44"/>
+    </svg></span>
+    <span>car2door.eu</span>
+  </div>
+  <section class="card ok" id="ok" hidden>
+    <span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#16203A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>RO e-Factura</span>
+    <h1>A Car2Door engedélyezve van</h1>
+    <p>Az ANAF engedi, hogy a Car2Door feltöltse a céged nevében kiállított számlákat. Bezárhatod ezt az oldalt: a Car2Door Pro egy percen belül megjeleníti.</p>
+  </section>
+  <p class="notice" id="privacy" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>A Car2Door titkosítva tárolja az ANAF-bejelentkezést, és csak a nevedben kiállított számlákhoz használja: feltöltésükhöz, az ANAF válaszának olvasásához és az aláírt másolat megőrzéséhez. Bármikor visszavonhatod az SPV-ben.</span></p>
+  <section class="card not" id="not" hidden>
+    <span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="16.4" r="1.3" fill="currentColor"/></svg>RO e-Factura</span>
+    <h1>A Car2Door még nincs engedélyezve</h1>
+    <p data-why="off" hidden>A Car2Door RO e-Factura szolgáltatása jelenleg nincs nyitva, ezért semmi nem lett mentve. Próbáld újra később a Car2Door Pro-ból küldött új linkkel.</p>
+    <p data-why="expired" hidden>Ez a link lejárt, vagy már használták. Nyisd meg a RO e-Factura részt a Car2Door Pro-ban, és küldj magadnak újat.</p>
+    <p data-why="denied" hidden>Az ANAF-os bejelentkezés megszakadt. Nyisd meg újra a linket a Car2Door Pro-ból, amikor készen állsz.</p>
+    <p data-why="rights" hidden>A bejelentkezett személynek nincs SPV-jogosultsága a cég CIF-jéhez. Kérd meg a cég törvényes képviselőjét, hogy jelentkezzen be, vagy adjon jogot a személynek az SPV-ben, majd küldj új linket a Car2Door Pro-ból.</p>
+    <p data-why="failed" hidden>Az ANAF nem érhető el, vagy hibával válaszolt, ezért semmi nem lett mentve. Próbáld újra néhány perc múlva, a Car2Door Pro-ból küldött új linkkel.</p>
+  </section>
+</main>
+<script src="/efactura-done.js"></script>
+</body>
+</html>
