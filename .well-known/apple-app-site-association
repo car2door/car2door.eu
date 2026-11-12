@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["W6TTC4LBQY.eu.car2door.app"],
+        "components": [
+          { "/": "/r/*", "comment": "Invite links (https://car2door.eu/r/CODE) open the Car2Door app's invite page" }
+        ]
+      }
+    ]
+  }
+}
