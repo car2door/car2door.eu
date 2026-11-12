@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "eu.car2door.app",
+      "sha256_cert_fingerprints": [
+        "61:6F:7B:EF:FA:12:77:BC:89:6B:CC:7A:14:F1:9B:59:37:CD:54:A2:FF:8C:A9:C8:4F:25:7C:F7:F9:D9:53:79",
+        "B6:1A:68:0A:AA:ED:5A:6C:63:14:F5:DB:69:1E:0A:8A:4B:88:AE:6E:74:AC:9E:EE:C8:BD:50:E0:57:47:97:9B"
+      ]
+    }
+  }
+]
