@@ -2,7 +2,17 @@
 (function (p, q) {
   var m = /^\/(?:(ro|pl|bg|hu|lt|lv)\/)?(?:r\/([A-Za-z0-9]{4,12})|invite(?:\.html)?)\/?$/.exec(p), lang = m && m[1],
     code = m && (m[2] || (/[?&]r=([A-Za-z0-9]{4,12})(?:&|$)/.exec(q) || [])[1]);
-  if (!m) { if (!/^\/book(?:\/|$)/.test(p)) location.replace('/'); return; }
+  if (!m) {
+    if (!/^\/book(?:\/|$)/.test(p)) location.replace('/');
+    // A token page (a handover link, the roadside copy, the deletion undo link): no referrer at all,
+    // set before the app loads, so the token in the path is never sent on (s13 L5).
+    else if (/^\/book\/(?:h|c|keep)\/[0-9a-f]{64}(?:[\/?#]|$)/i.test(p)) {
+      var ref = document.querySelector('meta[name=referrer]') || document.head.appendChild(document.createElement('meta'));
+      ref.name = 'referrer';
+      ref.content = 'no-referrer';
+    }
+    return;
+  }
   try { var kept = localStorage.getItem('car2door.language'); if (/^(en|ro|pl|bg|hu|lt|lv)$/.test(kept)) lang = kept; } catch (e) {}
   for (var ls = navigator.languages || [navigator.language || ''], i = 0; !lang && i < ls.length; i++) {
     var c = String(ls[i]).slice(0, 2).toLowerCase();

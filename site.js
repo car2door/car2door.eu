@@ -8,7 +8,7 @@
  * panels instead (below); opened directly, they are pages as before.
  *
  * Panels, like the client app: the app's menu (New transport, My transports, Profile) floats at
- * the bottom, and My transports, Profile, Join Transporters, the legal pages and Help slide in as
+ * the bottom, and Join Transporters, the legal pages and Help slide in as
  * a panel over the page (on computers a frame on the right, on phones the whole screen under the
  * header); their steps slide sideways inside it. The panel is the account card: Join
  * Transporters (#join), the legal pages (#terms, ...) and Help. The one sign-in is the client
@@ -74,7 +74,7 @@ try {
   // which each load deletes. Never the project's key, whatever supabase_url says: that one is
   // /book's, and deleting it would sign every visitor out of /book (check.mjs §10).
   var STORE = 'sb-preview-auth-token';
-  var NAME = 'car2door-name', DRAFT = 'car2door-join-draft';
+  var NAME = 'car2door-name', DRAFT = 'car2door-join-draft', DRAFT_AT = 'car2door-join-draft-at', DRAFT_DAYS = 7;
   var REF = 'car2door-referral'; // a Share & Earn invite code, same key as the apps
   // Share & Earn on the site (E14.1: off). build.py writes it from its own REFERRALS on every build.
   var REFERRALS = false;
@@ -94,9 +94,9 @@ try {
   // name@domain.tld, with no empty parts (no '..', no dot at either end).
   var EMAIL_RE = /^[^@\s.]+(?:\.[^@\s.]+)*@[^@\s.]+(?:\.[^@\s.]+)+$/;
   // The longest text the database takes in each column the forms write, so nobody types past it:
-  // profiles (Personal details) and transporter_applications (Join Transporters), as the apps.
+  // profiles (Create account's name) and transporter_applications (Join Transporters), as the apps.
   var TEXT_MAX = {
-    full_name: 120, phone: 30, billing_name: 200, billing_vat_number: 40, billing_address: 300,
+    full_name: 120, phone: 30,
     company_name: 200, reg_number: 40, vat_number: 40, email: 200
   };
   var EASE = 'cubic-bezier(.22, .8, .24, 1)';
@@ -126,13 +126,6 @@ try {
     });
   }
   function fill(s, v) { return String(s || '').replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }); }
-  // The Call link for a phone someone else typed, as the apps build it (telLink in
-  // src/lib/contact-links.ts; scripts/app-tests/contact-links.test.mjs compares them): the digits
-  // only, after a + when one comes before the first digit; '' when there is nothing to call.
-  function telHref(phone) {
-    var digits = String(phone).replace(/\D/g, '');
-    return digits ? 'tel:' + (/^\D*\+/.test(phone) ? '+' : '') + digits : '';
-  }
   var store = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
@@ -244,114 +237,22 @@ try {
     b.onfinish = end;
   }
 
-  // ---------------------------------------------------------------- money and times
+  // ---------------------------------------------------------------- numbers and countries
 
-  // Euros, dates and countries the way the page's language writes them.
+  // Numbers and countries the way the page's language writes them.
   function locale(lang) { return lang === 'en' ? 'en-GB' : lang === 'pt' ? 'pt-PT' : lang; }
   function numText(n, lang) {
     try { return new Intl.NumberFormat(locale(lang || T.lang), { maximumFractionDigits: 1 }).format(n); } catch (e) { return String(n); }
   }
-  function money(cents, lang) {
-    var f = cents % 100 ? 2 : 0;
-    try {
-      return new Intl.NumberFormat(locale(lang), { style: 'currency', currency: 'EUR', currencyDisplay: 'narrowSymbol', minimumFractionDigits: f, maximumFractionDigits: f }).format(cents / 100);
-    } catch (e) { return '€' + (cents / 100).toFixed(f); }
-  }
-
-  // Times. A pickup is entered and shown on the pickup's own clock, as in the apps
-  // (src/lib/format.ts): 08:00 in Bucharest is 08:00 in Bucharest, also for a visitor in Berlin,
-  // with " (GMT+3)" after it when the visitor's clock differs then. The zones and their clocks
-  // are the apps' own: site/zones.js (window.DvZones), built from
-  // supabase/functions/_shared/zones.ts by scripts/make-site-zones.mjs and loaded before this
-  // script. Other moments (until when a problem can be reported, when a cancellation gets
-  // dearer) are on the visitor's own clock. Only clockText writes a moment down
-  // (scripts/check-time-zones.mjs).
-  var Z = window.DvZones || null; // missing only if zones.js didn't load: pickups then go by the visitor's clock
-  var DATE_TIME = { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' };
-  var TIME = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' };
-  // A moment in the page's language, on a zone's clock or (zone null) on the visitor's own.
-  function clockText(t, zone, parts, lang) {
-    if (zone && Z) return Z.wallText(Z.wallAt(zone, t), parts, locale(lang));
-    try {
-      return new Intl.DateTimeFormat(locale(lang), Object.assign({}, parts, { timeZone: undefined })).format(t);
-    } catch (e) { return t.toISOString().slice(0, 16).replace('T', ' ') + ' UTC'; }
-  }
-  function dateText(t, lang) { return clockText(t, null, DATE_TIME, lang); }
-  function tripZoneOf(o) { return Z ? o.pickup_tz || Z.tripZone(o.pickup_country) : null; }
-  // A pickup on its own clock, "Mon 2 Nov, 07:30", and a Book-ahead pickup's 2-hour window from
-  // the time chosen (as in the apps: PICKUP_WINDOW_HOURS in src/lib/format.ts),
-  // "Mon 2 Nov, 07:30–09:30"; " (GMT+3)" after it when the visitor's clock differs.
-  var WINDOW_MS = 2 * 3600e3;
-  function pickupText(from, until, zone, lang) {
-    return clockText(from, zone, DATE_TIME, lang) + (until ? '–' + clockText(until, zone, TIME, lang) : '')
-      + (zone && Z ? Z.zoneNote(from, zone) : '');
-  }
-  // A day on a zone's clock (the visitor's without one): "Thu 12 Nov".
-  var PICKUP_DAY = { weekday: 'short', day: 'numeric', month: 'short' };
-  function dayText(t, zone, lang) { return clockText(t, zone, PICKUP_DAY, lang); }
   function countryName(cc, lang) {
     try { return new Intl.DisplayNames([locale(lang)], { type: 'region' }).of(cc) || cc; } catch (e) { return cc; }
   }
 
-  // ---------------------------------------------------------------- the project's functions
-
-  // A cancellation function that did not run at all (not deployed: 404; did not start: a 5xx
-  // without the function's own { error }) can't report itself: the page tells the Admin app,
-  // once per kind, with nothing about the visitor (report_function_failure).
-  var fnFailures = {};
-  function reportFnFailure(name, status, j) {
-    if (name !== 'cancel-order') return;
-    if (j.error || !(status === 404 || status >= 500)) return;
-    var code = typeof j.code === 'string' ? j.code : null, key = name + status + code;
-    if (fnFailures[key]) return;
-    fnFailures[key] = 1;
-    sbFetch(SB + '/rest/v1/rpc/report_function_failure', {
-      method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_app: 'website', p_platform: 'web', p_version: null, p_function: name, p_status: status, p_code: code })
-    }).catch(function () {});
-  }
-
-  // POST to one of the project's edge functions as the signed-in visitor.
-  function callFn(name, body, token) {
-    return sbFetch(SB + '/functions/v1/' + name, {
-      method: 'POST', body: JSON.stringify(body),
-      headers: { apikey: KEY, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }
-    }).then(function (r) {
-      return r.text().then(function (txt) {
-        var j = {};
-        try { j = txt ? JSON.parse(txt) : {}; } catch (e) {}
-        if (r.ok) return j;
-        reportFnFailure(name, r.status, j);
-        var e = new Error(j.error || 'HTTP ' + r.status);
-        e.status = r.status;
-        e.code = j.code;
-        e.params = j.params;
-        throw e;
-      });
-    });
-  }
-  function busyBtn(btn, on, label) {
-    if (on) {
-      if (btn._label == null) btn._label = btn.textContent;
-      btn.disabled = true; btn.classList.add('busy');
-      if (label) btn.textContent = label;
-    } else if (btn._label != null) {
-      btn.disabled = false; btn.classList.remove('busy');
-      btn.textContent = btn._label; btn._label = null;
-    }
-  }
-
   // ---------------------------------------------------------------- booking card (home)
 
-  // Icons the account card, My transports and the invite panel share.
+  // Icons the account card and the invite panel share.
   var IC = {
-    cal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
-    car: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15.5v-3l1.6-4.2A2 2 0 0 1 7.5 7h9a2 2 0 0 1 1.9 1.3l1.6 4.2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM4.5 12.5h15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="7.8" cy="16.6" r="1.7" fill="currentColor"/><circle cx="16.2" cy="16.6" r="1.7" fill="currentColor"/></svg>',
-    km: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c3-1 3-6 7-7s4-6 7-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-dasharray="2.2 3"/><circle cx="5" cy="19" r="2" fill="currentColor"/><circle cx="19" cy="5" r="2" fill="currentColor"/></svg>',
-    lock: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>',
     ok: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12.5 4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    doc: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h7.5l4.5 4.5v12.5h-12z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M14 3.5V8h4.5M9.5 12.5h5.5M9.5 16h5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
-    call: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.6 4.2-2 1.4a11 11 0 0 0 6.1 6.1l1.4-2 4.2 1.6v2.6a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" fill="currentColor"/></svg>'
   };
   // Book your transport is the app's own booking, /book, in a frame inside the card (D104, D114):
   // its slides change inside the card and the page never leaves, as on the sister site. The frame
@@ -530,8 +431,12 @@ try {
   function initJoin(form, D) {
     var J = D.t, FLAGS = D.flags, API = (JOIN_SB || SB) + '/rest/v1/transporter_applications', JKEY = JOIN_SB ? JOIN_KEY : KEY;
     var box = $('.q', form), bar = $('.progress span', form), count = $('.count', form), back = $('.back', form);
+    // The draft keeps its time and goes after 7 days, unsent, so the next person at a shared computer
+    // finds no company's or person's details (s13 L4). One without a time is an older one: it goes too.
+    var at = store.json(DRAFT_AT);
+    if (!(typeof at === 'number' && Date.now() - at < DRAFT_DAYS * 864e5)) { store.del(DRAFT); store.del(DRAFT_AT); }
     var a = store.json(DRAFT) || {};
-    var save = function () { store.set(DRAFT, JSON.stringify(a)); };
+    var save = function () { store.set(DRAFT, JSON.stringify(a)); store.set(DRAFT_AT, String(Date.now())); };
     var digits = function (v) { return String(v || '').replace(/\D/g, ''); };
     // Light format checks for each country's company number; staff verify the real thing.
     var REG = {
@@ -695,7 +600,7 @@ try {
     }
 
     function done() {
-      store.del(DRAFT);
+      store.del(DRAFT); store.del(DRAFT_AT);
       bar.style.width = '100%'; back.hidden = true; count.textContent = '';
       box.className = 'q to-left';
       setTimeout(function () {
@@ -776,7 +681,10 @@ try {
     var rest = q.toString();
     history.replaceState(history.state, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
     if (!REFERRALS || !REF_CODE.test(code)) return;
-    keepRef(code, had && had.code === code ? had.by : null);
+    // The first code wins, as in the apps (src/lib/referral.ts, s13 A4): a later link never replaces
+    // another company's code still waiting here.
+    if (had && had.code !== code) return;
+    keepRef(code, had ? had.by : null);
     inv = { step: 'check' };
   }
 
@@ -906,30 +814,6 @@ try {
       });
     });
   }
-  function rateLimited(e) { return !!e && (e.status === 429 || /rate_limit/.test(e.code)); }
-  // Supabase says how long to wait: "...you can only request this after 37 seconds."
-  function waitFor(e) { var m = /(\d+)\s*seconds?/i.exec((e && e.message) || ''); return m ? Math.min(3600, +m[1]) : 60; }
-  // An address Supabase won't take, although it looks fine here.
-  function badEmail(e) {
-    return !!e && (e.status === 400 || e.status === 422)
-      && (/email_address_invalid|validation_failed/.test(e.code) || /email/i.test(e.message) && /invalid|validate/i.test(e.message));
-  }
-  function errText(e) {
-    if (!e || !e.status) return T.err_network;
-    if (rateLimited(e)) return T.err_rate;
-    return T.err_generic;
-  }
-  // A request refused for a reason the function names (delete-account's { code, params }): the
-  // apps' own words for it (T.refusals, site/src/texts), the numbers filled in. Null for any other failure.
-  function refusalText(e) {
-    var text = e && e.code && T.refusals && T.refusals[e.code];
-    if (!text) return null;
-    var p = {}, k;
-    for (k in e.params || {}) p[k] = e.params[k];
-    text = fill(text, p);
-    return /\{\w+\}/.test(text) ? null : text;
-  }
-
   function getSession() { var s = store.json(STORE); return s && s.access_token ? s : null; }
   // Signed in at /book: its session, read only (BOOK_STORE). Its name is the profile the app keeps
   // (car2door.profile), else the one given at sign-up.
@@ -978,23 +862,6 @@ try {
       return getSession();
     });
   }
-  // Signs out here at once, then ends the session at Supabase too. An expired access token
-  // would be refused there, so it is renewed first (the new one is used only for this call).
-  function logout() {
-    var s = getSession();
-    clearSession();
-    store.del(DRAFT); // a Join form started on this computer goes with the person
-    // So does a trip typed on the booking card, on this page and on a home page kept for Back.
-    [page].concat(Object.keys(screens).map(function (k) { return screens[k].page; })).forEach(function (p) {
-      var b = p && $('.deck > .book', p);
-      if (b && b._bk) b._bk.forget();
-    });
-    if (!s) return;
-    var stale = s.refresh_token && (!s.expires_at || s.expires_at - Date.now() / 1000 < 60);
-    (stale ? renew(s).then(function (n) { return n.access_token; }) : Promise.resolve(s.access_token))
-      .then(function (t) { if (t) return api('/auth/v1/logout', {}, t); }).catch(noop);
-  }
-
   function nameOf(s) {
     var u = (s && s.user) || {}, m = u.user_metadata || {}, c = store.json(NAME);
     return (c && c.id === u.id && c.n) || m.full_name || m.name || '';
@@ -1038,467 +905,10 @@ try {
     if (bk) bk.auth();
   }
 
-  // ---------------------------------------------------------------- My transports (account card)
-  //
-  // The transports this visitor booked, and one in full, as views of the account card: its status,
-  // the route, the car, the option, what is or was charged, what happens next, the transport company
-  // and its phone (from 24 hours before pickup, as in the app), the handover code, Report a problem,
-  // the invoices, and Cancel until pickup. Only transports they booked as a client, and only what a
-  // client sees in the app: my_trips() gives each side only its own amounts, never what the
-  // transport company is paid. Bookings never offered to transport companies (no card saved or no
-  // registration paper yet: they are finished at /book or in the app) don't show in the list.
-
-  // my_trips() can only be filtered and sorted on columns it is asked for, so client_id and
-  // bid_started_at are in here. refund_state and refunded_cents: the client's refund as the
-  // database knows it. discount_cents: an invite voucher on it. payment and charge_hold_until: where
-  // the card saved at booking stands (E10: saved, held while the bank asks the client to confirm,
-  // charged; none for a transport paid when it was booked). The car's columns (car_make, car_size,
-  // car_runs, car_plate, option, deliver_by) are phase 2's: the preview answers them.
-  var ORDER_COLS = 'id,client_id,status,option,car_make,car_size,car_runs,car_plate,pickup_address,pickup_city,pickup_country,dropoff_address,dropoff_city,dropoff_country,'
-    + 'pickup_at,pickup_until,pickup_tz,deliver_by,notes,fare_cents,bid_started_at,cancel_reason,cancel_fee_cents,payout_on_hold,payout_release_at,payout_sent,'
-    + 'refund_state,refunded_cents,discount_cents,payment,charge_hold_until';
-  var DONE = ['completed', 'cancelled'], ASSIGNED = ['accepted', 'en_route', 'picked_up'];
-  // A client can cancel these in My trips (cancel-order); my_cancellation_terms says what comes back.
-  var CANCELLABLE = ['pending_payment', 'bidding', 'accepted', 'en_route'];
-  var TONE = { pending_payment: 'gray', bidding: 'amber', accepted: 'blue', en_route: 'blue', picked_up: 'blue', completed: 'green', cancelled: 'gray' };
-  var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-  // The project's database as the signed-in visitor (PostgREST): a read, with a body a function
-  // call (or with method PATCH, a change to rows). Row security decides what comes back.
-  function rest(path, token, body, method) {
-    var h = { apikey: KEY, Authorization: 'Bearer ' + token };
-    if (body) h['Content-Type'] = 'application/json';
-    return sbFetch(SB + '/rest/v1/' + path, { method: method || (body ? 'POST' : 'GET'), headers: h, body: body ? JSON.stringify(body) : undefined }).then(function (r) {
-      return r.text().then(function (txt) {
-        var j = null;
-        try { j = txt ? JSON.parse(txt) : null; } catch (e) {}
-        if (r.ok) return j;
-        var e = new Error((j && j.message) || 'HTTP ' + r.status);
-        e.status = r.status;
-        throw e;
-      });
-    });
-  }
-  // The signed-in user's id: the session keeps the user (one saved by an older page only the token).
-  function uidOf(s) {
-    if (s && s.user && s.user.id) return s.user.id;
-    try { return JSON.parse(atob(s.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).sub || null; } catch (e) { return null; }
-  }
-  function nothing() { return null; }
-
-  function Trips(listPane, tripPane) {
-    var L = T, uid = null, rows = null, byId = {}, listN = 0, listAt = 0;
-    // The trip shown: its id, what was loaded for it (order, transporter, pickup code, invoices, what
-    // cancelling now gives back),
-    // and what the visitor has open in it (Cancel's question, the report form and its text, the
-    // question before stopping the search).
-    var id = null, dt = null, tripN = 0, tripAt = 0, ask = false, rep = false, repText = '', note = null, busy = false, tick = 0,
-      sAsk = false;
-
-    function token() {
-      return refresh().then(function (s) {
-        if (!s) { var e = new Error('Signed out'); e.status = 401; throw e; }
-        return s.access_token;
-      });
-    }
-    // Refused as signed out: Log in again (the card then comes back to this view).
-    function out(e) { if (e && e.status === 401) { clearSession(); return true; } return false; }
-    function spinner() { return '<div class="tload"><span class="spin" aria-hidden="true"></span></div>'; }
-    function oops(text, retry) {
-      return '<div class="tempty"><p>' + esc(text) + '</p>' + (retry ? '<button type="button" class="btn ghost t-retry">' + esc(L.retry) + '</button>'
-        : '<a class="btn ghost" href="#trips">' + esc(L.my_trips) + '</a>') + '</div>';
-    }
-    function badges(o) {
-      return '<span class="badge ' + (TONE[o.status] || 'gray') + '">' + esc(L['st_' + o.status] || o.status) + '</span>'
-        + (o.option ? '<span class="badge gray">' + esc(L['o_' + o.option] || o.option) + '</span>' : '');
-    }
-
-    // ---- the list: upcoming transports first (soonest at the top), then past ones (latest first)
-    function list() {
-      if (rows) drawList();
-      else listPane.innerHTML = spinner();
-      if (Date.now() - listAt < 1000) return; // just asked
-      listAt = Date.now();
-      var n = ++listN;
-      (uid ? token() : Promise.reject(new Error('No user'))).then(function (t) {
-        return rest('rpc/my_trips?select=' + ORDER_COLS + '&client_id=eq.' + uid
-          + '&bid_started_at=not.is.null&order=pickup_at.desc&limit=100', t);
-      }).then(function (r) {
-        if (n !== listN) return;
-        rows = r || [];
-        byId = {};
-        rows.forEach(function (o) { byId[o.id] = o; });
-        drawList();
-      }, function (e) {
-        if (n !== listN) return;
-        listAt = 0;
-        if (!out(e) && !rows) listPane.innerHTML = oops(L.err_trips, true);
-      });
-    }
-    function drawList() {
-      var y = listPane.scrollTop;
-      if (!rows.length) {
-        listPane.innerHTML = '<div class="tempty"><span class="tempty-ic" aria-hidden="true">' + IC.cal + '</span><h3>' + esc(L.none_h) + '</h3>'
-          + '<p>' + esc(L.none_p) + '</p><a class="btn big" href="' + esc(L.home) + '">' + esc(L.book_trip) + '</a></div>';
-        return;
-      }
-      var up = rows.filter(function (o) { return DONE.indexOf(o.status) < 0; }).reverse();
-      var past = rows.filter(function (o) { return DONE.indexOf(o.status) >= 0; });
-      listPane.innerHTML = (up.length ? '<h3 class="tsec">' + esc(L.up_h) + '</h3>' + up.map(row).join('') : '')
-        + (past.length ? '<h3 class="tsec">' + esc(L.past_h) + '</h3>' + past.map(row).join('') : '');
-      listPane.scrollTop = y;
-    }
-    function row(o) {
-      return '<a class="trow" href="#trips/' + esc(o.id) + '"><span class="trow-top">' + badges(o) + '</span>'
-        + '<b class="trow-route">' + esc(o.pickup_city) + ' → ' + esc(o.dropoff_city) + '</b>'
-        + '<span class="trow-foot"><span>' + esc([o.car_make, dayText(new Date(o.pickup_at), tripZoneOf(o), L.lang)].filter(Boolean).join(' · ')) + '</span><b>' + esc(money(o.fare_cents, L.lang)) + '</b></span>'
-        + '<span class="go-ic" aria-hidden="true">' + CHEV + '</span></a>';
-    }
-    listPane.addEventListener('click', function (e) { if (e.target.closest('.t-retry')) list(); });
-
-    // ---- one transport. Opened from the list it shows at once and fills in as the rest arrives;
-    // while it is shown it is read again every minute (the company's phone appears on a clock).
-    function open(tid) {
-      if (tid !== id) {
-        id = tid; dt = null; ask = rep = sAsk = false; repText = ''; note = null; tripAt = 0;
-        tripPane.scrollTop = 0;
-        if (byId[tid]) { dt = { o: byId[tid] }; drawTrip(); } else tripPane.innerHTML = spinner();
-      }
-      if (Date.now() - tripAt > 1000) load();
-      stop();
-      tick = setInterval(function () {
-        if (!busy && !ask && !rep && !sAsk && !d.hidden && tripPane.isConnected && !tripPane.closest('.off')) load();
-      }, 60000);
-    }
-    function stop() { clearInterval(tick); tick = 0; }
-    function load() {
-      var tid = id, n = ++tripN;
-      tripAt = Date.now();
-      return (uid ? token() : Promise.reject(new Error('No user'))).then(function (t) {
-        return rest('rpc/my_trips?select=' + ORDER_COLS + '&id=eq.' + tid + '&client_id=eq.' + uid, t).then(function (r) {
-          var o = r && r[0];
-          if (!o) return null;
-          return Promise.all([
-            ASSIGNED.indexOf(o.status) >= 0 ? rest('rpc/trip_contact', t, { p_order: tid }).catch(nothing) : null,
-            o.status === 'accepted' || o.status === 'en_route' ? rest('order_pickup_codes?select=code&order_id=eq.' + tid, t).catch(nothing) : null,
-            rest('invoices?select=id,kind,number,total_cents,file_path&order_id=eq.' + tid + '&kind=in.(trip,credit_note)&file_path=not.is.null&order=created_at.asc', t).catch(nothing),
-            CANCELLABLE.indexOf(o.status) >= 0 ? rest('rpc/my_cancellation_terms', t, { p_order: tid }).catch(nothing) : null,
-            o.status === 'bidding' ? rest('rpc/my_trip_search', t, { p_order: tid }).catch(nothing) : null
-          ]).then(function (x) {
-            return { o: o, who: x[0] && x[0][0], code: x[1] && x[1][0] && x[1][0].code, inv: x[2] || [], cx: x[3] && x[3][0], srch: x[4] || null };
-          });
-        });
-      }).then(function (r) {
-        if (n !== tripN || tid !== id) return;
-        if (!r) { dt = null; tripPane.innerHTML = oops(L.gone); return; }
-        dt = r;
-        byId[tid] = r.o;
-        if (rows) rows = rows.map(function (o) { return o.id === tid ? r.o : o; }); // the list shows it like this too
-        drawTrip();
-      }, function (e) {
-        if (n !== tripN || tid !== id) return;
-        tripAt = 0;
-        if (!out(e) && !dt) tripPane.innerHTML = oops(L.err_trips, true);
-      });
-    }
-
-    function leg(cls, city, cc, addr) {
-      return '<div class="leg"><span class="' + cls + '" aria-hidden="true"></span><p><b>' + esc(city + ', ' + countryName(cc, L.lang)) + '</b>'
-        + '<span>' + (addr && addr !== city ? esc(addr) : '') + '</span></p></div>';
-    }
-    function msgHtml(where) { return '<div class="msg" role="alert">' + (note && note.where === where ? esc(note.text) : '') + '</div>'; }
-    function drawTrip() {
-      var o = dt.o, who = dt.who, at = new Date(o.pickup_at), opens = new Date(at.getTime() - 864e5), now = Date.now(), say = '', tone = '', zone = tripZoneOf(o);
-      // The car, the pickup window (from the ready day to its end) and the deliver-by day.
-      var facts = [[L.s_car, [o.car_make, L['sz_' + o.car_size], o.car_runs === false ? L.runs_not : '', o.car_plate].filter(Boolean).join(' · ')],
-        [L.t_window, dayText(at, zone, L.lang) + (o.pickup_until ? ' – ' + dayText(new Date(o.pickup_until), zone, L.lang) : '')]];
-      if (o.deliver_by) facts.push([L.t_deliver, dayText(new Date(o.deliver_by), zone, L.lang)]);
-      // An invite voucher: the price and the voucher above what they paid.
-      if (+o.discount_cents > 0) facts.push([L.s_price, money(o.fare_cents + o.discount_cents, L.lang)], [L.s_voucher, '−' + money(o.discount_cents, L.lang)]);
-      facts.push([paidLabel(o), money(o.fare_cents, L.lang)]);
-      var h = '<div class="t-top">' + badges(o) + '</div>'
-        + '<div class="legs">' + leg('start', o.pickup_city, o.pickup_country, o.pickup_address) + leg('ring', o.dropoff_city, o.dropoff_country, o.dropoff_address) + '</div>'
-        + '<dl class="done-sum">' + facts.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('')
-        + (o.notes ? '<div class="wide"><dt>' + esc(L.t_note) + '</dt><dd>' + esc(o.notes) + '</dd></div>' : '') + '</dl>';
-      // What happens next.
-      if (o.status === 'bidding') { say = L.n_bidding + (charged(o) ? '' : ' ' + L.n_card_later); tone = ' amber'; }
-      else if (o.status === 'pending_payment') say = L.n_pending;
-      else if (o.status === 'cancelled') say = cancelled(o);
-      else if (o.payment === 'held' && o.charge_hold_until) {
-        say = fill(L.n_held, { time: clockText(new Date(o.charge_hold_until), zone, DATE_TIME, L.lang) });
-        tone = ' amber';
-      }
-      else if (ASSIGNED.indexOf(o.status) >= 0 && !who && opens > now) say = fill(L.n_locked, { date: dateText(opens, L.lang) });
-      else say = refundNote(o); // a transport that went ahead with part of it refunded (or a refund under way)
-      if (say) h += '<p class="t-note' + tone + '">' + esc(say) + '</p>';
-      if (who) {
-        var van = [who.unit_plate, who.car_slots ? fill(L.slots, { n: who.car_slots }) : ''].filter(Boolean).join(' · ');
-        h += '<section class="t-sec"><h3>' + esc(L.tr_h) + '</h3>'
-          + '<div class="t-person"><span class="ava" aria-hidden="true">' + esc((who.full_name || '?').charAt(0).toUpperCase()) + '</span><p><b>' + esc(who.full_name || '') + '</b>'
-          + (who.company_name ? '<span>' + esc(who.company_name) + '</span>' : '') + '</p></div>'
-          + (van ? '<p class="t-van">' + esc(van) + '</p>' : '')
-          + (who.phone && telHref(who.phone) ? '<a class="btn big t-call" href="' + esc(telHref(who.phone)) + '">' + IC.call + '<span>' + esc(fill(L.call, { phone: who.phone })) + '</span></a>' : '')
-          + '</section>';
-      }
-      // Who carries a paid transport (D84): the transport company once contact opens, booked
-      // through Car2Door, the go-between.
-      if (o.bid_started_at) {
-        h += '<p class="t-note t-carrier">' + esc((who && who.company_name ? fill(L.t_carried_by, { company: who.company_name }) + ' ' : '') + L.t_carrier)
-          + '</p>';
-      }
-      if (dt.code && (o.status === 'accepted' || o.status === 'en_route')) {
-        h += '<section class="t-sec"><h3>' + esc(L.pc_h) + '</h3><b class="t-digits">' + esc(dt.code) + '</b><p>' + esc(L.pc_p) + '</p></section>';
-      }
-      tripPane.innerHTML = h + search(o) + report(o, now) + invoices() + cancel(o);
-      if (rep) $('textarea', tripPane).value = repText;
-    }
-    // E10: the card saved at booking is charged when a transport company accepts. A transport paid
-    // when it was booked (before E10) has no payment and was offered once paid.
-    function charged(o) { return o.payment === 'charged' || (!o.payment && !!o.bid_started_at); }
-    // The label over the amount, as the app's paidLabel() (src/components/booking-state.tsx): paid,
-    // still to come, to confirm with the bank, or never charged (cancelled before the charge).
-    function paidLabel(o) {
-      if (charged(o)) return L.s_paid;
-      if (o.status === 'cancelled') return L.t_not_charged;
-      return o.payment === 'held' ? L.t_to_confirm : L.t_to_charge;
-    }
-    // Report a problem: while on the road, and after the trip until the transporter is paid (as in the app).
-    function report(o, now) {
-      if (o.payout_on_hold) return '<p class="t-note t-done">' + esc(L.report_done) + '</p>';
-      var until = o.payout_release_at ? new Date(o.payout_release_at) : null;
-      if (!(o.status === 'picked_up' || (o.status === 'completed' && !o.payout_sent && until && until > now))) return note && note.where === 'rep' ? msgHtml('rep') : '';
-      return '<section class="t-sec">'
-        + (o.status === 'completed' ? '<p>' + esc(fill(L.report_until, { date: dateText(until, L.lang) })) + '</p>' : '')
-        + (rep ? '<label><small>' + esc(L.report_ph) + '</small><textarea maxlength="3800" rows="4"></textarea></label>' + msgHtml('rep')
-          + '<button type="button" class="btn big t-send">' + esc(L.report_send) + '</button>'
-          : '<button type="button" class="btn ghost t-report">' + esc(L.report) + '</button>')
-        + '</section>';
-    }
-    // A Book ahead trip nobody took within the hour (my_trip_search(), as the app's
-    // src/lib/trip-search.ts): keep looking until the time shown (on the pickup's clock, as in the
-    // push and the email), or stop looking now (the booking is cancelled: refunded if it was paid,
-    // else nothing is charged). The database's clock says whether it still runs.
-    function search(o) {
-      var s = dt.srch;
-      if (o.status !== 'bidding' || !s || s.answer === 'refund' || Date.parse(s.until) <= Date.parse(s.server_now)) {
-        return note && note.where === 'srch' ? msgHtml('srch') : '';
-      }
-      if (sAsk) {
-        return '<section class="t-sec"><h3>' + esc(L.sr_stop_q) + '</h3><p>' + esc(charged(o) ? L.sr_stop_p : L.sr_stop_p_free) + '</p>'
-          + '<div class="t-two"><button type="button" class="btn ghost t-s-no">' + esc(L.sr_keep) + '</button>'
-          + '<button type="button" class="btn danger t-s-yes">' + esc(L.sr_stop) + '</button></div>' + msgHtml('srch') + '</section>';
-      }
-      var zone = tripZoneOf(o), at = new Date(s.until);
-      var until = clockText(at, zone, DATE_TIME, L.lang) + (zone && Z ? Z.zoneNote(at, zone) : '');
-      return '<section class="t-sec"><h3>' + esc(L.sr_title) + '</h3><p>' + esc(fill(s.answer === 'keep' ? L.sr_keeping : L.sr_text, { date: until })) + '</p>'
-        + (s.answer === 'keep' ? '' : '<button type="button" class="btn big t-s-keep">' + esc(L.sr_keep) + '</button>')
-        + '<button type="button" class="btn ghost danger t-s-ask">' + esc(L.sr_stop) + '</button>' + msgHtml('srch') + '</section>';
-    }
-    function invoices() {
-      if (!dt.inv || !dt.inv.length) return '';
-      return '<section class="t-sec"><h3>' + esc(L.invoices_h) + '</h3>' + dt.inv.map(function (v) {
-        return '<button type="button" class="t-file" data-path="' + esc(v.file_path) + '">' + IC.doc
-          + '<span>' + esc(fill(v.kind === 'credit_note' ? L.invoice_credit : L.invoice_trip, { n: v.number })) + '</span><b>' + esc(money(v.total_cents, L.lang)) + '</b></button>';
-      }).join('') + msgHtml('inv') + '</section>';
-    }
-    // Cancel (D14): free until a transport company accepts, and while the charge of its acceptance
-    // has not gone through (nothing is charged then). After that, until pickup, what comes back
-    // depends on how long before the pickup window: dt.cx says how much now and until when (the
-    // database decides, migration 20261110000210_cancel_d14). One question first, with the amount.
-    function cancel(o) {
-      var open = o.status === 'bidding' || o.status === 'pending_payment', cx = dt.cx;
-      if (!open && !cx) return note && note.where === 'cancel' ? msgHtml('cancel') : '';
-      if (!ask) return '<div class="t-cancel"><button type="button" class="btn ghost danger t-ask">' + esc(L.cancel) + '</button>'
-        + (cx ? '<small class="t-cx">' + esc(cxNow(cx)) + '</small>' : '') + msgHtml('cancel') + '</div>';
-      return '<div class="t-cancel"><p>' + esc(cxQuestion(cx, o)) + '</p>'
-        + (!open && cx && cx.fee_cents ? '<small class="t-cx">' + esc(L.cx_late) + '</small>' : '')
-        + '<div class="t-two"><button type="button" class="btn ghost t-keep">' + esc(L.cancel_no) + '</button>'
-        + '<button type="button" class="btn danger t-yes">' + esc(L.cancel_yes) + '</button></div>' + msgHtml('cancel') + '</div>';
-    }
-    function pct(x) {
-      try { return new Intl.NumberFormat(locale(L.lang), { style: 'percent', maximumFractionDigits: 0 }).format(+x); } catch (e) { return Math.round(x * 100) + '%'; }
-    }
-    function cxNow(cx) {
-      var at = cx.changes_at ? dateText(new Date(cx.changes_at), L.lang) : '';
-      if (!cx.fee_cents) return at ? fill(L.cx_free, { date: at }) : L.cx_free_any;
-      var now = cx.refund_cents > 0 ? fill(L.cx_part, { pct: pct(cx.refund_pct), amount: money(cx.refund_cents, L.lang) }) : L.cx_none;
-      if (!at || cx.next_refund_pct == null) return now;
-      return now + ' ' + (+cx.next_refund_pct > 0 ? fill(L.cx_then_part, { pct: pct(cx.next_refund_pct), date: at }) : fill(L.cx_then_none, { date: at }));
-    }
-    function cxQuestion(cx, o) {
-      if (!charged(o)) return L.cancel_q_free;
-      if (!cx || !cx.fee_cents) return L.cancel_q;
-      return cx.refund_cents > 0 ? fill(L.cx_q_part, { amount: money(cx.refund_cents, L.lang), pct: pct(cx.refund_pct) }) : L.cx_q_none;
-    }
-    // A cancelled trip: why, and where the refund stands as the database knows it, as in the app
-    // (src/lib/refund-notes.ts): "refunded" only once Stripe made the refund, never for a trip that
-    // was not paid, a refund still being made or retried, or a payment the bank disputed.
-    function cancelled(o) {
-      var fee = o.cancel_fee_cents, why;
-      switch (o.cancel_reason) {
-        case 'no_transporter': why = L.n_why_none; break;
-        case 'not_paid': why = L.n_why_unpaid; break;
-        case 'payment_failed': why = L.n_why_payment_failed; break; // E10: the acceptance's charge not confirmed in time
-        case 'no_paper': why = L.n_why_no_paper; break; // the registration paper not in by its day
-        case 'complaint_refund': why = L.n_why_checked; break;
-        case 'fraud_warning': why = L.n_why_fraud; break;
-        case 'disputed': why = L.n_why_disputed; break;
-        // Set by Car2Door's staff: a no-show keeps the fare, the others refund all of it.
-        case 'client_no_show': why = L.n_why_no_show; break;
-        case 'carrier_no_show': why = L.n_why_carrier_no_show; break;
-        case 'staff_cancelled': why = L.n_why_staff; break;
-        case 'client_cancelled':
-          why = fee == null ? L.n_why_you : !fee ? L.n_why_in_time
-            : fee < o.fare_cents ? fill(L.n_why_fee, { fee: money(fee, L.lang) }) : L.n_cx_none;
-          break;
-        default: why = L.n_why_other;
-      }
-      return [why, refundNote(o)].filter(Boolean).join(' ');
-    }
-    function refundNote(o) {
-      var got = +o.refunded_cents || 0;
-      switch (o.refund_state) {
-        case 'pending': return L.n_ref_pending;
-        case 'retrying': return L.n_ref_retrying;
-        case 'failed': return L.n_ref_failed;
-        case 'refunded': return got > 0 ? fill(got >= o.fare_cents ? L.n_ref_full : L.n_ref_part, { amount: money(got, L.lang) }) : '';
-        default: return '';
-      }
-    }
-
-    function redraw(focus) {
-      drawTrip();
-      var f = focus && $(focus, tripPane);
-      if (!f) return;
-      into(f.closest('.t-sec, .t-cancel') || f);
-      f.focus({ preventScroll: true });
-    }
-    // Brings a part of the trip (the cancel question, the report form, a message) fully into view.
-    function into(x) {
-      x = typeof x === 'string' ? $(x, tripPane) : x;
-      if (!x) return;
-      var p = tripPane.getBoundingClientRect(), r = x.getBoundingClientRect(), y = tripPane.scrollTop;
-      if (r.top - 16 < p.top || r.height + 32 > p.height) y += r.top - 16 - p.top;
-      else if (r.bottom + 16 > p.bottom) y += r.bottom + 16 - p.bottom;
-      else return;
-      tripPane.scrollTo({ top: y, behavior: calm() ? 'auto' : 'smooth' });
-    }
-    tripPane.addEventListener('input', function (e) { if (e.target.tagName === 'TEXTAREA') repText = e.target.value; });
-    tripPane.addEventListener('click', function (e) {
-      var b = e.target.closest('button');
-      if (!b || busy || !dt && !b.classList.contains('t-retry')) return;
-      var c = b.classList;
-      if (c.contains('t-retry')) load();
-      else if (c.contains('t-ask')) { ask = true; note = null; redraw('.t-keep'); }
-      else if (c.contains('t-keep')) { ask = false; note = null; redraw('.t-ask'); }
-      else if (c.contains('t-yes')) cancelTrip(b);
-      else if (c.contains('t-s-keep')) answerSearch(b, 'keep');
-      else if (c.contains('t-s-ask')) { sAsk = true; note = null; redraw('.t-s-no'); }
-      else if (c.contains('t-s-no')) { sAsk = false; note = null; redraw('.t-s-ask'); }
-      else if (c.contains('t-s-yes')) answerSearch(b, 'refund');
-      else if (c.contains('t-report')) { rep = true; note = null; redraw('textarea'); }
-      else if (c.contains('t-send')) sendReport(b);
-      else if (c.contains('t-file')) openFile(b.dataset.path);
-    });
-    // Sends the refund the visitor was shown: if it changed meanwhile (a transporter accepted, or
-    // the refund stepped down), nothing is cancelled and the trip shows the new one.
-    function cancelTrip(b) {
-      var tid = id, refund = dt.cx ? dt.cx.refund_cents : dt.o.fare_cents;
-      busy = true;
-      note = null;
-      busyBtn(b, true, L.cancelling);
-      token().then(function (t) { return callFn('cancel-order', { orderId: tid, refundCents: refund }, t); }).then(function () { ask = false; }, function (e) {
-        if (out(e)) return;
-        if (e.status === 409) ask = false;
-        note = { where: 'cancel', text: e.status !== 409 ? errText(e) : e.code === 'refund_changed' ? L.err_cx_changed
-          : e.code === 'not_cancellable' ? L.err_cx_started : L.err_cancel };
-      }).then(function () { return tid === id ? load() : null; }).then(function () {
-        busy = false; // the button says Cancelling… until the trip shows how it is now
-        listAt = 0;   // the list reads it again too
-        if (tid === id && dt) { drawTrip(); into(note ? '.msg:not(:empty)' : '.t-note'); }
-      });
-    }
-    // The answer to the search question: 'keep', or 'refund' (cancelled as Car2Door finding nobody,
-    // so everything paid goes back). A transport company that accepted first keeps the transport.
-    function answerSearch(b, choice) {
-      var tid = id;
-      busy = true;
-      note = null;
-      busyBtn(b, true, choice === 'refund' ? L.cancelling : L.sending);
-      token().then(function (t) { return rest('rpc/answer_trip_search', t, { p_order: tid, p_answer: choice }); }).then(function (r) {
-        sAsk = false;
-        if (r === 'taken') note = { where: 'srch', text: L.sr_taken };
-      }, function (e) {
-        if (out(e)) return;
-        sAsk = false;
-        note = { where: 'srch', text: /search_closed/.test(e.message) ? L.sr_closed : errText(e) };
-      }).then(function () { return tid === id ? load() : null; }).then(function () {
-        busy = false;
-        listAt = 0; // the list reads it again too
-        if (tid === id && dt) { drawTrip(); into(note ? '.msg:not(:empty)' : '.t-note'); }
-      });
-    }
-    function sendReport(b) {
-      var text = repText.trim(), tid = id;
-      if (!text) { note = { where: 'rep', text: L.err_report_empty }; return redraw('textarea'); }
-      busy = true;
-      note = null;
-      busyBtn(b, true, L.sending);
-      token().then(function (t) { return rest('rpc/report_trip_problem', t, { p_order: tid, p_body: text }); }).then(function () {
-        rep = false;
-        repText = '';
-      }, function (e) {
-        if (out(e)) return;
-        note = { where: 'rep', text: /report_window_closed/.test(e.message) ? L.err_report_closed : /empty_report/.test(e.message) ? L.err_report_empty : errText(e) };
-      }).then(function () { return !note && tid === id ? load() : null; }).then(function () {
-        busy = false;
-        if (tid === id && dt) { drawTrip(); into(note ? '.msg:not(:empty)' : '.t-done'); } // keeps the text when it didn't go
-      });
-    }
-    // An invoice opens in a new tab (openInvoice); if it can't, the trip says so.
-    function openFile(path) {
-      note = null;
-      openInvoice(path, function () {
-        note = { where: 'inv', text: L.err_generic };
-        if (dt) { drawTrip(); into('.msg:not(:empty)'); }
-      });
-    }
-
-    return {
-      list: list, open: open, stop: stop,
-      // Who is signed in. Another account (or none): what was loaded for the last one goes.
-      user: function (u) {
-        u = UUID.test(u || '') ? u : null;
-        if (u === uid) return;
-        uid = u;
-        rows = dt = id = null;
-        byId = {};
-        ask = rep = busy = false;
-        repText = '';
-        note = null;
-        listN++; tripN++;
-        listAt = tripAt = 0;
-        stop();
-        listPane.innerHTML = tripPane.innerHTML = '';
-      }
-    };
-  }
-
   // ---------------------------------------------------------------- account card
 
   var CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var CROSS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
-  // The Profile panel's icons, drawn like the app's (Ionicons outlines).
-  function ico(d) { return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + d + '" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
-  var PI = {
-    receipt: ico('M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4zM9 8h6M9 11.5h6M9 15h3.5'),
-    help: ico('M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.5V17A2.5 2.5 0 0 1 4 14.5zM10 9a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.4M12 14.3h.01'),
-    user: ico('M12 4.2a3.8 3.8 0 1 1 0 7.6 3.8 3.8 0 0 1 0-7.6zM4.5 20c1.2-3.6 4-5.4 7.5-5.4s6.3 1.8 7.5 5.4'),
-    globe: ico('M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18zM3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z'),
-    out: ico('M14 4.5H7.5A2.5 2.5 0 0 0 5 7v10a2.5 2.5 0 0 0 2.5 2.5H14M11 12h9.5M17 8.5l3.5 3.5-3.5 3.5'),
-    trash: ico('M4.5 6.5h15M9.5 6.5v-2h5v2M6.5 6.5l1 13.5h9l1-13.5M10 10.5v6M14 10.5v6'),
-    go: ico('M9.5 5.5 16 12l-6.5 6.5')
-  };
   var cards = 0;
 
   function field(name, label, type, ac, ph, max) {
@@ -1536,36 +946,15 @@ try {
       + '<p class="hint">' + esc(T.hint) + '</p>'
       + '</form></div>';
   }
-  // A row of the Profile panel's menus, as in the app: icon, label, value, chevron.
-  function menuItem(href, icon, label, value, cls) {
-    return '<a class="mi' + (cls ? ' ' + cls : '') + '" href="' + href + '"><span class="mi-ic">' + icon + '</span><span class="mi-t">' + esc(label) + '</span>'
-      + '<span class="mi-v">' + (value || '') + '</span><span class="mi-go">' + PI.go + '</span></a>';
-  }
-  function profileHtml() {
-    var cur = $('.top .lang .menu a[aria-current]'), lang = cur ? ($('.flag', cur) ? $('.flag', cur).outerHTML : '') + '<span>' + esc($('span', cur).textContent) + '</span>' : '';
-    var tile = function (href, icon, label) { return '<a class="pf-tile" href="' + href + '">' + icon + '<span>' + esc(label) + '</span></a>'; };
-    return '<div class="pf-head"><div class="me-ava"><span class="ava big" aria-hidden="true"></span><i class="ok" aria-hidden="true"></i></div>'
-      + '<div class="pf-who"><p class="me-hi">' + esc(T.welcome) + '</p><b class="me-name"></b><span class="me-mail"></span></div></div>'
-      + '<div class="pf-more">'
-      + '<div class="pf-tiles">' + tile('#trips', IC.cal, T.my_trips) + tile('#login/invoices', PI.receipt, T.pn_invoices) + tile('#login/help', PI.help, T.pn_help) + '</div>'
-      + '<h3 class="pf-sec">' + esc(T.pn_account) + '</h3><div class="mlist">'
-      + menuItem('#login/details', PI.user, T.pn_details, '<span class="pf-phone"></span>')
-      + menuItem('#login/invite', GIFT, T.pn_invite, '<span class="pf-until"></span>', 'pf-inv') + '</div>'
-      + '<h3 class="pf-sec">' + esc(T.pn_site) + '</h3><div class="mlist">'
-      + menuItem('#login/language', PI.globe, T.pn_language, lang)
-      + menuItem('#login/terms', IC.doc, T.pn_terms) + menuItem('#login/privacy', IC.lock, T.pn_privacy) + '</div>'
-      + '<div class="mlist"><button type="button" class="mi red out"><span class="mi-ic">' + PI.out + '</span><span class="mi-t">' + esc(T.logout) + '</span></button>'
-      + '<a class="mi red" href="#login/delete"><span class="mi-ic">' + PI.trash + '</span><span class="mi-t">' + esc(T.pn_delete) + '</span></a></div>'
-      + '</div>';
-  }
-
   // The panel's views by address, each a pane of the account card. #login is Log in / Create
-  // account, or Profile once signed in; Profile's steps are #login/<step>. A legal page or Help
-  // stands on its own (#terms) or under Profile or Join Transporters (#login/terms, #join/terms),
-  // so the back arrow returns there. auth: signed out, Log in shows first.
+  // account; Profile's steps are #login/<step>. A legal page or Help stands on its own (#terms) or
+  // under Profile or Join Transporters (#login/terms, #join/terms), so the back arrow returns there.
+  // auth: signed out, Log in shows first. My transports, a transport, Profile and its steps and
+  // Feedback are the app's at /book (bookPath): the card has no pane of its own for them.
   var DOCS = ['terms', 'transporter-terms', 'privacy', 'cookies', 'delete-account'];
   var PSTEPS = { details: 1, invoices: 1, invite: 1, delete: 1, language: 0, help: 0 }; // 1: needs an account
   var AUTH = { login: 1, create: 1 };
+  var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i; // a transport's id: #trips/<id> is /book/order/<id>
   function viewOf(h) {
     h = String(h || '');
     var p = h.slice(1).split('/'), a = p[0], b = p[1], x = b == null ? a : b;
@@ -1608,8 +997,7 @@ try {
       + '<label><input type="radio" name="acct-tab' + n + '" value="create"><span>' + esc(T.tab_create) + '</span></label>'
       + '</div>'
       + '<div class="panes">' + authPane('login') + authPane('create')
-      + '<div class="pane tv" data-pane="me">' + profileHtml() + '</div>'
-      + ['details', 'invoices', 'invite', 'delete', 'language', 'help', 'report', 'feedback', 'doc', 'join', 'trips', 'trip'].map(function (p) {
+      + ['me', 'language', 'help', 'doc', 'join'].map(function (p) {
         return '<div class="pane tv" data-pane="' + p + '"></div>';
       }).join('')
       + '</div></div>'
@@ -1618,10 +1006,9 @@ try {
     var P = {}, panes = $('.panes', el), cur = null, tab = 'login', h2 = $('h2', el);
     $$('.pane', el).forEach(function (p) { P[p.dataset.pane] = p; setOn(p, false); });
     h2.tabIndex = -1;
-    // The view shown: Profile (#login), one of its steps, My trips (#trips), one trip
-    // (#trips/<id>), Join Transporters or a legal page. Deeper views come in from the right,
-    // shallower ones from the left.
-    var view = '#login', shown = '', trips = Trips(P.trips, P.trip);
+    // The view shown: Log in (#login), Language or Help, Join Transporters or a legal page.
+    // Deeper views come in from the right, shallower ones from the left.
+    var view = '#login', shown = '';
 
     function show(name, dir, instant) {
       var to = P[name];
@@ -1630,7 +1017,6 @@ try {
       var solo = el.parentNode && el.parentNode.classList.contains('solo'); // the card is as tall as its step
       swap(panes, cur, to, dir, instant || !el.isConnected || el.classList.contains('off'), null, solo ? panes.offsetHeight : null);
       cur = to;
-      if (name !== 'trip') trips.stop();
     }
     function msg(pane, text, name, action) {
       var m = $('.msg', pane);
@@ -1696,201 +1082,20 @@ try {
     }
     $$('.sso-btn', el).forEach(function (b) { b.addEventListener('click', function () { oauth(b); }); });
 
-    // Tapping My trips or anything else in the card stops the automatic slide back, so the card
+    // Tapping anything in the card stops the automatic slide back, so the card
     // stays: its back arrow shows again (it is hidden during the welcome on a phone).
     el.addEventListener('click', function (e) {
       if (!(e.target.closest && e.target.closest('a, button'))) return;
       cancelAutoClose();
       if (loginOpen && !gated()) el.classList.remove('gate');
     }, true);
-    $('.out', P.me).addEventListener('click', function () { el.classList.remove('fresh'); logout(); });
     $('.back-btn', el).addEventListener('click', accountBack);
     $('.x-btn', el).addEventListener('click', function () { closeLogin({ ui: true }); });
 
-    // ---- Profile and its steps. me: the profile row (name, phone, invoice details) and until
-    // when an invite code can still be added (referral_window(), null once it can't).
-    var me = null, meFor = null, meAt = 0, inviteUntil = null;
-    function uid() { var s = getSession(); return s ? uidOf(s) : null; }
-    function token() {
-      return refresh().then(function (s) {
-        if (!s) { var e = new Error('Signed out'); e.status = 401; throw e; }
-        return s.access_token;
-      });
-    }
-    // Refused as signed out: Log in again (the panel then comes back to this view).
-    function out(e) { if (e && e.status === 401) { clearSession(); return true; } return false; }
     function spinner() { return '<div class="tload"><span class="spin" aria-hidden="true"></span></div>'; }
     function oops(pane, again) {
       pane.innerHTML = '<div class="tempty"><p>' + esc(T.err_generic) + '</p><button type="button" class="btn ghost pn-retry">' + esc(T.retry) + '</button></div>';
       $('.pn-retry', pane).onclick = again;
-    }
-    function loadMe(force) {
-      var u = uid();
-      if (!u || (!force && meFor === u && Date.now() - meAt < 30000)) return drawMe();
-      meAt = Date.now();
-      token().then(function (t) {
-        return Promise.all([
-          rest('profiles?select=full_name,phone,billing_name,billing_vat_number,billing_address&id=eq.' + u, t),
-          null
-        ]);
-      }).then(function (r) {
-        if (uid() !== u) return;
-        me = (r[0] && r[0][0]) || {}; meFor = u;
-        inviteUntil = r[1] && Date.parse(r[1]) > Date.now() ? new Date(r[1]) : null;
-        drawMe();
-        if (cur === P.details) details(); // a step that was waiting for it
-        if (cur === P.invite) invite();
-      }, function (e) {
-        meAt = 0;
-        if (!out(e) && cur === P.details && meFor !== u) oops(P.details, details);
-      });
-    }
-    function drawMe() {
-      var s = getSession(), u = (s && s.user) || {}, nm = (meFor === uid() && me && me.full_name) || nameOf(s);
-      $('.ava', P.me).textContent = (nm || u.email || '?').charAt(0).toUpperCase();
-      $('.me-name', P.me).textContent = nm || u.email || T.my_account;
-      $('.me-mail', P.me).textContent = nm ? u.email || '' : '';
-      $('.pf-phone', P.me).textContent = (meFor === uid() && me && me.phone) || '';
-      var inv = $('.pf-inv', P.me);
-      inv.hidden = true; // no code field (D193)
-      $('.pf-until', P.me).textContent = inviteUntil ? fill(T.pn_invite_by, { date: clockText(inviteUntil, null, SOON, T.lang) }) : '';
-    }
-
-    function detailsHtml() {
-      var f = function (k, label, type, ac, ph, max) {
-        return '<label><small>' + esc(label) + '</small><input name="' + k + '" type="' + (type || 'text') + '"' + (ac ? ' autocomplete="' + ac + '"' : '')
-          + (max ? ' maxlength="' + max + '"' : '')
-          + (ph ? ' placeholder="' + esc(ph) + '"' : '') + (k === 'email' ? ' disabled' : '') + '></label>';
-      };
-      return '<form class="pn-form" novalidate>' + f('full_name', T.pn_name, 'text', 'name', null, TEXT_MAX.full_name)
-        + '<div><label for="pf-phone"><small>' + esc(T.pn_phone) + '</small></label>' + phoneHtml('pf-phone', { cc: null, number: '' }, T.lang) + '</div>'
-        + f('email', T.f_email, 'email', 'email')
-        + '<h3 class="pf-sec">' + esc(T.pn_bill_h) + '</h3><p class="pn-note">' + esc(T.pn_bill_p) + '</p>'
-        + f('billing_name', T.pn_bill_name, 'text', 'organization', null, TEXT_MAX.billing_name)
-        + f('billing_vat_number', T.pn_bill_vat, 'text', 'off', null, TEXT_MAX.billing_vat_number)
-        + f('billing_address', T.pn_bill_addr, 'text', 'street-address', T.pn_bill_addr_ph, TEXT_MAX.billing_address)
-        + '<div class="msg" role="alert"></div><button class="btn big go" type="submit">' + esc(T.pn_save) + '</button></form>';
-    }
-    function details() {
-      var u = uid();
-      if (!$('form', P.details)) {
-        P.details.innerHTML = detailsHtml();
-        $('form', P.details).addEventListener('submit', function (e) { e.preventDefault(); saveDetails(this); });
-      }
-      var f = $('form', P.details), wait = $('.tload', P.details);
-      if (meFor !== u) { // its fields come with the profile
-        f.hidden = true;
-        if (!wait) P.details.insertAdjacentHTML('afterbegin', spinner());
-        return loadMe(true);
-      }
-      if (wait) P.details.removeChild(wait);
-      f.hidden = false;
-      if (f._for === u && f._at > meAt) return;
-      f._for = u; f._at = Date.now();
-      ['full_name', 'billing_name', 'billing_vat_number', 'billing_address'].forEach(function (k) { f.elements[k].value = me[k] || ''; });
-      setPhone(f, phoneParts(me.phone, phoneGuess(T.lang))); // a number saved without its code gets one here
-      f.elements.email.value = (getSession().user || {}).email || '';
-      msg(f, '');
-    }
-    function saveDetails(f) {
-      var btn = $('.go', f), v = function (k) { return f.elements[k].value.trim().replace(/\s+/g, ' '); };
-      var phone = readPhone(f), typed = /\d/.test(phone.number);
-      var row = { full_name: v('full_name'), phone: typed ? phoneValue(phone) : '', billing_name: v('billing_name') || null,
-        billing_vat_number: v('billing_vat_number').toUpperCase() || null, billing_address: v('billing_address') || null };
-      if (row.full_name.length < 2) return msg(f, T.err_name, 'full_name');
-      if (typed && !row.phone) return msg(f, phoneProblem(phone, T.lang), 'phone');
-      if (btn.disabled) return;
-      var u = uid();
-      msg(f, '');
-      busy(btn, true);
-      token().then(function (t) { return rest('profiles?id=eq.' + u, t, row, 'PATCH'); }).then(function () {
-        if (uid() !== u) return;
-        me = Object.assign({}, me, row); meFor = u;
-        store.set(NAME, JSON.stringify({ id: u, n: row.full_name })); // the header's first name
-        authChanged(true);
-        drawMe();
-        msg(f, T.pn_saved, null, 'ok');
-      }, function (e) { if (!out(e)) msg(f, errText(e)); }).catch(noop).then(function () { busy(btn, false); });
-    }
-
-    // Every invoice and credit note of this account, newest first (row security picks them).
-    var invRows = null, invFor = null, invAt = 0;
-    function invoices() {
-      var u = uid();
-      if (invFor === u && invRows) drawInvoices(); else P.invoices.innerHTML = spinner();
-      if (invFor === u && Date.now() - invAt < 5000) return;
-      invAt = Date.now();
-      token().then(function (t) {
-        return rest('invoices?select=id,kind,number,total_cents,file_path,created_at&kind=in.(trip,credit_note)&file_path=not.is.null&order=created_at.desc&limit=100', t);
-      }).then(function (r) {
-        if (uid() !== u) return;
-        invRows = r || []; invFor = u;
-        drawInvoices();
-      }, function (e) { invAt = 0; if (!out(e) && !(invFor === u && invRows)) oops(P.invoices, invoices); });
-    }
-    function drawInvoices() {
-      if (!invRows.length) {
-        P.invoices.innerHTML = '<div class="tempty"><span class="tempty-ic" aria-hidden="true">' + PI.receipt + '</span><p>' + esc(T.pn_inv_none) + '</p></div>';
-        return;
-      }
-      P.invoices.innerHTML = invRows.map(function (v) {
-        return '<button type="button" class="t-file" data-path="' + esc(v.file_path) + '">' + IC.doc
-          + '<span>' + esc(fill(v.kind === 'credit_note' ? T.invoice_credit : T.invoice_trip, { n: v.number }))
-          + '<small>' + esc(clockText(new Date(v.created_at), null, DAY, T.lang)) + '</small></span><b>' + esc(money(v.total_cents, T.lang)) + '</b></button>';
-      }).join('') + '<div class="msg" role="alert"></div>';
-    }
-    P.invoices.addEventListener('click', function (e) {
-      var b = e.target.closest('.t-file');
-      if (b) openInvoice(b.dataset.path, function () { msg(P.invoices, T.err_generic); });
-    });
-
-    // Invite code: in the first 7 days after signing up, before the first booking (as in the app).
-    function invite() {
-      if (!$('form', P.invite)) {
-        P.invite.innerHTML = '<form class="pn-form" novalidate><p class="pn-note"></p>'
-          + '<label><small>' + esc(T.inv_h) + '</small><input name="code" class="pn-code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" placeholder="ABC123"></label>'
-          + '<div class="msg" role="alert"></div><button class="btn big go" type="submit">' + esc(T.pn_code_add) + '</button></form>';
-        $('form', P.invite).addEventListener('submit', function (e) { e.preventDefault(); addCode(this); });
-      }
-      var f = $('form', P.invite);
-      $('.pn-note', f).textContent = inviteUntil ? fill(T.pn_code_until, { date: clockText(inviteUntil, null, SOON, T.lang) }) : '';
-      if (meFor !== uid()) loadMe(true);
-    }
-    function addCode(f) {
-      var btn = $('.go', f), code = f.elements.code.value.replace(/\s+/g, '').toUpperCase();
-      if (!REF_CODE.test(code)) return msg(f, T.pn_code_short, 'code');
-      if (btn.disabled) return;
-      msg(f, '');
-      busy(btn, true);
-      token().then(function (t) { return rest('rpc/apply_referral_code', t, { p_code: code }); }).then(function (res) {
-        if (res !== 'ok') return msg(f, refWhy(res), 'code');
-        store.del(REF);
-        inviteUntil = null;
-        drawMe();
-        msg(f, T.inv_ok, null, 'ok');
-      }, function (e) { if (!out(e)) msg(f, errText(e)); }).catch(noop).then(function () { busy(btn, false); });
-    }
-
-    // Delete account: the app's question, then delete-account (it waits while a trip, payout,
-    // refund or invoice is still to come, and says which). The login is gone then, so only this
-    // browser forgets it.
-    function deletePane() {
-      if ($('.pn-del', P.delete)) return msg(P.delete, '');
-      P.delete.innerHTML = '<div class="pn-del"><span class="tempty-ic" aria-hidden="true">' + PI.trash + '</span>'
-        + '<h3>' + esc(T.pn_delete_q) + '</h3><p>' + esc(T.pn_delete_p) + '</p></div>'
-        + '<div class="msg" role="alert"></div>'
-        + '<div class="t-two"><a class="btn ghost" href="#login">' + esc(T.pn_cancel) + '</a>'
-        + '<button type="button" class="btn danger pn-del-yes">' + esc(T.pn_delete_yes) + '</button></div>';
-      $('.pn-del-yes', P.delete).addEventListener('click', function () {
-        var btn = this;
-        if (btn.disabled) return;
-        msg(P.delete, '');
-        busy(btn, true, T.pn_deleting);
-        token().then(function (t) { return callFn('delete-account', {}, t); }).then(function () {
-          clearSession();
-          store.del(DRAFT);
-        }, function (e) { if (!out(e)) msg(P.delete, refusalText(e) || errText(e)); }).catch(noop).then(function () { busy(btn, false); });
-      });
     }
 
     // Language: the header's language links, each opening this page in that language on Profile.
@@ -1918,125 +1123,6 @@ try {
           .replace('{legal}', '<a href="mailto:support@car2door.eu">support@car2door.eu</a>') + '</p>';
         qs.forEach(function (q) { q.open = false; $('.pn-faq', P.help).appendChild(q); });
       }).catch(function () { P.help._lang = null; oops(P.help, help); });
-    }
-
-    // Report content (#report): the DSA notice form (Art. 16(2)), open to everyone, signed in or not.
-    // It posts to the content-report function: { where, reason, details, law, name, email, good_faith,
-    // lang }, answered by { ok: true } or a refusal { error, code, params }. A sent report shows a thank
-    // you until the visitor reports something else.
-    function reportPane() {
-      if (P.report._lang === T.lang) return;
-      P.report._lang = T.lang;
-      var field = function (k, label, max, type, ac) {
-        return '<label><small>' + esc(label) + '</small><input name="' + k + '" type="' + (type || 'text') + '" maxlength="' + max + '"'
-          + (ac ? ' autocomplete="' + ac + '"' : '') + '></label>';
-      };
-      var pick = function (v, label, on) {
-        return '<label class="consent"><input type="radio" name="reason" value="' + v + '"' + (on ? ' checked' : '') + '><span>'
-          + esc(label) + '</span></label>';
-      };
-      P.report.innerHTML = '<form class="pn-form rep" novalidate><p class="pn-note">' + esc(T.pn_rep_p) + '</p>'
-        + '<fieldset class="rep-why"><legend><small>' + esc(T.pn_rep_reason) + '</small></legend>'
-        + pick('illegal', T.pn_rep_illegal, true) + pick('terms', T.pn_rep_terms) + '</fieldset>'
-        + '<label><small>' + esc(T.pn_rep_where) + '</small><textarea name="where" rows="2" maxlength="1000" placeholder="'
-        + esc(T.pn_rep_where_ph) + '"></textarea></label>'
-        + '<label><small>' + esc(T.pn_rep_details) + '</small><textarea name="details" rows="4" maxlength="3000"></textarea></label>'
-        + '<div class="rep-law">' + field('law', T.pn_rep_law, 300) + '</div>'
-        + field('name', T.pn_rep_name, 200, 'text', 'name') + field('email', T.pn_rep_email, 254, 'email', 'email')
-        + '<label class="consent"><input type="checkbox" name="good_faith"><span>' + esc(T.pn_rep_faith) + '</span></label>'
-        + '<div class="msg" role="alert"></div><button class="btn big go" type="submit">' + esc(T.pn_rep_send) + '</button>'
-        + '<p class="pn-note">' + esc(T.pn_rep_112) + '</p></form>'
-        + '<div class="rep-done" hidden><p class="pn-note">' + esc(T.pn_rep_done) + '</p>'
-        + '<button type="button" class="btn ghost rep-again">' + esc(T.pn_rep_again) + '</button></div>';
-      var form = $('form', P.report);
-      // The law concerned is asked only for illegal content.
-      form.addEventListener('change', function () { $('.rep-law', form).hidden = form.elements.reason.value !== 'illegal'; });
-      form.addEventListener('submit', function (e) { e.preventDefault(); sendContentReport(form); });
-      $('.rep-again', P.report).addEventListener('click', function () {
-        form.reset();
-        $('.rep-law', form).hidden = false;
-        msg(form, '');
-        $('.rep-done', P.report).hidden = true;
-        form.hidden = false;
-      });
-    }
-    // The fields the function would refuse are checked here first, in the visitor's language.
-    var REP_FIELD = { report_where_missing: 'where', report_details_missing: 'details', report_good_faith_missing: 'good_faith',
-      report_email_invalid: 'email' };
-    var REP_ERR = { where: 'pn_rep_err_where', details: 'pn_rep_err_details', good_faith: 'pn_rep_err_faith', email: 'pn_rep_err_email' };
-    function sendContentReport(form) {
-      var btn = $('.go', form), v = function (k) { return form.elements[k].value.trim(); }, illegal = form.elements.reason.value !== 'terms';
-      var body = { where: v('where'), reason: illegal ? 'illegal' : 'terms', details: v('details'), law: (illegal && v('law')) || null,
-        name: v('name') || null, email: v('email') || null, good_faith: form.elements.good_faith.checked, lang: T.lang };
-      var bad = !body.where ? 'where' : !body.details ? 'details'
-        : body.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email) ? 'email' : !body.good_faith ? 'good_faith' : null;
-      if (bad) return msg(form, T[REP_ERR[bad]], bad);
-      if (btn.disabled) return;
-      msg(form, '');
-      busy(btn, true, T.pn_rep_sending);
-      callFn('content-report', body, KEY).then(function () {
-        form.hidden = true;
-        $('.rep-done', P.report).hidden = false;
-      }, function (e) {
-        var f = REP_FIELD[e.code];
-        msg(form, f ? T[REP_ERR[f]] : e.code === 'report_too_long' ? fill(T.pn_rep_err_long, { max: (e.params && e.params.max) || '' })
-          : !e.status ? T.err_network : rateLimited(e) ? T.err_rate : T.pn_rep_err, f);
-      }).then(function () { busy(btn, false); });
-    }
-
-    // Feedback (#feedback): a suggestion, a problem, praise or anything else, from anyone, signed in
-    // or not. It posts to the feedback function: { kind, message, name, email, lang }, answered by
-    // { ok: true } or a refusal { error, code, params }. A suggestion is the first choice. A thank-you
-    // shows until the visitor sends more.
-    function feedbackPane() {
-      if (P.feedback._lang === T.lang) return;
-      P.feedback._lang = T.lang;
-      var pick = function (v) {
-        return '<label class="consent"><input type="radio" name="kind" value="' + v + '"' + (v === 'suggestion' ? ' checked' : '') + '><span>'
-          + esc(T['pn_fb_' + v]) + '</span></label>';
-      };
-      P.feedback.innerHTML = '<form class="pn-form rep fb" novalidate><p class="pn-note">' + esc(T.pn_fb_p) + '</p>'
-        + '<fieldset class="rep-why"><legend><small>' + esc(T.pn_fb_kind) + '</small></legend>'
-        + ['suggestion', 'problem', 'praise', 'other'].map(pick).join('') + '</fieldset>'
-        + '<label><small>' + esc(T.pn_fb_message) + '</small><textarea name="message" rows="5" maxlength="2000" placeholder="'
-        + esc(T.pn_fb_message_ph) + '"></textarea></label>'
-        + '<label><small>' + esc(T.pn_rep_name) + '</small><input name="name" type="text" maxlength="200" autocomplete="name"></label>'
-        + '<label><small>' + esc(T.pn_fb_email) + '</small><input name="email" type="email" maxlength="254" autocomplete="email"></label>'
-        + '<div class="msg" role="alert"></div><button class="btn big go" type="submit">' + esc(T.pn_fb_send) + '</button></form>'
-        + '<div class="rep-done" hidden><p class="pn-note">' + esc(T.pn_fb_done) + '</p>'
-        + '<button type="button" class="btn ghost fb-again">' + esc(T.pn_fb_again) + '</button></div>';
-      var form = $('form', P.feedback);
-      form.addEventListener('submit', function (e) { e.preventDefault(); sendFeedback(form); });
-      $('.fb-again', P.feedback).addEventListener('click', function () {
-        form.reset();
-        msg(form, '');
-        $('.rep-done', P.feedback).hidden = true;
-        form.hidden = false;
-      });
-    }
-    // What the function would refuse is checked here first, in the visitor's language.
-    var FB_FIELD = { feedback_message_missing: 'message', feedback_email_invalid: 'email' };
-    var FB_ERR = { kind: 'pn_fb_kind', message: 'pn_fb_err_message', email: 'pn_fb_err_email' };
-    var FB_EMAIL = /^[^\s@?&=%,\/#:;<>()[\]\\"`\x7f]+@[^\s@?&=%,\/#:;<>()[\]\\"`\x7f]+\.[^\s@?&=%,\/#:;<>()[\]\\"`\x7f]+$/;
-    function sendFeedback(form) {
-      var btn = $('.go', form), v = function (k) { return form.elements[k].value.trim(); };
-      var body = { kind: form.elements.kind.value || null, message: v('message'), name: v('name') || null, email: v('email') || null,
-        lang: T.lang };
-      // A plain address only, as the function and the database take it (no ? & = % , / # : ; brackets or quotes).
-      var bad = !body.kind ? 'kind' : !body.message ? 'message'
-        : body.email && !FB_EMAIL.test(body.email) ? 'email' : null;
-      if (bad) return msg(form, T[FB_ERR[bad]], bad);
-      if (btn.disabled) return;
-      msg(form, '');
-      busy(btn, true, T.pn_rep_sending);
-      callFn('feedback', body, KEY).then(function () {
-        form.hidden = true;
-        $('.rep-done', P.feedback).hidden = false;
-      }, function (e) {
-        var f = FB_FIELD[e.code];
-        msg(form, f ? T[FB_ERR[f]] : e.code === 'feedback_too_long' ? fill(T.pn_fb_err_long, { max: (e.params && e.params.max) || '' })
-          : !e.status ? T.err_network : rateLimited(e) ? T.err_rate : T.pn_fb_err, f);
-      }).then(function () { busy(btn, false); });
     }
 
     // A legal page, or Join Transporters: its own page's content, fetched once per language.
@@ -2077,20 +1163,11 @@ try {
     function showView(instant) {
       var v = viewOf(view), signed = !!getSession(), was = shown, name = v.pane;
       if (v.auth && !signed) return;
-      if (name === 'me') loadMe();
-      else if (name === 'details') details();
-      else if (name === 'invoices') invoices();
-      else if (name === 'invite') invite();
-      else if (name === 'delete') deletePane();
-      else if (name === 'language') language();
+      if (name === 'language') language();
       else if (name === 'help') help();
-      else if (name === 'report') reportPane();
-      else if (name === 'feedback') feedbackPane();
       else if (name === 'doc') doc(v.doc);
       else if (name === 'join') join();
-      else if (name === 'trips') trips.list();
-      else if (name === 'trip') trips.open(v.id);
-      h2.textContent = name === 'me' ? T.pn_profile : name === 'trips' ? T.my_trips : name === 'trip' ? T.trip_h : name === 'join' ? T.pn_join
+      h2.textContent = name === 'me' ? T.pn_profile : name === 'join' ? T.pn_join
         : name === 'doc' ? T[DOC_T[v.doc]] : T['pn_' + name];
       if (name === 'doc') docTitle();
       var dir = !was ? 1 : depth(view) !== depth(was) ? (depth(view) > depth(was) ? 1 : -1) : TAB_ORDER(view) < TAB_ORDER(was) ? -1 : 1;
@@ -2104,15 +1181,7 @@ try {
 
     function sync(instant) {
       var s = getSession(), v = viewOf(view);
-      if (s) trips.user(uidOf(s));
-      else {
-        el.classList.remove('fresh');
-        trips.user(null);
-        me = meFor = inviteUntil = null; invRows = invFor = null;
-        var df = $('form', P.details);
-        if (df) { df.reset(); df._for = null; }
-      }
-      if (s) drawMe();
+      if (!s) el.classList.remove('fresh');
       if (s || !v.auth) showView(instant);
       else { shown = ''; h2.textContent = T.acct_h; if (!cur || !AUTH[cur.dataset.pane]) show(tab, -1, instant); }
       upArrow();
@@ -2145,32 +1214,8 @@ try {
     if (!acct || acct.lang !== T.lang) acct = Account();
     return acct;
   }
-  // Dates without a time: when an invoice was made, and until when an invite code can still be
-  // added (within the next 7 days, so no year).
-  var DAY = { day: 'numeric', month: 'short', year: 'numeric' }, SOON = { day: 'numeric', month: 'short' };
   // Which of the app's tabs a view belongs to: My trips, then Profile, then the rest.
   function TAB_ORDER(h) { return h.indexOf('#trips') === 0 ? 1 : h.indexOf('#login') === 0 ? 2 : 3; }
-
-  // An invoice (a PDF in the private invoices bucket) opens in a new tab through a link that
-  // works for five minutes. The tab opens at the tap, so the browser doesn't block it.
-  function openInvoice(path, failed) {
-    var w = window.open('', '_blank');
-    if (w) w.opener = null;
-    refresh().then(function (s) {
-      if (!s) throw new Error('Signed out');
-      return sbFetch(SB + '/storage/v1/object/sign/invoices/' + path.split('/').map(encodeURIComponent).join('/'), {
-        method: 'POST', body: JSON.stringify({ expiresIn: 300 }),
-        headers: { apikey: KEY, Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' }
-      });
-    }).then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); }).then(function (j) {
-      if (!j || !j.signedURL) throw new Error('No link');
-      var url = SB + '/storage/v1' + j.signedURL;
-      if (w) w.location.href = url; else location.assign(url);
-    }).catch(function () {
-      if (w) w.close();
-      failed();
-    });
-  }
 
   // The Car2Door Pro app's store buttons (Join Transporters once sent; the home page's own are in
   // site/src/site-template.html): "coming soon" until both store pages are public (DRIVER_APP.live).
@@ -2560,22 +1605,10 @@ try {
     else if (h) routeView(h);
   }
 
-  // Signed in from the account card: on the home page, slide back to Book your trip after a
-  // moment (not on the way to another view). Tapping anything in the card, or leaving the page,
-  // cancels that.
+  // The panel's slide back after a sign-in on the card, which no longer starts (the sign-in is
+  // /book's); tapping anything in the card, or leaving the page, cancels it.
   var autoClose = 0;
   function cancelAutoClose() { clearTimeout(autoClose); autoClose = 0; }
-  function signedIn() {
-    var s = getSession();
-    if (s) fetchName(s);
-    cancelAutoClose();
-    if (loginOpen && deckOf(page) && (acctHash() || '#login') === '#login') {
-      autoClose = setTimeout(function () {
-        autoClose = 0;
-        if (loginOpen && getSession() && deckOf(page)) closeLogin({ ui: true, focus: false });
-      }, 1600);
-    }
-  }
 
   // ---------------------------------------------------------------- the app's menu
   //
