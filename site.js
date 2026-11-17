@@ -30,11 +30,12 @@
  * Page modules: the booking card (home) and the Join Transporters form, started once for
  * each page as it is shown.
  *
- * Invite links (Share & Earn): off since E14 (REFERRALS below, written by build.py). Off, an old
- * link (car2door.eu/r/CODE or /invite?r=CODE) just opens the home page, and no code is kept, shown,
- * checked or sent. On, a transport company's code shows an invite panel on the home page and is kept
- * until the visitor signs in, applies to drive or downloads the Car2Door Pro app (see "invite links"
- * below).
+ * Invite links (Share & Earn, D193): a transport company's link car2door.eu/r/CODE opens the home
+ * page with its card (€25 off from €300, who carries, its lanes and reviews) while the server says
+ * the code works (referral_code_info: valid only while the programme is open). The code is kept in
+ * this browser for 30 days, where /book adds it after sign-in (see "invite links" below). Clients
+ * only: Join Transporters and the Car2Door Pro app take no code (D25). REFERRALS below (written by
+ * build.py) turns the whole of it off.
  *
  * Preview: with no backend in site/src/config.json (no project exists for the site yet), every
  * call to it is answered by preview.js with made-up data: nothing is sent, booked or charged
@@ -247,6 +248,9 @@ try {
 
   // Euros, dates and countries the way the page's language writes them.
   function locale(lang) { return lang === 'en' ? 'en-GB' : lang === 'pt' ? 'pt-PT' : lang; }
+  function numText(n, lang) {
+    try { return new Intl.NumberFormat(locale(lang || T.lang), { maximumFractionDigits: 1 }).format(n); } catch (e) { return String(n); }
+  }
   function money(cents, lang) {
     var f = cents % 100 ? 2 : 0;
     try {
@@ -587,14 +591,7 @@ try {
         } },
       { id: 'confirm', q: J.q_confirm, sub: J.confirm_sub, type: 'confirm' }
     ];
-    var i = 0, busy = false, ref = keptRef();
-    // Came through an invite link (Share & Earn): the code goes with the application.
-    if (ref) {
-      var chip = d.createElement('p');
-      chip.className = 'inv-chip';
-      chip.innerHTML = GIFT + '<span>' + esc(ref.by ? fill(T.inv_saved, { name: ref.by }) : fill(T.inv_code, { code: ref.code })) + '</span>';
-      form.parentNode.insertBefore(chip, form);
-    }
+    var i = 0, busy = false;
 
     function optHtml(s, o) {
       var on = s.type === 'many' ? (a[s.id] || []).indexOf(o.v) >= 0 : a[s.id] === o.v;
@@ -690,17 +687,10 @@ try {
         // The consent box was ticked (checked above): the database keeps its own time of it.
         consented_at: new Date().toISOString()
       };
-      ref = keptRef();
-      if (ref) row.referral_code = ref.code;
-      var post = function () {
-        return joinFetch(API, { method: 'POST', headers: { apikey: JKEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) })
-          .then(function (r) { return r.ok ? 0 : r.status; });
-      };
-      post().then(function (status) {
-        if (status !== 400 || !row.referral_code) return status;
-        delete row.referral_code; // an invite code the database refuses never costs the application itself
-        return post();
-      }).then(function (status) { if (status) throw new Error(status); done(); })
+      // No invite code goes with it: transporters bringing transporters waits until after launch (D25).
+      joinFetch(API, { method: 'POST', headers: { apikey: JKEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) })
+        .then(function (r) { return r.ok ? 0 : r.status; })
+        .then(function (status) { if (status) throw new Error(status); done(); })
         .catch(function () { busy = false; btn.disabled = false; btn.classList.remove('busy'); btn.textContent = J.submit; err('_', J.err_send); });
     }
 
@@ -711,7 +701,6 @@ try {
       setTimeout(function () {
         box.innerHTML = '<div class="done-mark" aria-hidden="true">✓</div><h1>' + esc(J.done_h.replace('{name}', (a.full_name || '').split(' ')[0])) + '</h1>'
           + '<p class="qsub">' + esc(J.done_p) + '</p>'
-          + (ref ? '<p class="qsub inv-done">' + GIFT + esc(fill(T.inv_join_done, { email: a.email })) + '</p>' : '')
           + driverBadges(J.ios_small, J.play_small)
           + '<a class="btn big next" href="' + esc(J.home) + '">' + esc(J.done_cta) + '</a>';
         box.className = 'q';
@@ -757,18 +746,15 @@ try {
 
   // ---------------------------------------------------------------- invite links (Share & Earn)
 
-  // A transport company's Share & Earn link or QR code (D22) opens car2door.eu/r/CODE. There is no
-  // such page, so 404.html sends it to the home page in the visitor's language as ?r=CODE. The code
-  // then waits in this browser for 30 days (REF). Signed out, the home page asks "I want to send a
-  // car" or "I'm a transporter". Clients book here, and the code goes on their account as soon as
-  // they are signed in (apply_referral_code checks every rule: new accounts only, in their first 7
-  // days, before the first booking, not their own code). Transporters get the Car2Door Pro app
-  // with the code (Google Play hands it to the app; on iPhone it is copied, and the app's sign-up
-  // page has Apple's Paste button) or the Join Transporters form, which sends it with the application.
+  // A transport company's Share & Earn link or QR code (D22, D193) opens car2door.eu/r/CODE. There is
+  // no such page, so 404.html sends it to the home page in the visitor's language as ?r=CODE. The code
+  // then waits in this browser for 30 days (REF, the key /book reads too: src/lib/referral.ts adds it to
+  // the account after sign-in, and apply_referral_code checks every rule). The home page shows the
+  // company's card, drawn in src/app/design/invited.tsx ("web"): €25 off the first transport from €300,
+  // Get a price, who carries, its lanes and reviews, and what the company sees. Clients only (D25).
   var REF_DAYS = 30, REF_CODE = /^[A-Z0-9]{4,12}$/;
   var GIFT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 11.5h15V19a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 19v-7.5ZM3.5 7.5h17v4h-17zM12 7.5v13M12 7.5c-1-2.6-2.3-4-3.8-4-1.3 0-2 .8-2 1.8 0 1.4 1.8 2.2 5.8 2.2Zm0 0c1-2.6 2.3-4 3.8-4 1.3 0 2 .8 2 1.8 0 1.4-1.8 2.2-5.8 2.2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  var VAN_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 16.5H3.2a.7.7 0 0 1-.7-.7V7.5A1.5 1.5 0 0 1 4 6h10.6c.5 0 .9.2 1.2.6l3.9 4.9c.2.3.3.6.3.9v3.4a.7.7 0 0 1-.7.7h-.4M8.6 16.5h6.3M14.5 6.5v5h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="17" r="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="17" r="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
-  var inv = null, applying = false, invN = 0; // inv: what the invite panel shows ({ step, ... })
+  var inv = null, applying = false, invN = 0; // inv: what the invite panel shows ({ step, info, ... })
 
   function keptRef() {
     if (!REFERRALS) return null; // off: no code is shown, checked, applied or sent with Join
@@ -804,9 +790,9 @@ try {
       var row = rows && rows[0];
       if (!row || !row.valid) { store.del(REF); inv = { step: 'note', msg: T.inv_bad }; return renderInvite(); }
       keepRef(r.code, row.invited_by);
-      inv = { step: 'choose' };
+      inv = { step: 'card', info: row };
       refNext();
-    }, function () { inv = { step: 'choose' }; refNext(); }); // offline: the server checks it when it is added
+    }, function () { inv = { step: 'saved' }; refNext(); }); // offline, 429, 5xx: only the small "saved" panel, never the €25 card; the server checks the code when it is added
   }
   function refNext() { if (getSession()) applyRef(); else renderInvite(); }
 
@@ -826,19 +812,13 @@ try {
   // Why apply_referral_code didn't add a code, in the visitor's words.
   function refWhy(res) {
     return { invalid_code: T.inv_bad, already_referred: T.inv_already, too_late: T.inv_too_late,
-      already_booked: T.inv_booked, own_code: T.inv_own }[res] || T.err_generic;
+      already_booked: T.inv_booked, own_code: T.inv_own, house_account: T.inv_house, programme_off: T.inv_off }[res] || T.err_generic;
   }
 
-  // A store link that carries the kept code: Google Play hands &referrer= to the app after the
-  // install. The App Store can't, so there the tap copies the invite link (onClick, onInvite).
-  function toStore(url) {
-    var r = keptRef();
-    if (!r || !/^https:\/\/play\.google\.com\//.test(url)) return url;
-    return url + (url.indexOf('?') < 0 ? '?' : '&') + 'referrer=' + encodeURIComponent('ref=' + r.code);
-  }
-  function copyRef() {
-    var r = keptRef();
-    if (r && navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText('https://car2door.eu/r/' + r.code).catch(noop);
+  // The company's lanes as the apps write them (src/lib/share-earn-rules.ts lanesText): the west, then Romania.
+  function lanesText(codes) {
+    var names = (codes || []).filter(function (c) { return c !== 'RO' && T.countries[c]; }).map(function (c) { return T.countries[c]; });
+    return names.length && (codes || []).indexOf('RO') >= 0 ? names.join(', ') + ' ⇄ ' + T.countries.RO : '';
   }
 
   // The invite panel on the home page: under the lead on wide screens, between the pill and the
@@ -852,7 +832,7 @@ try {
       return;
     }
     var el = old || d.createElement('section');
-    el.className = 'invite' + (inv.step === 'choose' || inv.step === 'driver' ? '' : ' small') + (inv.step === 'ok' ? ' ok' : '');
+    el.className = 'invite' + (inv.step === 'card' ? '' : ' small') + (inv.step === 'ok' ? ' ok' : '');
     el.innerHTML = html;
     el.setAttribute('aria-labelledby', $('h2', el).id);
     if (!old) {
@@ -875,18 +855,23 @@ try {
     if (v.step === 'note') return head(GIFT, T.inv_h, v.msg, true);
     if (v.step === 'ok') return head(IC.ok, fill(T.inv_saved, { name: v.by }), T.inv_ok, true);
     if (!r || v.step === 'check') return '';
-    var app = v.step === 'driver' && driverStore();
-    if (app) {
-      return head(VAN_ICON, T.inv_drv_h, fill(/apple\.com/.test(app) ? T.inv_drv_ios : T.inv_drv_android, { code: r.code }), false, true)
-        + '<a class="btn big inv-store" href="' + esc(toStore(app)) + '" data-inv="store">' + esc(T.inv_drv_btn) + '</a>'
-        + '<a class="link inv-web" href="' + esc(T.home + 'join') + '">' + esc(T.inv_drv_web) + '</a>';
-    }
-    if (v.step === 'choose') {
-      return head(GIFT, fill(T.inv_by, { name: refBy(r) }), T.inv_choose)
-        + '<div class="inv-opts">'
-        + '<button type="button" class="inv-opt" data-inv="travel">' + IC.car + '<span><b>' + esc(T.inv_travel) + '</b><small>' + esc(T.inv_travel_s) + '</small></span></button>'
-        + '<a class="inv-opt" href="' + esc(T.home + 'join') + '" data-inv="driver">' + VAN_ICON + '<span><b>' + esc(T.inv_driver) + '</b><small>' + esc(T.inv_driver_s) + '</small></span></a>'
-        + '</div>';
+    if (v.step === 'card') {
+      // The card as drawn (src/app/design/invited.tsx, "web"): the €25, then who carries. Rows only for what
+      // the server gave (referral_code_info: rating, reviews, lanes; none offline).
+      var by = refBy(r), info = v.info || {}, lanes = lanesText(info.lanes), rows = '';
+      if (lanes) rows += '<div class="inv-row"><span>' + esc(T.inv_lanes) + '</span><b>' + esc(lanes) + '</b></div>';
+      if (info.reviews > 0 && info.rating != null) {
+        rows += '<div class="inv-row"><span>' + esc(T.inv_reviews) + '</span><b>'
+          + esc(fill(T.inv_reviews_v, { rating: numText(info.rating), n: info.reviews })) + '</b></div>';
+      }
+      return '<p class="inv-badge">' + GIFT + '<span>' + esc(fill(T.inv_saved, { name: by })) + '</span></p>'
+        + '<h2 id="' + id + '" class="inv-big">' + esc(T.inv_card_h) + '</h2>'
+        + '<p class="inv-p">' + esc(T.inv_card_p) + '</p>'
+        + '<button type="button" class="btn big inv-go" data-inv="travel">' + esc(T.inv_price) + '</button>'
+        + '<div class="inv-co"><h3>' + esc(fill(T.inv_carried, { name: by })) + '</h3>' + rows
+        + '<p class="inv-small">' + esc(fill(T.inv_first, { name: by })) + '</p></div>'
+        + '<p class="inv-small">' + esc(T.inv_pay) + '</p>'
+        + '<p class="inv-small inv-seen">' + esc(fill(T.inv_seen, { name: by })) + '</p>';
     }
     return head(GIFT, fill(T.inv_saved, { name: refBy(r) }), T.inv_saved_p, true);
   }
@@ -895,14 +880,7 @@ try {
     if (!b) return;
     var what = b.getAttribute('data-inv');
     if (what === 'close') { inv.hidden = true; return renderInvite(); }
-    if (what === 'back') { inv = { step: 'choose' }; return renderInvite(); }
-    if (what === 'store') { if (/apple\.com/.test(b.href)) copyRef(); return; } // on to the store
-    if (what === 'driver') {
-      if (driverStore()) { e.preventDefault(); inv = { step: 'driver' }; renderInvite(); }
-      else inv = { step: 'saved' }; // on to Join Transporters (the link); the panel waits here
-      return;
-    }
-    // A client: Book your trip is right here. On phones the card is Log in / Create account
+    // Get a price: Book your trip is right here. On phones the card is Log in / Create account
     // until they sign in; someone new needs Create account.
     inv = { step: 'saved' };
     renderInvite();
@@ -1600,8 +1578,8 @@ try {
     if (x === 'help') return { pane: 'help', auth: 0 };
     if (x === 'report') return { pane: 'help', auth: 0 }; // a link to it is a mail (reportMail); an old address opens Help, which has it
     if (x === 'feedback') return { pane: 'feedback', auth: 0 };
-    // The invite-code form only while Share & Earn is on (E14.1); off, its old link opens Profile.
-    if (a === 'login' && x === 'invite' && !REFERRALS) return { pane: 'me', auth: 1 };
+    // No invite-code form any more (D193: a code comes by link or QR only); its old link opens Profile.
+    if (a === 'login' && x === 'invite') return { pane: 'me', auth: 1 };
     if (a === 'login' && PSTEPS[x] != null) return { pane: x, auth: PSTEPS[x] };
     return null;
   }
@@ -1753,7 +1731,7 @@ try {
       token().then(function (t) {
         return Promise.all([
           rest('profiles?select=full_name,phone,billing_name,billing_vat_number,billing_address&id=eq.' + u, t),
-          REFERRALS ? rest('rpc/referral_window', t, {}).catch(nothing) : null
+          null
         ]);
       }).then(function (r) {
         if (uid() !== u) return;
@@ -1774,7 +1752,7 @@ try {
       $('.me-mail', P.me).textContent = nm ? u.email || '' : '';
       $('.pf-phone', P.me).textContent = (meFor === uid() && me && me.phone) || '';
       var inv = $('.pf-inv', P.me);
-      inv.hidden = !(REFERRALS && meFor === uid() && inviteUntil);
+      inv.hidden = true; // no code field (D193)
       $('.pf-until', P.me).textContent = inviteUntil ? fill(T.pn_invite_by, { date: clockText(inviteUntil, null, SOON, T.lang) }) : '';
     }
 
@@ -2470,7 +2448,7 @@ try {
   // The views that need an account are the app's at /book, its one sign-in: My trips, a trip,
   // Profile and its steps open there (signed out, the app shows its Log in first), and so does
   // Feedback (Profile's Feedback). #login is the account card's Log in until then.
-  var BOOK_VIEWS = { trips: 'trips', me: 'profile', details: 'edit-profile', invoices: 'invoices', invite: 'invite-code', delete: 'profile', feedback: 'profile' };
+  var BOOK_VIEWS = { trips: 'trips', me: 'profile', details: 'edit-profile', invoices: 'invoices', invite: 'profile', delete: 'profile', feedback: 'profile' };
   function bookPath(h) {
     var v = viewOf(h);
     if (!v || !(BOOK_VIEWS[v.pane] || v.pane === 'trip') || (v.pane === 'me' && !bookSession())) return '';
@@ -2834,8 +2812,7 @@ try {
     if (app) { // phones: the browser follows the link to the store (and it is /join again right after)
       cancelAutoClose();
       var href = a.getAttribute('href');
-      if (/apple\.com/.test(app)) copyRef(); // an invite code goes along (toStore)
-      a.setAttribute('href', toStore(app));
+      a.setAttribute('href', app);
       setTimeout(function () { a.setAttribute('href', href); });
       return;
     }

@@ -118,7 +118,7 @@
     }
     if (path.indexOf('/rest/v1/rpc/my_trip_search') === 0) return reply(200, null);
     if (/\/rest\/v1\/rpc\/(answer_trip_search|report_trip_problem|report_function_failure)/.test(path)) return reply(200, null);
-    if (path.indexOf('/rest/v1/rpc/referral_code_info') === 0) return reply(200, [{ valid: true, invited_by: 'Demo Transport SRL' }]);
+    if (path.indexOf('/rest/v1/rpc/referral_code_info') === 0) return reply(200, [{ valid: true, invited_by: 'Demo Transport SRL', rating: 4.9, reviews: 12, lanes: ['DE', 'AT', 'RO'] }]);
     if (path.indexOf('/rest/v1/rpc/apply_referral_code') === 0) return reply(200, 'ok');
     if (path.indexOf('/rest/v1/transporter_applications') === 0) return reply(201, null);
     if (path.indexOf('/storage/v1/object/sign/') === 0) return reply(404, { message: 'Not in the preview' });
