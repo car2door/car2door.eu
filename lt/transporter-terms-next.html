@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://krscknuzrqhjfiryvqkc.supabase.co https://*.stripe.com https://*.link.com; font-src 'self'; connect-src 'self' https://krscknuzrqhjfiryvqkc.supabase.co wss://krscknuzrqhjfiryvqkc.supabase.co https://api.stripe.com https://r.stripe.com https://link.com https://*.link.com https://photon.komoot.io https://nominatim.openstreetmap.org; frame-src 'self' https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://m.stripe.network https://link.com https://*.link.com https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Sąlygos vežėjams | Car2Door</title>
+<meta name="description" content="Paslaugų teikimo sąlygos transporto įmonėms, vežančioms automobilius su programėle „Car2Door Pro“.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://car2door.eu/lt/transporter-terms-next">
+<link rel="alternate" hreflang="en" href="https://car2door.eu/transporter-terms-next">
+<link rel="alternate" hreflang="ro" href="https://car2door.eu/ro/transporter-terms-next">
+<link rel="alternate" hreflang="pl" href="https://car2door.eu/pl/transporter-terms-next">
+<link rel="alternate" hreflang="bg" href="https://car2door.eu/bg/transporter-terms-next">
+<link rel="alternate" hreflang="hu" href="https://car2door.eu/hu/transporter-terms-next">
+<link rel="alternate" hreflang="lt" href="https://car2door.eu/lt/transporter-terms-next">
+<link rel="alternate" hreflang="lv" href="https://car2door.eu/lv/transporter-terms-next">
+<link rel="alternate" hreflang="x-default" href="https://car2door.eu/transporter-terms-next">
+<meta name="theme-color" content="#050B18">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/landing.css?v=892371ac">
+<script src="/zones.js?v=ae55f024" defer></script>
+
+<script src="/site.js?v=a145742a" defer></script>
+<script src="/hero-net.js?v=ca533a10" defer></script>
+</head>
+<body>
+
+<!-- Car2Door's mark (plans/design/logo): the client's door on an orange disc, the dotted route and
+     the pickup ring. Its colours come from the tile it sits on (--m-disc, --m-door, --m-dot). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="0 0 1024 1024">
+    <circle cx="650" cy="370" r="190" fill="var(--m-disc, #FF6A13)"/>
+    <path d="M580 494V344a70 70 0 0 1 140 0v150z" fill="var(--m-door, #0E1726)"/>
+    <circle cx="686.4" cy="401.6" r="11.9" fill="var(--m-disc, #FF6A13)"/>
+    <circle cx="355" cy="671" r="26" fill="var(--m-dot, #fff)"/><circle cx="415" cy="610" r="26" fill="var(--m-dot, #fff)"/><circle cx="476" cy="548" r="26" fill="var(--m-dot, #fff)"/>
+    <circle cx="260" cy="768" r="54" fill="var(--m-door, #0E1726)" stroke="var(--m-dot, #fff)" stroke-width="44"/>
+  </symbol>
+</svg>
+
+<!-- One night map for every page. Pages slide over it and it is never redrawn (site.js).
+     hero-net.js tilts it into a table and runs the live network of transports across it. The masks
+     fade the image out at its own edges, so the tilted map has no hard border. -->
+<div class="backdrop" aria-hidden="true">
+  <svg viewBox="0 120 1800 1140" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="fade-y" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1381"><stop offset="0" stop-color="#000"/><stop offset=".1" stop-color="#fff"/><stop offset=".94" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+      <linearGradient id="fade-x" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1800" y2="0"><stop offset="0" stop-color="#000"/><stop offset=".06" stop-color="#fff"/><stop offset=".94" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+      <mask id="fade-v" maskUnits="userSpaceOnUse" x="0" y="0" width="1800" height="1381"><rect width="1800" height="1381" fill="url(#fade-y)"/></mask>
+      <mask id="fade-h" maskUnits="userSpaceOnUse" x="0" y="0" width="1800" height="1381"><rect width="1800" height="1381" fill="url(#fade-x)"/></mask>
+      <!-- brightness(1.22) contrast(1.1) saturate(1.3), applied when the map is drawn (landing.css), not on every frame -->
+      <filter id="lift" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope="1.342" intercept="-.05"/><feFuncG type="linear" slope="1.342" intercept="-.05"/><feFuncB type="linear" slope="1.342" intercept="-.05"/></feComponentTransfer><feColorMatrix type="saturate" values="1.3"/></filter>
+    </defs>
+    <g mask="url(#fade-h)"><image mask="url(#fade-v)" href="/img/europe-night.webp?v=5663e10b" x="0" y="0" width="1800" height="1381" preserveAspectRatio="none"/></g>
+  </svg>
+</div>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="/lt/"><span class="logo"><svg><use href="#mark"/></svg></span><span class="word">Car<span class="n2">2</span>Door</span></a>
+    <nav>
+      <a href="/lt/#how">Kaip tai veikia</a>
+      <a href="/lt/#cars">Automobiliai</a>
+      <a class="btn small shiny" href="/lt/join" data-driver-app><span class="long">Tapkite vežėju</span><span class="short">Vežėjams</span></a>
+      <details class="lang">
+        <summary aria-label="Kalba"><span class="earth" aria-hidden="true"></span><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#FDB913"/><rect x="0" y="0.667" width="3" height="0.667" fill="#006A44"/><rect x="0" y="1.333" width="3" height="0.667" fill="#C1272D"/></svg>LT</summary>
+        <div class="menu">
+        <a href="/transporter-terms-next" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><clipPath id="uk-t"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#uk-t)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg><span>English</span><b>EN</b></a>
+        <a href="/ro/transporter-terms-next" hreflang="ro" lang="ro"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0.000" y="0" width="1.000" height="2" fill="#002B7F"/><rect x="1.000" y="0" width="1.000" height="2" fill="#FCD116"/><rect x="2.000" y="0" width="1.000" height="2" fill="#CE1126"/></svg><span>Română</span><b>RO</b></a>
+        <a href="/pl/transporter-terms-next" hreflang="pl" lang="pl"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="1.000" fill="#FFFFFF"/><rect x="0" y="1.000" width="3" height="1.000" fill="#DC143C"/></svg><span>Polski</span><b>PL</b></a>
+        <a href="/bg/transporter-terms-next" hreflang="bg" lang="bg"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#FFFFFF"/><rect x="0" y="0.667" width="3" height="0.667" fill="#00966E"/><rect x="0" y="1.333" width="3" height="0.667" fill="#D62612"/></svg><span>Български</span><b>BG</b></a>
+        <a href="/hu/transporter-terms-next" hreflang="hu" lang="hu"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#CD2A3E"/><rect x="0" y="0.667" width="3" height="0.667" fill="#FFFFFF"/><rect x="0" y="1.333" width="3" height="0.667" fill="#436F4D"/></svg><span>Magyar</span><b>HU</b></a>
+        <a href="/lt/transporter-terms-next" hreflang="lt" lang="lt" aria-current="page"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#FDB913"/><rect x="0" y="0.667" width="3" height="0.667" fill="#006A44"/><rect x="0" y="1.333" width="3" height="0.667" fill="#C1272D"/></svg><span>Lietuvių</span><b>LT</b></a>
+        <a href="/lv/transporter-terms-next" hreflang="lv" lang="lv"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.800" fill="#9E3039"/><rect x="0" y="0.800" width="3" height="0.400" fill="#FFFFFF"/><rect x="0" y="1.200" width="3" height="0.800" fill="#9E3039"/></svg><span>Latviešu</span><b>LV</b></a>
+        </div>
+      </details>
+      <a class="btn small login" href="#login" data-login><span class="long">Prisijungti / Sukurti paskyrą</span><span class="short">Prisijungti</span></a>
+    </nav>
+  </div>
+</header>
+
+<div id="stage">
+<main id="page" class="page page-legal" data-page="legal">
+<div class="wrap legal-wrap">
+<article class="card legal" lang="lt">
+<h1>Paslaugų teikimo sąlygos vežėjams</h1>
+<p class="meta">Skirta Car2Door Pro programėlei, valdo StepsNest B.V.<br>Atnaujinta: 2026 m. lapkričio 19 d.</p>
+<p class="draft">Tai būsimoji sąlygų vežėjams versija. Ji taikoma nuo datos, nurodytos mūsų pranešime jums; iki tos datos taikoma <a href="/lt/transporter-terms">dabartinė versija</a>.</p>
+<h2>1. Kas mes esame ir kokie mūsų vaidmenys</h2>
+<ol>
+<li>Car2Door Pro valdo StepsNest B.V., Weert, Nyderlandai, KvK 42105882, <a href="mailto:support@car2door.eu">support@car2door.eu</a> („Car2Door“, „mes“); jos registruotoji buveinė ir PVM numeris nurodyti žemiau, skyriuje Įmonės duomenys.</li>
+<li>„Jūs“ esate transporto įmonė, kuri naudoja Car2Door Pro. Jūs vežate automobilius. Kiekvienam reisui esate vežėjas pagal CMR ir kliento sutarties šalis.</li>
+<li>Veikiame kaip jūsų agentai: užsakome reisus jūsų vardu, surenkame kliento mokėjimą jums ir atliekame kitus dalykus pagal 6 skyrių. Nesame vežėjas, ekspeditorius ar darbdavys ir neprisiimame atsakomybės už pervežimą.</li>
+</ol>
+<h2>2. Kas gali prisijungti</h2>
+<ol>
+<li>Transporto verslas, įsteigtas ES ir įregistruotas savo šalies įmonių registre (įskaitant vienasmenę įmonę, pavyzdžiui, Rumunijos PFA ar Lenkijos JDG), turintis ES Bendrijos licenciją tarptautiniam krovinių vežimui keliais.</li>
+<li>Asmuo, kuris registruojasi, turi būti registre nurodytas direktoriumi ar savininku. Stripe tikrina to asmens tapatybę, kai nustatote išmokas; mes ją sutikriname su registru.</li>
+<li>Pateikiate ES PVM numerį, rodomą VIES. Mažas verslas, kuris jo neturi, gali pateikti savo nacionalinį mokesčių numerį; tada gauna darbus tik iš verslo klientų savo šalyje, kol atsiras jo PVM numeris.</li>
+</ol>
+<h2>3. Jūsų dokumentai ir mūsų patikros</h2>
+<ol>
+<li>Įkeliate ir laikote galiojančius: ES Bendrijos licenciją ir jos patvirtintą kopiją kiekvienam automobiliui; savo CMR draudimą (pažymėjimą ir priedą); automobiliams, vertiems daugiau nei 15 000 €, – visos vertės draudimą; ir dokumentus, kurių kiekvienam automobiliui ir vairuotojui reikia programėlėje.</li>
+<li>Tikriname juos, kaip aprašyta mūsų kliento sąlygose (registrą, VIES, licenciją, draudimą, sankcijų sąrašus): prisijungiant ir vėliau pagal tvarkaraštį (VIES kas mėnesį, dokumentus – kai baigiasi jų galiojimas).</li>
+<li>Apie bet kokį pasikeitimą (pasibaigusį ar atšauktą draudimą, atimtą licenciją, naują direktorių) praneškite per 3 darbo dienas. Darbai sustoja tą dieną, kai dokumento galiojimas baigiasi.</li>
+<li>Melagingas ar pakeistas dokumentas iš karto nutraukia jūsų paskyrą (15 skyrius).</li>
+</ol>
+<h2>4. Draudimas</h2>
+<ol>
+<li>CMR civilinės atsakomybės draudimas kiekvienam jūsų reisui: jis apima naudotus automobilius, kiekvieną reiso šalį ir bent 50 000 € vienam įvykiui (250 000 € automobiliui, kuriame daugiau nei 3 automobilių vietos).</li>
+<li>Vežti automobilius, vertus daugiau nei 15 000 €: kiekvieno automobilio visos vertės draudimas iki to automobilio vertės grupės. Dėl tokių automobilių atsakote klientui iki automobilio vertės, nurodytos važtaraštyje (CMR 24 straipsnis), ir jūsų visos vertės draudimas turi tai sumokėti.</li>
+<li>Nedelsdami praneškite, jei koks nors draudimas baigiasi ar sumažėja.</li>
+</ol>
+<h2>5. Įstatymų laikymasis</h2>
+<p>Už transporto įstatymų laikymąsi kiekviename reise atsakote tik jūs, ir saugote kiekvieną licenciją, registracijos dokumentą ir draudimą, kurių jie reikalauja. Tai apima vairavimo ir poilsio laikus bei tachografą; vairuotojų pažymėjimus ir, kai reikia, Code 95 bei vairuotojų atestacijas; ES Bendrijos licenciją ir jos patvirtintą kopiją automobilyje; komandiravimo deklaracijas ir priimančiosios šalies minimalų atlyginimą, kai jūsų vairuotojai komandiruojami; kabotažo apribojimus; kelių mokesčius; ir Rumunijos e-Transport, kai jis taikomas. Car2Door tikrina tik 3 skyriaus dokumentus. Jos patikra neperima nė vienos iš šių pareigų.</p>
+<h2>6. Jūsų įgaliojimas Car2Door</h2>
+<p>Priimdami šias sąlygas, reisams, kuriuos priimate per Car2Door Pro, įgaliojate Car2Door:</p>
+<ol>
+<li>pasiūlyti ir užsakyti pervežimą jūsų vardu, už kainą, kurią nustato 9 skyrius, pagal pervežimo sąlygas (<a href="/lt/transport-conditions">car2door.eu/transport-conditions</a>);</li>
+<li>pateikti klientui jūsų vardu informaciją, kurios reikalauja įstatymas prieš užsakymą ir užsakymo metu;</li>
+<li>jūsų vardu priimti kliento nurodymus, ataskaitas ir pretenzijas (ataskaita programėlėje laikoma pranešimu jums) ir jūsų vardu perduoti kliento ataskaitą jūsų CMR draudikui (13.4 punktas);</li>
+<li>surinkti kliento mokėjimą kaip jūsų mokėjimų rinkėjas: kliento mokėjimas Car2Door laikomas mokėjimu jums;</li>
+<li>grąžinti klientui pinigus pagal atšaukimo taisykles;</li>
+<li>išrašyti jūsų sąskaitas faktūras ir kreditines sąskaitas klientui jūsų vardu ir jūsų sąskaita (11 skyrius);</li>
+<li>sulaikyti reiso išmoką, kol atvira ataskaita, ir sumokėti klientui iš jos, kai jūs arba jūsų draudikas pripažįstate pretenziją (13 skyrius).</li>
+</ol>
+<h2>7. Kaip jums siūlomi darbai</h2>
+<ol>
+<li>Darbas siunčiamas vežėjams, kurių automobiliai ir dokumentai tinka: maršrutas ir jūsų CMR draudimo šalys, draudžiama suma, laisvos automobilių vietos ir krovinio svoris, lebėdka automobiliui, kuris nevažiuoja, visos vertės draudimas automobiliui, vertam daugiau nei 15 000 €, ir – privačiam klientui – tai, kad taikote paėmimo šalies PVM (10 skyrius).</li>
+<li>Vežėjai, turintys planuojamą maršrutą tuo keliu, pirmieji jį mato. Tada visi tinkami mato tuo pačiu metu. Pirmasis priėmęs gauna darbą. Reitingai nekeičia, kas mato darbą.</li>
+<li>Naujai paskyrai pirmuosius 3 švarius pristatymus skiriami automobiliai, vertesni iki 15 000 €. Viena transporto priemonė vienu metu veža ne daugiau kaip 250 000 € vertės Car2Door automobilių.</li>
+<li>Esate laisvi priimti ar atmesti bet kurį darbą ir dirbti kitiems. Minimalaus darbų skaičiaus nėra. Atsisakymas ar ignoravimas darbo niekada nekeičia, kuriuos darbus matote, jūsų reitingo ar prieigos.</li>
+<li>Dirbate savo verslą: savo transporto priemones, licenciją, draudimą ir darbuotojus, savo kitus klientus, savo maršrutą ir laiką darbo datų ribose bei savo verslo riziką.</li>
+<li>Jei pakeičiame, kaip siūlomi darbai, apie tai pranešame 15 dienų iš anksto (17 skyrius).</li>
+</ol>
+<h2>8. Darbo atlikimas</h2>
+<ol>
+<li>Programėlėje nurodykite vairuotoją ir automobilio valstybinius numerius likus 24 valandoms iki paėmimo, iš patvirtintų vairuotojų ir automobilių. Automobilį veža tik tas vairuotojas ir ta transporto priemonė. Subrangos ir perkrovimo į kitą transporto priemonę nėra.</li>
+<li>Paimant: vairuotojas paprašo 6 skaitmenų paėmimo kodo, parodo asmens dokumentą tam, kas perduoda, pažymi, kad ant automobilio esantis VIN atitinka užsakytąjį (nesutapus – nekraunama), programėlės kamera padaro keturias kampų nuotraukas ir kiekvienos pažeidimo vietos artimą nuotrauką, senus pažeidimus užrašo žodžiais ir pasirašo kartu su tuo, kas perduoda.</li>
+<li>Važtaraštis yra e-CMR programėlėje; sutinkate su jo elektroniniais parašais (e-CMR protokolu). Paėmimui Belgijoje – atsispausdinkite ir pasirašykite popieriuje.</li>
+<li>Kelyje: atviras automobilių vežimo priemonė; automobilis užrakintas, jo raktai niekada nepaliekami viduje; nakvoti leidžiama tik saugomoje ar uždarytoje vietoje; nurodymus priimate tik iš kliento, programėlėje.</li>
+<li>Pristatant: tik nurodytam gavėjui, pagal pristatymo kodą; tos pačios keturios nuotraukos; gavėjas pasirašo. Prieš laikydami kontaktą nebuvusiu, palaukite bent 60 minučių po skambučio ir žinutės ir praneškite mums programėlėje.</li>
+<li>Niekada neprašykite kliento papildomų pinigų, grynais ar kitaip, ir niekada nesiūlykite Car2Door klientui reiso už programėlės ribų.</li>
+<li><strong>Žinutės ir elgesys.</strong> Žinutėse, nuotraukose ir atsiliepimuose negali būti įžeidžiamo, neapykantą kurstančio, aiškiai seksualinio pobūdžio, grasinančio ar neteisėto turinio. Pokalbyje galite pranešti apie žinutę arba blokuoti klientą. Tokį turinį galime pašalinti, o paskyrą, kuri pažeidžia šias taisykles, galime apriboti ar uždaryti.</li>
+</ol>
+<h2>9. Kaina, išmoka ir komisinis mokestis</h2>
+<ol>
+<li><strong>Kliento kaina.</strong> Jūs įgaliojate Car2Door nustatyti kliento kainą jūsų vardu, pagal Car2Door tarifą, už kiekvieną darbą, kurį priimate per Car2Door Pro. Klientas moka tą kainą, nepriklausomai nuo to, kuris vežėjas priima darbą ir kada.</li>
+<li><strong>Kliento kaina yra jūsų.</strong> Tai jūsų pervežimo kaina; PVM nuo jos apskaičiuojate, kaip nurodo 10 skyrius.</li>
+<li><strong>Jūsų išmoka didėja.</strong> Naujas darbas siūlomas su išmoka, kuri kiekvieną sekundę didėja: jūsų dalis prasideda nuo 80 % aukščiausio lygio ir pasiekia aukščiausią lygį per 10 minučių, tada lieka tame lygyje, kol darbas bus priimtas. Jūsų dalis aukščiausiu lygiu yra grynoji kliento kaina, atėmus Car2Door komisinį mokestį: 15 % grynosios kliento kainos, ir ne mažiau kaip 50 € už automobilį. Jei darbas grąžinamas, jis vėl siūlomas su išmoka, su kuria buvo priimtas, o išmoka toliau didėja nuo to lygio; laikas, kol jis buvo priimtas, į 10 minučių neįskaičiuojamas. Darbas, kuris yra maršruto paketo dalis, siūlomas iš karto aukščiausiu lygiu. Car2Door pradinį lygį ir laiką iki aukščiausio lygio gali keisti tik kaip aprašyta 17 skyriuje.</li>
+<li><strong>Jūsų priimama išmoka.</strong> Gaunate išmoką, galiojančią tą akimirką, kai mūsų serveris įrašo jūsų priėmimą, ir niekada ne mažesnę nei išmoka, kurią programėlė rodė, kai paspaudėte „Priimti“. Jei programėlė rodė didesnę išmoką nei mūsų serveris (pavyzdžiui, dėl to, kad telefono laikrodis skuba), priėmimas atmetamas ir darbas lieka atviras.</li>
+<li><strong>Car2Door komisinis mokestis</strong> už kiekvieną darbą yra grynoji kliento kaina, atėmus jūsų priimtą dalį: aukščiausiu lygiu – 15 % (ir ne mažiau kaip 50 € už automobilį), o kai priimate žemiau aukščiausio lygio – daugiau. Kai darbui sunku rasti vežėją, galime sumažinti savo komisinį mokestį. Kuponai, kuriuos suteikiame klientams, dengiami iš mūsų komisinio mokesčio, o ne iš jūsų dalies.</li>
+<li><strong>Jei klientas vėlai atšaukia arba neatvyksta</strong>, gaunate klientui mokamą dalį, o mūsų komisinis mokestis sumažėja tuo pačiu dalimi.</li>
+<li><strong>Kur tai matote.</strong> Darbo kortelė skiltyje Pasiūlymai rodo didėjančią jūsų išmoką ir laiką, likusį iki aukščiausio lygio. Jūsų reise rodoma jūsų priimta išmoka. Komisinis mokestis kartu su kliento grynąja kaina ir jūsų dalimi nurodomas mūsų komisinio mokesčio sąskaitoje kiekvienam darbui, skiltyse Uždarbis bei Sąskaitos faktūros.</li>
+<li><strong>Mūsų komisinio mokesčio sąskaita:</strong> vežėjui Nyderlanduose – su 21 % Nyderlandų PVM; kiekvienam kitam vežėjui – PVM apmokestinamas grįžtamuoju būdu (PVM direktyvos 44 ir 196 straipsniai), jūsų PVM numeriu, o jo neturint – nacionaliniu mokesčių numeriu.</li>
+</ol>
+<h2>10. PVM už jūsų pervežimą</h2>
+<ol>
+<li>PVM už jūsų pervežimą deklaruojate ir mokate jūs.</li>
+<li>Privačiam klientui taikomas paėmimo šalies PVM nuo pirmojo reiso. Jį deklaruojate per ES vienos įstaigos sistemą (OSS) savo šalyje arba su PVM numeriu kiekvienoje paėmimo šalyje. Privačių klientų darbus gauna tik vežėjas, kuris programėlėje praneša, kad taip daro.</li>
+<li>Verslo klientas moka grynąją kainą su PVM, apmokestinamu grįžtamuoju būdu, išskyrus verslą jūsų šalyje, kuris moka jūsų šalies PVM.</li>
+<li>PVM jums grąžiname kartu su išmoka ir kas ketvirtį pateikiame jūsų reisų santrauką pagal šalis jūsų OSS deklaracijai.</li>
+</ol>
+<h2>11. Sąskaitos faktūros jūsų vardu</h2>
+<ol>
+<li><strong>Įgaliojimas.</strong> Įgaliojate Car2Door išrašyti klientui jūsų vardu ir jūsų sąskaita kiekvieno darbo sąskaitą faktūrą, o kai darbas atšaukiamas arba dalis kainos grąžinama – kreditinę sąskaitą. Kiekvienoje nurodoma, kad ją išrašė StepsNest B.V. (Car2Door) jūsų vardu ir jūsų sąskaita, ir kad klientas mokėjo Car2Door kaip jūsų mokėjimų rinkėjui.</li>
+<li><strong>Jūsų numerių serija.</strong> Šios sąskaitos turi savo seriją: TR-[jūsų kodas]-[metai]-[numeris], kreditinės sąskaitos TRC-[jūsų kodas]-[metai]-[numeris]. Serija rezervuota sąskaitoms, kurias Car2Door išrašo jums; jūs jos patys nenaudojate, o savo kitoms sąskaitoms laikote savo seriją.</li>
+<li><strong>Kopijos.</strong> Kiekviena sąskaita faktūra ir kreditinė sąskaita pateikiama skiltyje Sąskaitos faktūros Car2Door Pro ir išsiunčiama jums el. paštu. Laikykite jas savo apskaitoje ir deklaruokite PVM deklaracijose.</li>
+<li><strong>14 dienų patikra.</strong> Patikrinkite kiekvieną sąskaitą faktūrą ir kreditinę sąskaitą, išrašytą jūsų vardu, ir kiekvieną savarankiškai išrašytą sąskaitą (12 skyrius). Jei kas nors negerai, praneškite mums per 14 dienų nuo jos gavimo; tada ją ištaisome kreditine sąskaita ir nauja sąskaita. Praėjus 14 dienų ji laikoma jūsų priimta, tačiau tai nesustabdo ištaisymo, kurio reikalauja įstatymas.</li>
+<li><strong>Lenkija.</strong> Lenkijos vežėjas kartu su šiomis sąlygomis suteikia Car2Door savo įgaliojimą (upoważnienie, Lenkijos PVM įstatymo 106d straipsnio 2 dalis) išrašyti sąskaitas jo vardu ir jo sąskaita.<ul>
+<li><strong>Verslo klientai.</strong> Verslo kliento sąskaita faktūra turi būti išrašyta per KSeF, taip pat klientui užsienyje, kai PVM apmokestinamas grįžtamuoju būdu. Ją išrašote KSeF patys, pagal duomenis, kuriuos programėlė pateikia skiltyje Sąskaitos, kurias išrašote patys, ir įrašote jos numerį ten; klientui siunčiame mokėjimo kvitą. Ištaisymas ar kreditinė sąskaita jam taip pat jūsų, nurodant jos KSeF numerį.</li>
+<li><strong>Privatūs klientai:</strong> sąskaitą išrašome už KSeF ribų jūsų TR serijoje.</li>
+<li>Nedelsdami praneškite, jei pasikeičia jūsų PVM statusas (aktyvus, atleistas, VAT-UE, OSS).</li>
+</ul>
+</li>
+<li><strong>Rumunija.</strong> Rumunijos sąskaitų išrašymo taisyklės taikomos kiekvienai mūsų išrašytai sąskaitai Rumunijos vežėjui (Codul fiscal 319 straipsnis).<ul>
+<li><strong>Prieš pirmąjį darbą:</strong> registruotu laišku praneškite savo mokesčių inspekcijai, kad StepsNest B.V. (Car2Door, Weert, Nyderlandai, su PVM numeriu, nurodytu skyriuje Įmonės duomenys žemiau) išrašo sąskaitas jūsų vardu, kaip to iš jūsų reikalauja Rumunijos teisė.</li>
+<li><strong>Per RO e-Factura:</strong> sąskaita, kurią įstatymas reikalauja siųsti per e-Factura (programėlė kiekvieną jų nurodo skiltyje Sąskaitos, kurias išrašote patys). Ją išrašote ir įkeliate patys, pagal programėlės pateikiamus duomenis, ir įrašote jos numerį ten; klientui siunčiame mokėjimo kvitą. Storno ar ištaisanti sąskaita jai taip pat jūsų.</li>
+<li><strong>Už e-Factura ribų:</strong> sąskaitą išrašome jūsų TR serijoje ir išsiunčiame klientui el. paštu.</li>
+<li><strong>Be PVM numerio</strong> (PFA, II): prieš imdami verslo kliento darbą užsienyje arba gaudami mūsų komisinio mokesčio sąskaitą, pateikite mums savo specialų PVM kodą (art. 317).</li>
+</ul>
+</li>
+<li><strong>Kitos nacionalinės sistemos</strong> (pavyzdžiui, Belgijos Peppol, Kroatijos eRačun ir fiskalizacija, Vengrijos Online Számla): kur viena jų reikalauja, kad sąskaitą išrašytumėte jūs, ją išrašote ten patys tuo pačiu būdu, o klientui siunčiame mokėjimo kvitą.</li>
+<li>Už savo sąskaitas faktūras ir PVM atsakote jūs. Mes jas rašome pagal jūsų pateiktus duomenis, todėl programėlėje teisingai laikykite įmonės pavadinimą, adresą ir PVM numerį.</li>
+</ol>
+<h2>12. Dalinkitės ir uždirbkite (šiuo metu nesiūloma)</h2>
+<ol>
+<li>Dalinkitės ir uždirbkite bei partnerių komisiniai šiuo metu nesiūlomi. Kai išmokame jums tokį atlygį, sąskaitą už jį išrašome patys, kaip jūsų klientui (savarankiškas išrašymas, PVM direktyvos 224 straipsnis). Tam sutinkate.</li>
+<li>Savarankiškai išrašytos sąskaitos turi savo seriją ir pateikiamos skiltyje Sąskaitos. Kiekvieną priimate, nebent per 14 dienų praneštumėte, kad kas nors negerai (11.4 punktas).</li>
+<li>Savarankiškai išrašymą galite nutraukti raštu; tada atlygiai mokami pagal jūsų pačių sąskaitą.</li>
+</ol>
+<h2>13. Išmokos ir sulaikymai</h2>
+<ol>
+<li>Išmokas mokame per Stripe į banko sąskaitą jūsų įmonės vardu, praėjus 48 valandoms po pristatymo kodo, kai mums pasiekia keturios kampų nuotraukos iš paėmimo ir pristatymo. Kol jūs ar klientas turite mažiau nei 3 apmokėtus reisus, ji laukia 72 valandas kaip apsauga nuo sukčiavimo. Jūsų dalis už atšauktą reisą (9.6 punktas) išmokama praėjus 24 valandoms nuo atšaukimo, kad klaidingas atšaukimas dar galėtų būti ištaisytas.</li>
+<li>Išmokas nustatote su Stripe ir sutinkate su Stripe prijungtos paskyros sutartimi (Connected Account Agreement). Banko duomenys keičiami tik per programėlę ar Stripe, o pakeitimas patikrinamas prieš kitą išmoką.</li>
+<li><strong>Sulaikymai.</strong> Kiekvienas sulaikymas turi priežastį, rodomą programėlėje:<ul>
+<li>klientas, prieš išmokant, pateikia žalos pranešimą – tam reisui išmoka sulaikoma iki 30 dienų;</li>
+<li>trūksta mokesčių duomenų ES DAC7 ataskaitai: po dviejų priminimų ir 60 dienų išmokos laukia, kol jie atsiras;</li>
+<li>kliento bankas atidaro mokėjimo ginčą dėl jūsų pervežimo: jei bankas sprendžia prieš jus, ginčijamą sumą galime išskaityti iš vėlesnių išmokų;</li>
+<li>kai įmonė jūsų Stripe išmokų paskyroje skiriasi nuo to, kurį nurodėte, jūsų išmokos laukia, kol žmogus iš mūsų komandos patikrins; jūsų nauji darbai tęsiasi, nebent tas žmogus juos sustabdo;</li>
+<li>kai po mūsų patvirtinimo pasikeičia jūsų įmonės duomenys, jūsų išmokos ir jūsų vardu išrašomos sąskaitos laukia, kol žmogus iš mūsų komandos patikrins pakeitimą; jūsų nauji darbai tęsiasi;</li>
+<li>kol žmogus iš mūsų komandos sulaiko jūsų paskyros išmokas (sustabdymas arba tikrinant sukčiavimo požymius), sustoja ir nauji darbai; vykstantys reisai tęsiasi.</li>
+</ul>
+</li>
+<li><strong>Pretenzijos.</strong> Kliento ataskaitą jums perduodame tą pačią dieną ir persiunčiame jūsų CMR draudikui, naudodami jūsų draudimo pažymėjime nurodytus kontaktus pretenzijoms teikti. Jei draudimo pažymėjime kontaktų pretenzijoms teikti nėra, prašome ataskaitą savo draudikui išsiųsti patiems. Už draudiko informavimą ir jo terminų laikymąsi ir toliau atsakote jūs. Prašome atsakyti programėlėje per 2 darbo dienas. Jei jūs arba jūsų draudikas pripažįstate pretenziją sulaikymo laikotarpiu, klientui išmokame iš sulaikytos išmokos ir apie tai jums pranešame. Pasibaigus sulaikymui, išmoka jums atlaisvinama, o pretenzija tęsiama tarp jūsų, kliento ir jūsų draudiko.</li>
+</ol>
+<h2>14. Darbo grąžinimas</h2>
+<ol>
+<li>Nemokamai iki 48 valandų iki paėmimo lango. Vėliau tai kainuoja 25 €, išskaičiuojami iš jūsų kitų išmokų po 24 valandų (kad klaidą dar galima būtų panaikinti).</li>
+<li>Darbas grįžta kitiems vežėjams, o klientui pranešame.</li>
+<li>Mūsų skaitikliai tik pažymi pasikartojančius grąžinimus. Bet kokį sustabdymą nusprendžia žmogus iš mūsų komandos (15 skyrius).</li>
+</ol>
+<h2>15. Reitingai, sustabdymai ir nutraukimas</h2>
+<ol>
+<li>Baigus reisą, klientas gali įvertinti vairuotoją ir jūsų įmonę: 1–5 žvaigždutėmis su komentaru. Jūsų vidurkis rodomas jūsų profilyje ir klientams. Dėl žemo įvertinimo atsiliepimo nepašaliname; jį galite pranešti programėlėje.</li>
+<li><strong>Kas sprendžia.</strong> Kiekvieną sustabdymą, apribojimą ar jūsų paskyros uždarymą, grindžiamą mūsų vertinimu, nusprendžia žmogus iš mūsų komandos. Mūsų signalai tik pažymi jūsų paskyrą tam žmogui: vėlyvi grąžinimai ir neatvykimai (3 per 90 dienų arba 5 per 12 mėnesių), įmonė jūsų Stripe išmokų paskyroje, kuri skiriasi nuo jūsų, įmonės duomenų pakeitimas po patvirtinimo ir įmonių registro atsakymas. Išmokų sulaikymai 13.3 punkte pradedami pagal ten užrašytas fiksuotas taisykles kaip saugumo žingsnis, kol žmogus pažiūri; tada žmogus nusprendžia, ar jie lieka. Tas žmogus jums pasako priežastis raštu, programėlėje ir el. paštu iki sprendimo įsigaliojimo dienos, nurodydamas asmenį, su kuriuo galite pasikalbėti. Galite prašyti, kad sprendimą peržiūrėtų kitas žmogus, pateikdami savo poziciją; atsakome raštu per 2 savaites. Taip pat galite kreiptis į teismą (20 skyrius).<br>Kai kurie veiksmai atliekami be žmogaus, nes sprendžia įstatymas, faktas ar jūsų pats veiksmas, o ne mūsų nuomonė:<ul>
+<li>pasibaigęs ar trūkstamas dokumentas sustabdo naujus darbus, kol įkeliate galiojantį (3.3 punktas): dokumentų tikrinimas yra mūsų pareiga, o juos atnaujinti gali tik jūs;</li>
+<li>galimas sutapimas su sankcijų sąrašu sustabdo darbus ir išmokas, kol žmogus iš mūsų komandos to nepaneigia: sankcijų teisė draudžia pinigus perduoti sąraše esančiam asmeniui;</li>
+<li>naujos sąlygos: nauji darbai laukia, kol jas priimsite (17 skyrius), nes kiekvienas darbas užsakomas pagal galiojančias sąlygas;</li>
+<li>Stripe išjungia jūsų išmokas: tai Stripe sprendimas, ir be jo mes nieko negalime sumokėti;</li>
+<li>įmonė ne ES negauna darbų: prisijungti gali tik ES pervežimo verslai (2.1 punktas);</li>
+<li>VIES nebežino PVM numerio – jis nebeskaičiuojamas savo šaliai, ir mes tai pranešame jums: apmokestinamai grįžtamuoju būdu sąskaitai reikalingas galiojantis numeris;</li>
+<li>demonstracinė paskyra, kurią suteikiame programėlių parduotuvių vertintojams, išmokų negauna: ji mūsų, o ne transporto įmonės.</li>
+</ul>
+Žmogus iš mūsų komandos bet kurį iš jų peržiūri, kai to paprašote: programėlėje spauskite „Paprašyti žmogaus pažiūrėti“ arba rašykite pokalbyje.</li>
+<li>Galime apriboti ar sustabdyti jūsų paskyrą ar nebesiūlyti jums darbų dėl: pasibaigusio ar trūkstamo dokumento; melagingo ar pakeisto dokumento; sutapimo su sankcijų sąrašu; sukčiavimo požymių; prašymo kliento papildomų pinigų ar klientų viliojimo už programėlės ribų; 8.7 punkto (žinutės ir elgesys) pažeidimo; pasikartojančių vėlyvų grąžinimų ar neatvykimų; pavojaus saugumui; arba teisinės pareigos.</li>
+<li><strong>Nutraukimas.</strong> Bet kada galite sustoti ir ištrinti savo paskyrą programėlėje; pirmiausia baikite arba grąžinkite priimtus darbus (14 skyrius). Paskyra tada iš karto įšaldoma ir ištrinama po 28 dienų arba iš karto, jei pasirenkate „Ištrinti dabar“. Jei tą dieną dar turime išmoką ar sąskaitą, arba atviras žalos pranešimas ar mokėjimo ginčas dėl vieno jūsų reiso, ištriname tai, kas gali būti ištrinta tada, o likusius – kai bus atsiskaityta ar uždaryta, ir per vieną mėnesį pranešame, kas padaryta ir kas laukia (Privatumo politika, 11 skyrius). Paskyrą nutraukiame su 30 dienų įspėjimu ir nurodydami priežastis, arba iš karto dėl teisinės pareigos ar rimto ar pasikartojančio šių sąlygų pažeidimo (įskaitant melagingus dokumentus).</li>
+</ol>
+<h2>16. Jūsų duomenys ir duomenys, kuriuos gaunate</h2>
+<ol>
+<li>Kaip naudojame jūsų ir jūsų vairuotojų duomenis, nurodyta mūsų Privatumo politikoje. Pateikite savo vairuotojams mūsų vairuotojo pranešimą (<a href="/lt/privacy#drivers">car2door.eu/privacy#drivers</a>).</li>
+<li>Kliento, pardavėjo ir gavėjo vardams, telefono numeriams ir adresams, kuriuos gaunate darbui, jūs esate atskiras duomenų valdytojas pagal BDAR. Naudokite juos tik tam darbui ir savo teisinėms pareigoms (pavyzdžiui, mokesčių apskaitai ir važtaraščiui), niekada rinkodarai, ir ištrinkite, kai jūsų teisė tai leidžia.</li>
+<li>Ką matote programėlėje: savo darbus, sąskaitas, išmokas, dokumentus ir įvertinimus – per visą paskyros laiką ir tiek, kiek įstatymas leidžia mums juos saugoti. Galite paprašyti mūsų nemokamai jūsų duomenų kopijos, įskaitant reitingus ir atsiliepimus. Jūsų išmokas pranešame Nyderlandų mokesčių inspekcijai pagal ES DAC7 taisykles.</li>
+<li><strong>Ką programėlė įrašo ir ko niekada nedaro.</strong> Ji bendrina jūsų vairuotojo naujausią padėtį nuo kelio iki priimto paėmimo vietos iki pristatymo, nesaugo jokio pėdsako, klientui ir gavėjui rodo tik likusius kilometrus tranzitu, tikslią vietą – tik paskutiniuose 30 km iki pristatymo, o poilsio metu – nieko, ir ją ištrina pristatymo metu. Nuotraukas ir parašus įrašo tik perdavimų metu. Įrašome įvertinimus, grąžinimus, dokumentų datas ir 3 skyriaus patikras. Niekada netvarkome emocijų, privačių pokalbių, sveikatos duomenų, profsąjungos narystės ar veido atpažinimo, ir nieko, kai nevykdote Car2Door darbo. Mūsų privatumo rizikos vertinimą šioms sistemoms pateikiame jums pagal prašymą; peržiūrime jas bent kas 2 metus.</li>
+</ol>
+<h2>17. Šių sąlygų pakeitimai</h2>
+<p>Apie pakeitimą pranešame programėlėje ir el. paštu bent 15 dienų prieš jam įsigaliojant. Iki tol galite nutraukti savo paskyrą. Prieš priimdami naujus darbus, priimate naują versiją Car2Door Pro skiltyje Profilis › Dokumentai; vykstantys reisai baigiami pagal senąją versiją. Joks pakeitimas netaikomas praeičiai.</p>
+<h2>18. Jūsų skundai</h2>
+<p>Rašykite programėlės pokalbyje arba adresu <a href="mailto:support@car2door.eu">support@car2door.eu</a>. Atsako žmogus, paprastai per 2 darbo dienas.</p>
+<h2>19. Atsakomybė tarp mūsų</h2>
+<ol>
+<li>Atsakote už savo pervežimą pagal CMR. Jei klientas ar valdžios institucija laiko Car2Door atsakinga už jūsų pervežimą ar jūsų įstatymų pažeidimą, jūs ją atlyginate.</li>
+<li>Mes atsakome už savo pareigas šiose sąlygose. Mūsų atsakomybė jums ribojama to darbo komisiniu mokesčiu, išskyrus tyčią ar didelį neatsargumą.</li>
+</ol>
+<h2>20. Teisė ir teismai</h2>
+<p>Nyderlandų teisė. Limburgo teismas (Rechtbank Limburg), Nyderlandai. Šios sąlygos parengtos anglų kalba; kai jos skelbiamos jūsų kalba, kiekviena versija yra lygiai galiojanti.</p>
+
+<section class="company" id="company">
+<h2>Įmonės duomenys</h2>
+<p>StepsNest B.V., buveinė: Sprangstraat 10, 6004 XD Weert, Nyderlandai. Nyderlandų prekybos rūmų (KvK) registro numeris 42105882, PVM mokėtojo kodas NL869759164B01.</p>
+<p>Patikrinkite mus patys: <a href="https://www.kvk.nl/zoeken/?source=all&amp;q=42105882" rel="noopener">KvK registras</a> · <a href="https://ec.europa.eu/taxation_customs/vies/" rel="noopener">ES PVM patikra (VIES)</a>.</p>
+</section>
+
+<nav class="links">
+<a href="/lt/">Car2Door</a>
+<a href="/lt/terms">Sąlygos klientams</a>
+<a href="/lt/transporter-terms">Sąlygos vežėjams</a>
+<a href="/lt/transport-conditions">Transport conditions</a>
+<a href="/lt/privacy">Privatumo politika</a>
+<a href="/lt/cookies">Slapukų politika</a>
+<a href="/lt/delete-account">Paskyros ištrynimas</a>
+</nav>
+</article>
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div class="proof">
+      <a class="brand" href="/lt/"><span class="logo"><svg><use href="#mark"/></svg></span><span class="word">Car<span class="n2">2</span>Door</span></a>
+      <p>Car2Door yra <b>StepsNest B.V.</b> paslauga, Weert, Nyderlandai.<br>Prekybos rūmai (KvK) <a href="https://www.kvk.nl/zoeken/?source=all&amp;q=42105882" rel="noopener">42105882</a>.</p>
+      <p class="never">Mes niekada neprašome jūsų pinigų. Užsakykite ir mokėkite tik car2door.eu.</p>
+      <p class="never car-price">Car2Door niekada nesurenka automobilio kainos.</p>
+    </div>
+    <nav>
+      <a href="/lt/terms">Sąlygos klientams</a>
+      <a href="/lt/transporter-terms">Sąlygos vežėjams</a>
+      <a href="/lt/privacy">Privatumo politika</a>
+      <a href="/lt/cookies">Slapukų politika</a>
+      <a href="/lt/delete-account">Paskyros ištrynimas</a>
+      <a href="/lt/how-we-check-transporters">Kaip tikriname vežėjus</a>
+      <a href="/lt/claims-and-deadlines">Pretenzijos ir terminai</a>
+      <a href="/lt/is-this-booking-real">Ar šis užsakymas tikras?</a>
+      <a href="#feedback">Atsiliepimai</a>
+      <a href="#report">Pranešti apie turinį</a>
+      <a href="mailto:support@car2door.eu">support@car2door.eu</a>
+    </nav>
+  </div>
+  <p class="wrap copy">© 2026 StepsNest B.V.</p>
+  <p class="wrap copy">Automobilių markės ir modeliai: <a href="https://www.eea.europa.eu/en/datahub" rel="noopener">Europos aplinkos agentūros CO2 stebėsenos duomenys</a>, <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.</p>
+</footer>
+</main>
+</div>
+
+<script type="application/json" id="dv-t">{"lang": "lt", "home": "/lt/", "acct_h": "Jūsų paskyra", "back": "Atgal", "tab_login": "Prisijungti", "tab_create": "Sukurti paskyrą", "google": "Tęsti su Google", "apple": "Tęsti su Apple", "redirecting": "Atidaroma: {provider}…", "signing_in": "Prijungiame jus…", "f_name": "Vardas ir pavardė", "ph_name": "Vardas Pavardė", "f_email": "El. paštas", "ph_email": "vardas@example.com", "hint": "Atsiųsime jums vienkartinį kodą el. paštu. Slaptažodžio nereikia.", "send": "Atsiųsti kodą el. paštu", "sending": "Siunčiama…", "code_h": "Patikrinkite el. paštą", "code_sent": "Išsiuntėme kodą adresu {email}", "f_code": "Kodas iš laiško", "verify": "Tęsti", "verifying": "Tikrinama…", "change_email": "Keisti el. paštą", "resend": "Siųsti naują kodą", "resend_in": "Naujas kodas po {s} s", "resent": "Išsiuntėme jums naują kodą.", "legal": "Tęsdami sutinkate su <a href=\"/lt/terms\">Sąlygomis<\/a> ir <a href=\"/lt/privacy\">Privatumo politika<\/a>.", "welcome": "Prisijungėte", "signed_in_as": "Prisijungta kaip", "my_trips": "Mano pervežimai", "logout": "Atsijungti", "my_account": "Mano paskyra", "err_email": "Įveskite teisingą el. pašto adresą.", "err_name": "Įveskite savo vardą.", "err_code": "Įveskite kodą iš laiško.", "err_bad_code": "Kodas neteisingas arba nebegalioja. Patikrinkite laišką arba paprašykite naujo kodo.", "no_account": "Su šiuo el. pašto adresu paskyros dar nėra.", "create_instead": "Sukurti paskyrą", "err_rate": "Per daug bandymų. Palaukite minutę ir bandykite dar kartą.", "err_wait": "Prieš prašydami kito kodo, šiek tiek palaukite.", "err_network": "Nepavyko susisiekti su Car2Door. Patikrinkite ryšį ir bandykite dar kartą.", "err_generic": "Kažkas nepavyko. Bandykite dar kartą.", "err_oauth": "Prisijungti per {provider} nepavyko. Bandykite dar kartą arba naudokite el. paštą.", "err_oauth_off": "Prisijungimas per {provider} dar negalimas. Naudokite el. paštą.", "h_price": "Jūsų kaina", "checking": "Tikriname jūsų maršrutą…", "err_from": "Įveskite paėmimo adresą.", "err_to": "Įveskite pristatymo adresą.", "err_not_found": "Neradome „{q}“. Pabandykite miestą ir šalį arba pašto kodą.", "err_search": "Adresų paieška šiuo metu neatsako. Po akimirkos bandykite dar kartą.", "err_route": "Car2Door užsako automobilių pervežimus ES viduje.", "err_domestic": "Car2Door kol kas neužsako pervežimų vienos šalies viduje. Galimi pervežimai iš vienos šalies į kitą.", "err_short": "Pervežimas turi būti bent {n} km.", "err_when": "Pasirinkite dieną nuo rytojaus.", "err_make": "Pasirinkite markę iš sąrašo.", "err_model": "Pasirinkite modelį iš sąrašo.", "err_vin": "Įveskite VIN: 17 raidžių ir skaitmenų iš registracijos liudijimo (E laukas), be I, O ir Q.", "err_vin_old": "Įveskite VIN arba, jei automobilis pagamintas iki 1981 m., kėbulo numerį: 5–16 raidžių ir skaitmenų.", "vin_letters": "Tik raidės ir skaitmenys, be I, O ir Q", "vin_maker": "Gamintojo kodas: {make}", "vin_other": "Šis gamintojo kodas nėra {make}. Kito gamintojo pagamintas automobilis turi to gamintojo kodą: patikrinkite VIN ir markę, tada tęskite.", "vin_check": "Dar kartą patikrinkite VIN: kontrolinis skaitmuo nesutampa. Kai kurie gamintojai jo nenaudoja, todėl galite tęsti.", "vin_unknown": "Šio gamintojo kodo dar nežinome. Paimant automobilį VIN sutikrinamas su registracijos liudijimu.", "err_value": "Pasirinkite automobilio vertę: vieną iš intervalų arba, jei daugiau nei 50 000 €, vertę sveikais eurais iki 250 000 €.", "err_plate": "Patikrinkite valstybinį numerį arba palikite tuščią, jei automobilis neįregistruotas.", "err_photo": "Pridėkite vieną viso automobilio nuotrauką iš šono.", "opt_h": "Pasirinkite variantą", "ow_saver": "Paėmimas per 7 dienas", "ow_standard": "Paėmimas per 5 dienas", "ow_priority": "Paėmimas jūsų pasirinktą arba kitą dieną", "deliver_by": "Pristatymas iki {date}", "runs_not": "Nevažiuoja", "km": "≈ {n} km", "total": "Iš viso", "go_book": "Tęsti užsakymą", "fine_print": "Toliau: automobilio duomenys ir jūsų kortelė. Nieko nemokate, kol transporto įmonė nepriima užsakymo.", "s_car": "Automobilis", "s_paid": "Sumokėta", "s_price": "Kaina", "s_voucher": "Kvietimo kuponas", "retry": "Bandyti dar kartą", "here_row": "Mano vieta", "here_finding": "Nustatoma jūsų vieta…", "here_denied": "Kad užpildytume, kur esate, leiskite Car2Door naudoti jūsų vietą. Arba įveskite adresą.", "here_blocked": "Jūsų naršyklė šiai svetainei blokuoja vietos nustatymą. Leiskite jį svetainės nustatymuose arba įveskite adresą.", "here_vague": "Šiuo metu jūsų vieta nustatoma nepakankamai tiksliai. Po akimirkos bandykite dar kartą arba įveskite adresą.", "here_timeout": "Vietos nustatymas užtruko per ilgai. Bandykite dar kartą arba įveskite adresą.", "here_unavailable": "Šiuo metu jūsų vietos nustatyti nepavyksta. Bandykite dar kartą arba įveskite adresą.", "here_not_found": "Ten, kur esate, adreso nerasta. Įveskite adresą.", "here_not_served": "Esate už šalių, kuriose dirba Car2Door, ribų. Įveskite adresą.", "clear_addr": "Išvalyti adresą", "route_closed_h": "Šis maršrutas dar neatidarytas", "route_closed": "Car2Door šiuo maršrutu užsakymų dar nepriima. Jis atsidarys, kai jį aptarnaus pakankamai transporto įmonių. Pabandykite kitą paėmimo ar pristatymo vietą arba grįžkite vėliau.", "country_closed": "Car2Door šiuo metu nepriima užsakymų iš šios šalies ar į ją.", "err_quote": "Nepavyko įkelti kainų. Patikrinkite ryšį ir bandykite dar kartą.", "priced_now": "Šiandienos kainos tokiam automobiliui kaip jūsų. Tikslią kainą jūsų automobiliui matysite užsakydami.", "book_trip": "Užsakyti pervežimą", "trip_h": "Jūsų pervežimas", "up_h": "Vykdomi", "past_h": "Užbaigti", "none_h": "Pervežimų dar nėra", "none_p": "Čia matysite užsakytus pervežimus.", "err_trips": "Nepavyko įkelti jūsų pervežimų. Patikrinkite ryšį ir bandykite dar kartą.", "gone": "Šio pervežimo jūsų paskyroje neradome.", "st_pending_payment": "Užsakymas nebaigtas", "st_bidding": "Ieškoma transporto įmonės", "st_accepted": "Transporto įmonė paskirta", "st_en_route": "Važiuoja į paėmimo vietą", "st_picked_up": "Kelyje", "st_completed": "Pristatyta", "st_cancelled": "Atšaukta", "t_note": "Jūsų pastaba", "t_window": "Paėmimo laiko intervalas", "t_deliver": "Pristatymas iki", "t_to_charge": "Nuskaičiuojama, kai įmonė priima", "t_to_confirm": "Mokėjimą reikia patvirtinti", "t_not_charged": "Nieko nenuskaičiuota", "n_bidding": "Jūsų pervežimas dabar siūlomas transporto įmonėms jūsų maršrute.", "n_card_later": "Pinigai iš jūsų kortelės nuskaičiuojami tik tada, kai viena iš jų jį priima.", "n_pending": "Šis užsakymas dar nebaigtas. Užbaikite jį programėlėje „Car2Door“ arba svetainėje car2door.eu/book: pinigai nenuskaičiuojami, kol transporto įmonė nepriima užsakymo.", "n_held": "Transporto įmonė priėmė užsakymą, o jūsų bankas prašo patvirtinti mokėjimą. Patvirtinkite jį programėlėje „Car2Door“ arba svetainėje car2door.eu/book iki {time}, kitaip pervežimas bus atšauktas be jokių išlaidų.", "n_locked": "Transporto įmonės duomenys ir telefono numeris bus matomi {date}, likus 24 valandoms iki paėmimo.", "tr_h": "Jūsų transporto įmonė", "slots": "Vietos automobiliams: {n}", "call": "Skambinti {phone}", "pc_h": "Perdavimo kodas", "pc_p": "Pristatymo metu, kai patikrinsite automobilį, pasakykite šį kodą vairuotojui.", "t_carrier": "Užsakyta per Car2Door.", "t_carried_by": "Pervežimą atlieka {company}.", "cancel": "Atšaukti pervežimą", "cancel_q": "Atšaukti šį pervežimą? Atgausite visus pinigus.", "cancel_q_free": "Atšaukti šį užsakymą? Pinigai dar nenuskaičiuoti, todėl atšaukimas jums nieko nekainuoja.", "cancel_yes": "Taip, atšaukti", "cancel_no": "Palikti pervežimą", "cancelling": "Atšaukiama…", "err_cancel": "Transporto įmonė jau priėmė šį pervežimą. Norėdami jį atšaukti, rašykite support@car2door.eu.", "cx_free": "Nemokamas atšaukimas iki {date}.", "cx_free_any": "Nemokamas atšaukimas.", "cx_part": "Atšaukus dabar, grąžinama {pct} ({amount}).", "cx_none": "Atšaukus dabar, pinigai negrąžinami.", "cx_then_part": "Nuo {date} grąžinama {pct}.", "cx_then_none": "Nuo {date} pinigai negrąžinami.", "cx_q_part": "Atšaukti šį pervežimą? Atgausite {amount}, t. y. {pct} sumokėtos sumos.", "cx_q_none": "Atšaukti šį pervežimą? Iki paėmimo liko per mažai laiko, todėl pinigai negrąžinami.", "cx_late": "Transporto įmonė vėluoja arba neatvyksta? Geriau rašykite support@car2door.eu.", "n_cx_none": "Atšaukėte šį pervežimą prieš pat paėmimą, todėl jūsų mokėjimas negrąžintas.", "n_why_none": "Nė viena transporto įmonė laiku nepriėmė šio pervežimo.", "n_why_you": "Atšaukėte šį pervežimą.", "n_why_in_time": "Atšaukėte šį pervežimą laiku, todėl atšaukimo mokesčio nėra.", "n_why_fee": "Atšaukėte šį pervežimą likus mažiau nei 48 valandoms iki paėmimo, todėl iš jo kainos buvo pasilikta {fee}.", "n_why_unpaid": "Šis užsakymas atšauktas, nes mokėjimas laiku negautas.", "n_why_payment_failed": "Šis pervežimas atšauktas, nes transporto įmonei priėmus užsakymą mokėjimas nebuvo laiku patvirtintas. Pinigai nenuskaičiuoti.", "n_why_no_paper": "Šis užsakymas atšauktas, nes registracijos liudijimas negautas laiku. Pinigai nenuskaičiuoti.", "n_why_checked": "Šis pervežimas atšauktas po Car2Door patikrinimo.", "n_why_fraud": "Šis pervežimas atšauktas: jūsų bankas pranešė apie šį mokėjimą kortele.", "n_why_disputed": "Šis pervežimas atšauktas, nes mokėjimas ginčijamas jūsų banke. Dėl pinigų grąžinimo sprendžia jūsų bankas.", "n_why_no_show": "Paėmimo metu automobilio nebuvo, todėl šis pervežimas atšauktas, o jūsų mokėjimas negrąžinamas.", "n_why_carrier_no_show": "Car2Door atšaukė šį pervežimą, nes transporto įmonė neatvyko. Atgausite visą sumokėtą sumą.", "n_why_staff": "Car2Door atšaukė šį pervežimą. Atgausite visą sumokėtą sumą.", "n_why_other": "Šis pervežimas atšauktas.", "n_ref_full": "Visas jūsų mokėjimas ({amount}) grąžintas į kortelę ar sąskaitą, kuria mokėjote. Pinigai gali ateiti per 5–10 darbo dienų.", "n_ref_part": "Į kortelę ar sąskaitą, kuria mokėjote, grąžinta {amount}. Pinigai gali ateiti per 5–10 darbo dienų.", "n_ref_pending": "Jūsų pinigai grąžinami. Jie grįš į kortelę ar sąskaitą, kuria mokėjote; tai gali užtrukti 5–10 darbo dienų.", "n_ref_retrying": "Pinigų grąžinimas dar neįvyko. Car2Door automatiškai bandys dar kartą, jums nieko daryti nereikia.", "n_ref_failed": "Pinigų nepavyko grąžinti automatiškai. Tuo rūpinasi Car2Door pagalbos komanda. Klausimų? Rašykite support@car2door.eu.", "err_cx_changed": "Grąžinama suma ką tik pasikeitė. Patikrinkite ir bandykite dar kartą.", "err_cx_started": "Šio pervežimo čia atšaukti nebegalima. Rašykite support@car2door.eu.", "report": "Pranešti apie problemą", "report_until": "Kas nors negerai su šiuo pervežimu? Pranešti galite iki {date}.", "report_ph": "Kas nutiko?", "report_send": "Siųsti pranešimą", "report_done": "Pranešėte apie problemą su šiuo pervežimu. Dėl jos su jumis susisieksime.", "err_report_empty": "Parašykite, kas nutiko.", "err_report_closed": "Laikas pranešti apie šio pervežimo problemą baigėsi. Rašykite support@car2door.eu.", "invoices_h": "Sąskaitos faktūros", "invoice_trip": "Sąskaita faktūra {n}", "invoice_credit": "Kreditinė sąskaita faktūra {n}", "inv_by": "{name} pakvietė jus į Car2Door", "inv_partner": "Car2Door transporto įmonė", "inv_saved": "Pakvietė {name}", "inv_saved_p": "Kvietimas bus pridėtas prie jūsų paskyros, kai prisijungsite ar užsiregistruosite.", "inv_ok": "Kvietimas pridėtas prie jūsų paskyros.", "inv_h": "Kvietimo kodas", "inv_bad": "Ši kvietimo nuoroda nebegalioja. Car2Door galite naudotis kaip įprastai.", "inv_too_late": "Kvietimo kodus galima pridėti tik per pirmąsias 7 dienas po registracijos.", "inv_already": "Jūsų paskyra jau turi kvietimą.", "inv_booked": "Kvietimo kodus galima pridėti tik iki pirmojo užsakymo.", "inv_own": "Negalite naudoti savo kvietimo kodo.", "inv_close": "Uždaryti", "inv_card_h": "€25 nuolaida pirmam automobilio pervežimui", "inv_card_p": "Nuo €300; €25 atimama, kai užsakote. Saugoma šioje naršyklėje 30 dienų.", "inv_price": "Sužinoti kainą", "inv_carried": "Car2Door automobilių pervežimas, veža {name}", "inv_lanes": "Maršrutai", "inv_reviews": "Atsiliepimai", "inv_reviews_v": "{rating} · {n} atsiliepimai", "inv_first": "Atsiliepimą gali palikti tik užsakęs klientas, vieną kartą, po pristatymo. Čia užsakytas darbas pirmiausia siūlomas {name}, paskui kitiems patikrintiems vežėjams.", "inv_pay": "Užsakykite ir mokėkite tik car2door.eu arba Car2Door programėlėje.", "inv_seen": "{name} gauna nedidelį atlygį iš Car2Door, kai užsakote. Ji mato, kiek klientų atėjo per jos nuorodą, ir mėnesio sumą. Kaip ir bet kuriam vežėjui, jai gali būti pasiūlytas jūsų pervežimas, pažymėtas kaip jos kliento, o jūsų vardą ji mato tik tada, jei veža jūsų automobilį.", "inv_house": "Šio kvietimo negalima naudoti šioje paskyroje.", "inv_off": "Share & Earn sustabdyta: dabar naujų kvietimų pridėti negalima.", "pn_help": "Pagalba", "pn_site": "Svetainė", "pn_saved": "Išsaugota.", "pn_help_more": "Vis dar reikia pagalbos? Rašykite mums {email}. Pranešti apie neteisėtą turinį: {report}. Institucijoms: {legal} (anglų arba nyderlandų kalba).", "pn_rep_p": "Praneškite mums apie Car2Door turinį, kuris, jūsų manymu, yra neteisėtas arba pažeidžia mūsų sąlygas: pokalbio žinutę, atsiliepimą, įmonės puslapį, profilio nuotrauką ar vardą arba ką nors šioje svetainėje. Paskyros nereikia.", "pn_rep_reason": "Kodėl apie tai pranešate?", "pn_rep_illegal": "Tai neteisėta", "pn_rep_terms": "Tai pažeidžia Car2Door sąlygas", "pn_rep_where": "Kur tai yra?", "pn_rep_where_ph": "Nuoroda arba kas tai parašė, kuriame pervežime ir kada", "pn_rep_details": "Paaiškinkite, kodėl", "pn_rep_law": "Kokį įstatymą tai pažeidžia? (neprivaloma)", "pn_rep_name": "Jūsų vardas (neprivaloma)", "pn_rep_email": "Jūsų el. paštas (neprivaloma: patvirtinimui ir mūsų sprendimui)", "pn_rep_faith": "Sąžiningai tikiu, kad mano pranešimas yra tikslus ir išsamus.", "pn_rep_send": "Siųsti pranešimą", "pn_rep_sending": "Siunčiama…", "pn_rep_done": "Ačiū. Jūsų pranešimą gavome ir jį peržiūrėsime. Jei nurodėte el. paštą, atsiųsime patvirtinimą ir savo sprendimą.", "pn_rep_again": "Pranešti apie ką nors kita", "pn_rep_112": "Kam nors šiuo metu gresia pavojus? Pirmiausia skambinkite 112.", "pn_rep_err_where": "Nurodykite, kur yra turinys.", "pn_rep_err_details": "Paaiškinkite, kodėl apie tai pranešate.", "pn_rep_err_faith": "Pažymėkite langelį, kad patvirtintumėte, jog pranešate sąžiningai.", "pn_rep_err_email": "Patikrinkite el. pašto adresą.", "pn_rep_err_long": "Per ilga: daugiausia {max} simbolių.", "pn_rep_err": "Nepavyko išsiųsti jūsų pranešimo. Patikrinkite ryšį ir bandykite dar kartą arba rašykite support@car2door.eu.", "pn_fb_p": "Parašykite, kas jums patinka, ko trūksta ar kas neveikia. Kiekvieną žinutę skaito žmogus iš Car2Door komandos. Paskyros nereikia.", "pn_fb_email": "Jūsų el. paštas (neprivaloma: jei norite atsakymo)", "pn_fb_done": "Ačiū! Jūsų atsiliepimą gavome. Kiekvieną žinutę skaito žmogus iš mūsų komandos ir atsako, kai reikia atsakymo ir nurodėte el. paštą.", "pn_fb_again": "Siųsti dar vieną atsiliepimą", "pn_fb_err": "Nepavyko išsiųsti jūsų atsiliepimo. Patikrinkite ryšį ir bandykite dar kartą.", "pn_delete_yes": "Taip, ištrinti mano paskyrą", "pn_deleting": "Trinama…", "pn_new": "Naujas pervežimas", "pn_trips": "Mano pervežimai", "pn_profile": "Profilis", "pn_account": "Paskyra", "pn_details": "Asmens duomenys", "pn_invoices": "Sąskaitos faktūros", "pn_invite": "Kvietimo kodas", "pn_invite_by": "Pridėkite iki {date}", "pn_language": "Kalba", "pn_terms": "Paslaugų teikimo sąlygos", "pn_privacy": "Privatumo politika", "pn_close": "Uždaryti", "pn_save": "Išsaugoti", "pn_cancel": "Atšaukti", "pn_delete": "Ištrinti paskyrą", "pn_delete_q": "Ištrinti jūsų paskyrą?", "pn_delete_p": "Jūsų paskyra iš karto užšaldoma ir ištrinama po 28 dienų. Iki tol galite atšaukti ištrynimą iš mūsų siunčiamo laiško arba ištrinti paskyrą dabar. Sąskaitos faktūros ir mokesčių duomenys saugomi 7 metus, o reiso įrašas – tol, kol dar galima pateikti pretenziją, kaip reikalauja įstatymas.", "pn_name": "Vardas ir pavardė", "pn_phone": "Telefonas", "pn_bill_h": "Sąskaitos faktūros duomenys (neprivaloma)", "pn_bill_p": "Verslo pervežimams: tada sąskaitose faktūrose bus nurodyta jūsų įmonė.", "pn_bill_name": "Įmonės pavadinimas", "pn_bill_vat": "PVM mokėtojo kodas", "pn_bill_addr": "Atsiskaitymo adresas", "pn_bill_addr_ph": "Gatvė, pašto kodas, miestas, šalis", "pn_inv_none": "Sąskaitos faktūros atsiras čia, kai pervežimas bus baigtas.", "bk_agree": "Perskaičiau šiuos dokumentus: {terms} ir {privacy}; sutinku su kaina ir sąlygomis.", "pn_code_add": "Pridėti kvietimo kodą", "pn_code_until": "Iš jus pakvietusios transporto įmonės ar draugo. Jį galite pridėti iki {date}, prieš pirmąjį užsakymą.", "pn_code_short": "Kvietimo kodą sudaro 6 raidės ir skaitmenys.", "pn_feedback": "Atsiliepimai ir pasiūlymai", "pn_fb_kind": "Apie ką tai?", "pn_fb_suggestion": "Pasiūlymas", "pn_fb_problem": "Problema", "pn_fb_praise": "Pagyrimas", "pn_fb_other": "Kita", "pn_fb_message": "Jūsų žinutė", "pn_fb_message_ph": "Jūsų idėja arba kas ir kur neveikė", "pn_fb_send": "Siųsti atsiliepimą", "pn_fb_err_message": "Pirmiausia parašykite atsiliepimą.", "pn_fb_err_long": "Per ilga: daugiausia {max} simbolių.", "pn_fb_err_email": "Patikrinkite el. pašto adresą arba palikite lauką tuščią.", "ph_code": "Šalies kodas", "ph_pick": "Kodas", "ph_first": "Pirmiausia pasirinkite šalies kodą.", "ph_invalid": "Patikrinkite numerį: jis per trumpas arba per ilgas (šalis: {country}).", "sr_title": "Transporto įmonės dar nėra", "sr_text": "Jūsų pervežimo dar niekas nepriėmė. Ieškosime iki {date}. Jei iki tol niekas nepriims, užsakymas baigsis ir jums tai nieko nekainuos.", "sr_keeping": "Ieškosime iki {date}. Jei iki tol niekas nepriims jūsų pervežimo, užsakymas baigsis ir jums tai nieko nekainuos.", "sr_keep": "Ieškoti toliau", "sr_stop": "Nebeieškoti", "sr_stop_q": "Nebeieškoti ir atšaukti užsakymą?", "sr_stop_p": "Jūsų pervežimas atšaukiamas, o visa sumokėta suma grąžinama jums.", "sr_stop_p_free": "Jūsų užsakymas atšauktas. Pinigai iš jūsų kortelės nebuvo nuskaičiuoti.", "sr_taken": "Transporto įmonė ką tik priėmė jūsų pervežimą.", "sr_closed": "Šis pervežimas nebelaukia transporto įmonės.", "wp_date": "Data", "wp_time": "Laikas", "wp_prev": "Ankstesnis mėnuo", "wp_next": "Kitas mėnuo", "sz_car": "Automobilis", "sz_suv": "Visureigis", "sz_van": "Furgonas ≤3,5t", "f_size": "Dydis", "f_when": "Paruoštas paimti nuo", "band_low": "Iki 15 000 €", "band_mid": "15 000 € – 50 000 €", "band_high": "Daugiau nei 50 000 €", "o_saver": "Taupus", "o_standard": "Standartinis", "o_priority": "Prioritetinis", "pn_join": "Tapkite vežėju", "pn_doc_terms": "Sąlygos klientams", "pn_doc_tterms": "Sąlygos vežėjams", "pn_doc_privacy": "Privatumo politika", "pn_doc_cookies": "Slapukų politika", "pn_doc_delete": "Paskyros ištrynimas", "pn_report": "Pranešti apie turinį", "or": "arba", "refusals": {"rate_limited": "Per daug bandymų. Šiek tiek palaukite ir bandykite dar kartą.", "trip_in_progress": "Pirmiausia baikite arba grąžinkite priimtą reisą. Tada galėsite ištrinti paskyrą.", "payout_due": "Jums skirta išmoka dar pakeliui (ji pervedama praėjus 48 valandoms po pristatymo). Paskyrą galėsite ištrinti, kai ji bus išmokėta. Klausimų? Rašykite pagalbos komandai.", "refund_due": "Jums grąžinami pinigai dar pervedami. Paskyrą galėsite ištrinti, kai pinigai bus grąžinti. Klausimų? Rašykite pagalbos komandai.", "invoice_due": "Jūsų naujausia sąskaita faktūra dar rengiama. Bandykite dar kartą po 15 minučių."}, "countries": {"PL": "Lenkija", "RO": "Rumunija", "BG": "Bulgarija", "HU": "Vengrija", "LT": "Lietuva", "LV": "Latvija", "DE": "Vokietija", "NL": "Nyderlandai", "BE": "Belgija", "AT": "Austrija", "FR": "Prancūzija", "IT": "Italija", "ES": "Ispanija", "CZ": "Čekija", "DK": "Danija", "SE": "Švedija", "IE": "Airija", "PT": "Portugalija", "LU": "Liuksemburgas", "GR": "Graikija"}, "gate_q": {"en": "What language?", "ro": "Ce limbă preferi?", "pl": "Wybierz język", "bg": "На какъв език?", "hu": "Válassz nyelvet", "lt": "Kuria kalba?", "lv": "Kurā valodā?"}}</script>
+</body>
+</html>

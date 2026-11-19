@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="lv">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://krscknuzrqhjfiryvqkc.supabase.co https://*.stripe.com https://*.link.com; font-src 'self'; connect-src 'self' https://krscknuzrqhjfiryvqkc.supabase.co wss://krscknuzrqhjfiryvqkc.supabase.co https://api.stripe.com https://r.stripe.com https://link.com https://*.link.com https://photon.komoot.io https://nominatim.openstreetmap.org; frame-src 'self' https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://m.stripe.network https://link.com https://*.link.com https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Noteikumi pārvadātājiem | Car2Door</title>
+<meta name="description" content="Lietošanas noteikumi transporta uzņēmumiem, kas pārvadā auto ar lietotni „Car2Door Pro“.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://car2door.eu/lv/transporter-terms-next">
+<link rel="alternate" hreflang="en" href="https://car2door.eu/transporter-terms-next">
+<link rel="alternate" hreflang="ro" href="https://car2door.eu/ro/transporter-terms-next">
+<link rel="alternate" hreflang="pl" href="https://car2door.eu/pl/transporter-terms-next">
+<link rel="alternate" hreflang="bg" href="https://car2door.eu/bg/transporter-terms-next">
+<link rel="alternate" hreflang="hu" href="https://car2door.eu/hu/transporter-terms-next">
+<link rel="alternate" hreflang="lt" href="https://car2door.eu/lt/transporter-terms-next">
+<link rel="alternate" hreflang="lv" href="https://car2door.eu/lv/transporter-terms-next">
+<link rel="alternate" hreflang="x-default" href="https://car2door.eu/transporter-terms-next">
+<meta name="theme-color" content="#050B18">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/landing.css?v=892371ac">
+<script src="/zones.js?v=ae55f024" defer></script>
+
+<script src="/site.js?v=a145742a" defer></script>
+<script src="/hero-net.js?v=ca533a10" defer></script>
+</head>
+<body>
+
+<!-- Car2Door's mark (plans/design/logo): the client's door on an orange disc, the dotted route and
+     the pickup ring. Its colours come from the tile it sits on (--m-disc, --m-door, --m-dot). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="0 0 1024 1024">
+    <circle cx="650" cy="370" r="190" fill="var(--m-disc, #FF6A13)"/>
+    <path d="M580 494V344a70 70 0 0 1 140 0v150z" fill="var(--m-door, #0E1726)"/>
+    <circle cx="686.4" cy="401.6" r="11.9" fill="var(--m-disc, #FF6A13)"/>
+    <circle cx="355" cy="671" r="26" fill="var(--m-dot, #fff)"/><circle cx="415" cy="610" r="26" fill="var(--m-dot, #fff)"/><circle cx="476" cy="548" r="26" fill="var(--m-dot, #fff)"/>
+    <circle cx="260" cy="768" r="54" fill="var(--m-door, #0E1726)" stroke="var(--m-dot, #fff)" stroke-width="44"/>
+  </symbol>
+</svg>
+
+<!-- One night map for every page. Pages slide over it and it is never redrawn (site.js).
+     hero-net.js tilts it into a table and runs the live network of transports across it. The masks
+     fade the image out at its own edges, so the tilted map has no hard border. -->
+<div class="backdrop" aria-hidden="true">
+  <svg viewBox="0 120 1800 1140" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="fade-y" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1381"><stop offset="0" stop-color="#000"/><stop offset=".1" stop-color="#fff"/><stop offset=".94" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+      <linearGradient id="fade-x" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1800" y2="0"><stop offset="0" stop-color="#000"/><stop offset=".06" stop-color="#fff"/><stop offset=".94" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+      <mask id="fade-v" maskUnits="userSpaceOnUse" x="0" y="0" width="1800" height="1381"><rect width="1800" height="1381" fill="url(#fade-y)"/></mask>
+      <mask id="fade-h" maskUnits="userSpaceOnUse" x="0" y="0" width="1800" height="1381"><rect width="1800" height="1381" fill="url(#fade-x)"/></mask>
+      <!-- brightness(1.22) contrast(1.1) saturate(1.3), applied when the map is drawn (landing.css), not on every frame -->
+      <filter id="lift" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope="1.342" intercept="-.05"/><feFuncG type="linear" slope="1.342" intercept="-.05"/><feFuncB type="linear" slope="1.342" intercept="-.05"/></feComponentTransfer><feColorMatrix type="saturate" values="1.3"/></filter>
+    </defs>
+    <g mask="url(#fade-h)"><image mask="url(#fade-v)" href="/img/europe-night.webp?v=5663e10b" x="0" y="0" width="1800" height="1381" preserveAspectRatio="none"/></g>
+  </svg>
+</div>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="/lv/"><span class="logo"><svg><use href="#mark"/></svg></span><span class="word">Car<span class="n2">2</span>Door</span></a>
+    <nav>
+      <a href="/lv/#how">Kā tas darbojas</a>
+      <a href="/lv/#cars">Automašīnas</a>
+      <a class="btn small shiny" href="/lv/join" data-driver-app><span class="long">Kļūstiet par pārvadātāju</span><span class="short">Pārvadātājiem</span></a>
+      <details class="lang">
+        <summary aria-label="Valoda"><span class="earth" aria-hidden="true"></span><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.800" fill="#9E3039"/><rect x="0" y="0.800" width="3" height="0.400" fill="#FFFFFF"/><rect x="0" y="1.200" width="3" height="0.800" fill="#9E3039"/></svg>LV</summary>
+        <div class="menu">
+        <a href="/transporter-terms-next" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><clipPath id="uk-t"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#uk-t)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg><span>English</span><b>EN</b></a>
+        <a href="/ro/transporter-terms-next" hreflang="ro" lang="ro"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0.000" y="0" width="1.000" height="2" fill="#002B7F"/><rect x="1.000" y="0" width="1.000" height="2" fill="#FCD116"/><rect x="2.000" y="0" width="1.000" height="2" fill="#CE1126"/></svg><span>Română</span><b>RO</b></a>
+        <a href="/pl/transporter-terms-next" hreflang="pl" lang="pl"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="1.000" fill="#FFFFFF"/><rect x="0" y="1.000" width="3" height="1.000" fill="#DC143C"/></svg><span>Polski</span><b>PL</b></a>
+        <a href="/bg/transporter-terms-next" hreflang="bg" lang="bg"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#FFFFFF"/><rect x="0" y="0.667" width="3" height="0.667" fill="#00966E"/><rect x="0" y="1.333" width="3" height="0.667" fill="#D62612"/></svg><span>Български</span><b>BG</b></a>
+        <a href="/hu/transporter-terms-next" hreflang="hu" lang="hu"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#CD2A3E"/><rect x="0" y="0.667" width="3" height="0.667" fill="#FFFFFF"/><rect x="0" y="1.333" width="3" height="0.667" fill="#436F4D"/></svg><span>Magyar</span><b>HU</b></a>
+        <a href="/lt/transporter-terms-next" hreflang="lt" lang="lt"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.667" fill="#FDB913"/><rect x="0" y="0.667" width="3" height="0.667" fill="#006A44"/><rect x="0" y="1.333" width="3" height="0.667" fill="#C1272D"/></svg><span>Lietuvių</span><b>LT</b></a>
+        <a href="/lv/transporter-terms-next" hreflang="lv" lang="lv" aria-current="page"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect x="0" y="0.000" width="3" height="0.800" fill="#9E3039"/><rect x="0" y="0.800" width="3" height="0.400" fill="#FFFFFF"/><rect x="0" y="1.200" width="3" height="0.800" fill="#9E3039"/></svg><span>Latviešu</span><b>LV</b></a>
+        </div>
+      </details>
+      <a class="btn small login" href="#login" data-login><span class="long">Pierakstīties / Izveidot kontu</span><span class="short">Pierakstīties</span></a>
+    </nav>
+  </div>
+</header>
+
+<div id="stage">
+<main id="page" class="page page-legal" data-page="legal">
+<div class="wrap legal-wrap">
+<article class="card legal" lang="lv">
+<h1>Lietošanas noteikumi pārvadātājiem</h1>
+<p class="meta">Car2Door Pro lietotnei, ko pārvalda StepsNest B.V.<br>Pēdējo reizi atjaunināts: 2026. gada 19. novembrī</p>
+<p class="draft">Šī ir pārvadātāju noteikumu nākamā versija. Tā stājas spēkā datumā, kas norādīts mūsu paziņojumā jums; līdz tam ir spēkā <a href="/lv/transporter-terms">pašreizējā versija</a>.</p>
+<h2>1. Kas mēs esam un mūsu loma</h2>
+<ol>
+<li>Car2Door Pro pārvalda StepsNest B.V., Weert, Nīderlande, KvK 42105882, <a href="mailto:support@car2door.eu">support@car2door.eu</a> ("Car2Door", "mēs"); tās juridiskā adrese un PVN numurs ir norādīti zemāk sadaļā Uzņēmuma dati.</li>
+<li>"Jūs" esat transporta uzņēmums, kas izmanto Car2Door Pro. Jūs pārvadājat automašīnas. Katram darbam jūs esat CMR pārvadātājs un klienta līgumslēdzēja puse.</li>
+<li>Mēs darbojamies kā jūsu aģents: mēs rezervējam darbus jūsu vārdā, iekasējam klienta maksājumu jūsu vārdā un veicam citas darbības 6. punktā. Mēs neesam pārvadātājs, ekspeditors vai darba devējs, un mēs neuzņemamies atbildību par pārvadājumu.</li>
+</ol>
+<h2>2. Kas var pievienoties</h2>
+<ol>
+<li>ES reģistrēts transporta uzņēmums, kas ir savas valsts uzņēmumu reģistrā (arī vienpersoniska uzņēmuma, piemēram, Rumānijas PFA vai Polijas JDG), ar ES Kopienas licenci starptautiskiem kravu autopārvadājumiem.</li>
+<li>Persona, kas reģistrējas, reģistrā ir jābūt direktoram vai īpašniekam. Stripe pārbauda šīs personas identitāti, kad jūs iestatāt izmaksas; mēs to salīdzinām ar reģistru.</li>
+<li>Jums jānorāda ES PVN numurs, kas parādās VIES. Mazs uzņēmums bez tāda var norādīt savu nacionālo nodokļu numuru, un tad saņem darbus tikai no uzņēmuma klientiem savā valstī, līdz tam būs PVN numurs.</li>
+</ol>
+<h2>3. Jūsu dokumenti un mūsu pārbaudes</h2>
+<ol>
+<li>Jūs augšupielādējat un uzturat derīgus: Kopienas licenci un tās apliecinātu kopiju katram transportlīdzeklim; jūsu CMR apdrošināšanu (sertifikātu un specifikāciju); automašīnām, kuru vērtība pārsniedz 15 000 €, pilnās vērtības segumu; un dokumentus, ko katram transportlīdzeklim un vadītājam vajag lietotnē.</li>
+<li>Mēs tos pārbaudām, kā to apraksta mūsu klientu noteikumi (reģistrs, VIES, licence, apdrošināšana, sankciju saraksti), kad jūs pievienojaties, un vēlāk pēc grafika (VIES reizi mēnesī, dokumentus — kad tie beidzas).</li>
+<li>Ziņojiet mums par jebkuru izmaiņu (beigusies polise, atsaukta licence, jauns direktors) 3 darba dienu laikā. Darbi pārtrauc darboties dienā, kad dokuments beidzas.</li>
+<li>Viltots vai izmainīts dokuments nekavējoties izbeidz jūsu kontu (15. punkts).</li>
+</ol>
+<h2>4. Apdrošināšana</h2>
+<ol>
+<li>CMR atbildības apdrošināšana katram jūsu veiktajam braucienam: tā sedz izmantotas automašīnas, katru brauciena valsti un vismaz 50 000 € par gadījumu (250 000 € transportlīdzeklim ar vairāk nekā 3 automašīnu vietām).</li>
+<li>Lai pārvadātu automašīnas, kuru vērtība pārsniedz 15 000 €: katras automašīnas pilnās vērtības segumu līdz automašīnas vērtības kategorijai. Par šīm automašīnām jūs atbildat klientam līdz automašīnas vērtībai, kas ierakstīta pavadzīmē (CMR 24. pants), un jūsu pilnās vērtības segumam šī summa jāsedz.</li>
+<li>Nekavējoties paziņojiet mums, ja jebkurš segums beidzas vai samazinās.</li>
+</ol>
+<h2>5. Likumu ievērošana</h2>
+<p>Jūs pats esat atbildīgs par transporta likumu ievērošanu katrā braucienā, un jūs glabājat katru licenci, reģistrāciju un apdrošināšanu, ko tie prasa. Tie ietver braukšanas un atpūtas laikus un tahogrāfu; vadītāja apliecības un, ja vajadzīgs, Code 95 un vadītāju apliecinājumus; Kopienas licenci un tās apliecinātu kopiju automašīnā; nosūtīšanas deklarācijas un uzņēmējas valsts minimālo algu, ja jūsu vadītāji ir nosūtīti; kabotāžas ierobežojumus; ceļu nodevas; un Rumānijas e-Transport, ja tas attiecas. Car2Door pārbauda tikai 3. punktā minētos dokumentus. Tās pārbaude nepārņem nevienu no šiem pienākumiem.</p>
+<h2>6. Jūsu pilnvarojums Car2Door</h2>
+<p>Pieņemot šos noteikumus, jūs pilnvarojat Car2Door darbiem, ko jūs pieņemat caur Car2Door Pro:</p>
+<ol>
+<li>piedāvāt un rezervēt pārvadājumu jūsu vārdā par cenu, ko nosaka 9. punkts, saskaņā ar pārvadājuma nosacījumiem (<a href="/lv/transport-conditions">car2door.eu/transport-conditions</a>);</li>
+<li>sniegt klientam jūsu vārdā informāciju, ko likums prasa pirms un pasūtīšanas brīdī;</li>
+<li>saņemt jūsu vārdā klienta norādījumus, ziņojumus un prasības (ziņojums lietotnē ir paziņojums jums) un pārsūtīt klienta ziņojumu jūsu CMR apdrošinātājam jūsu vārdā (13.4 punkts);</li>
+<li>iekasēt klienta maksājumu kā jūsu iekasēšanas aģents: klienta maksājums Car2Door tiek uzskatīts par maksājumu jums;</li>
+<li>atmaksāt klientam saskaņā ar atcelšanas noteikumiem;</li>
+<li>izrakstīt jūsu rēķinus un kredītrēķinus klientam jūsu vārdā un jūsu uzdevumā (11. punkts);</li>
+<li>turēt brauciena izmaksu, kamēr ir atvērts ziņojums, un izmaksāt no tās klientam, kad jūs vai jūsu apdrošinātājs pieņemat prasību (13. punkts).</li>
+</ol>
+<h2>7. Kā jums piedāvā darbus</h2>
+<ol>
+<li>Darbs tiek piedāvāts pārvadātājiem, kuru transportlīdzekļi un dokumenti tam atbilst: maršruts un valstis jūsu CMR segumā, apdrošinātā summa, brīvās automašīnu vietas un kravnesība, vinča automašīnai, kas nebrauc, pilnās vērtības segums automašīnai virs 15 000 € un, privātam klientam, ka jūs iekasējat savākšanas valsts PVN (10. punkts).</li>
+<li>Pārvadātājiem ar plānotu braucienu maršrutā tas tiek rādīts pirmajiem. Pēc tam visi, kas atbilst, to redz vienlaikus. Pirmais, kas pieņem, to iegūst. Vērtējumi nemaina to, kas redz darbu.</li>
+<li>Jauns konts pārvadā automašīnas līdz 15 000 € vērtībā pirmajām 3 nogādāšanām bez pretenzijām. Neviens transportlīdzeklis vienlaikus nevar pārvadāt Car2Door automašīnas vairāk nekā 250 000 € vērtībā.</li>
+<li>Jūs varat brīvi pieņemt vai noraidīt jebkuru darbu un strādāt jebkuram citam. Nav minimuma. Darba noraidīšana vai ignorēšana nekad nemaina to, kurus darbus jūs redzat, jūsu vērtējumu vai piekļuvi.</li>
+<li>Jūs vadāt savu uzņēmumu: savus transportlīdzekļus, licenci, apdrošināšanu un darbiniekus, savus citus klientus, savu maršrutu un laiku darba datumu ietvaros un savu uzņēmējdarbības risku.</li>
+<li>Ja mēs mainām to, kā piedāvājam darbus, mēs jums paziņojam 15 dienas iepriekš (17. punkts).</li>
+</ol>
+<h2>8. Darba veikšana</h2>
+<ol>
+<li>Nosauciet vadītāju un transportlīdzekļa numurzīmes lietotnē 24 stundas pirms savākšanas no saviem apstiprinātajiem vadītājiem un transportlīdzekļiem. Automašīnu pārvadā tikai šis vadītājs un šis transportlīdzeklis. Nav apakšuzņēmēju un nav pārkraušanas citā transportlīdzeklī.</li>
+<li>Savākšanas brīdī: vadītājs pieprasa 6 ciparu savākšanas kodu, parāda identitāti tam, kas nodod, atzīmē, ka automašīnā esošais VIN ir tas, kas ir pasūtīts (neatbilst — neiekrauj), ar lietotnes kameru uzņem četras stūru fotogrāfijas un tuvplānu katram bojājuma punktam, vecos bojājumus ieraksta vārdos un paraksta kopā ar to, kas nodod.</li>
+<li>Pavadzīme ir e-CMR lietotnē; jūs piekrītat tās elektroniskajiem parakstiem (e-CMR protokols). Savākšanai Beļģijā izdrukājiet to un parakstiet uz papīra.</li>
+<li>Ceļā: atvērts automašīnu transportlīdzeklis; automašīna slēgta, atslēgas nekad neatstātas tajā; nakšņošana tikai apsargātā vai slēgtā vietā; norādījumus pieņem tikai no klienta, lietotnē.</li>
+<li>Nogādāšanā: tikai norādītajam saņēmējam pret nogādāšanas kodu; tās pašas četras fotogrāfijas; saņēmējs paraksta. Pirms kontaktpersonu uzskatāt par prombūtnē, gaidiet vismaz 60 minūtes pēc zvanīšanas un ziņas nosūtīšanas, un paziņojiet mums lietotnē.</li>
+<li>Nekad neprasiet no klienta papildu naudu, skaidrā naudā vai citādi, un nekad nepiedāvājiet Car2Door klientam braucienu ārpus lietotnes.</li>
+<li><strong>Ziņas un uzvedība.</strong> Ziņās, fotogrāfijās un atsauksmēs nedrīkst būt saturs, kas ir aizskarošs, naidu kurinošs, seksuāli atklāts, draudīgs vai nelikumīgs. Jūs varat ziņot par ziņu vai bloķēt klientu tērzēšanā. Mēs varam šādu saturu noņemt un ierobežot vai slēgt kontu, kas pārkāpj šos noteikumus.</li>
+</ol>
+<h2>9. Cena, izmaksa un komisija</h2>
+<ol>
+<li><strong>Klienta cena.</strong> Jūs pilnvarojat Car2Door noteikt klienta cenu jūsu vārdā, izmantojot Car2Door tarifu, katram darbam, ko pieņemat caur Car2Door Pro. Klients maksā šo cenu neatkarīgi no tā, kurš pārvadātājs pieņem darbu un kad.</li>
+<li><strong>Klienta cena ir jūsu.</strong> Tā ir jūsu pārvadājuma cena; jūs no tās aprēķināt PVN, kā norādīts 10. punktā.</li>
+<li><strong>Jūsu izmaksa pieaug.</strong> Jauns darbs tiek piedāvāts ar izmaksu, kas pieaug ik sekundi: jūsu daļa sākas ar 80% no tās augstākā līmeņa un sasniedz augstāko līmeni 10 minūšu laikā, pēc tam paliek tajā, līdz darbs tiek pieņemts. Jūsu daļa augstākajā līmenī ir klienta neto cena, atskaitot Car2Door komisiju: 15% no klienta neto cenas, vismaz 50 € par automašīnu. Ja darbs tiek atdots atpakaļ, tas tiek piedāvāts vēlreiz ar izmaksu, ar kādu tas tika pieņemts, un izmaksa turpina pieaugt no šī līmeņa; laiks, kamēr tas bija pieņemts, netiek ieskaitīts 10 minūtēs. Darbs, kas ir daļa no apvienotā maršruta, tiek piedāvāts uzreiz augstākajā līmenī. Car2Door var mainīt sākuma līmeni un laiku līdz augstākajam līmenim tikai tā, kā apraksta 17. punkts.</li>
+<li><strong>Izmaksa, ko pieņemat.</strong> Jūs saņemat izmaksu, kas piemērojama brīdī, kad mūsu serveris reģistrē jūsu pieņemšanu, un nekad ne mazāku par izmaksu, ko lietotne rādīja, kad jūs pieskārāties "Pieņemt". Ja lietotne rādīja augstāku izmaksu nekā mūsu serveris (piemēram, tāpēc, ka tālruņa pulkstenis steidzas), pieņemšana tiek noraidīta un darbs paliek atvērts.</li>
+<li><strong>Car2Door komisija</strong> par katru darbu ir klienta neto cena, atskaitot jūsu daļu, kā tā pieņemta: 15% (vismaz 50 € par automašīnu) augstākajā līmenī un vairāk, ja pieņemat zem augstākā līmeņa. Ja darbam ir grūti atrast pārvadātāju, mēs varam samazināt savu komisiju. Kuponi, ko mēs dodam klientiem, tiek segti no mūsu komisijas, nevis no jūsu daļas.</li>
+<li><strong>Ja klients vēlu atceļ vai neierodas,</strong> jūs saņemat daļu, ko klients maksā, un mūsu komisija tiek samazināta par to pašu daļu.</li>
+<li><strong>Kur to redzēt.</strong> Darba kartīte sadaļā Piedāvājumi rāda, kā pieaug jūsu izmaksa, un laiku, kas atlicis līdz augstākajam līmenim. Jūsu brauciens rāda pieņemto izmaksu. Komisija kopā ar klienta neto cenu un jūsu daļu ir norādīta mūsu komisijas rēķinā par katru darbu sadaļās Ieņēmumi un Rēķini.</li>
+<li><strong>Mūsu komisijas rēķins:</strong> transportlīdzekļa pārvadātājam Nīderlandē ar 21% Nīderlandes PVN; katram citam pārvadātājam PVN apgrieztā maksāšanā (PVN direktīvas 44. un 196. pants), pret jūsu PVN numuru vai, bez tā, pret jūsu nacionālo nodokļu numuru.</li>
+</ol>
+<h2>10. PVN par jūsu pārvadājumu</h2>
+<ol>
+<li>PVN par jūsu pārvadājumu jums jādeklarē un jāsamaksā.</li>
+<li>Privātam klientam tas ir savākšanas valsts PVN no pirmā brauciena. Jūs to deklarējat caur ES vienoto pakalpojumu centru (OSS) savā valstī vai ar PVN numuru katrā savākšanas valstī. Tikai pārvadātājs, kas mums lietotnē paziņo, ka to dara, saņem privātu klientu darbus.</li>
+<li>Uzņēmuma klients maksā neto cenu ar PVN apgrieztā maksāšanā, izņemot uzņēmumu jūsu valstī, kas maksā jūsu valsts PVN.</li>
+<li>Mēs jums izmaksājam šo PVN kopā ar izmaksu un katru ceturksni dodam jums kopsavilkumu par jūsu braucieniem pa valstīm jūsu OSS deklarācijai.</li>
+</ol>
+<h2>11. Rēķini jūsu vārdā</h2>
+<ol>
+<li><strong>Pilnvarojums.</strong> Jūs pilnvarojat Car2Door izrakstīt, jūsu vārdā un jūsu uzdevumā, katra darba rēķinu klientam un kredītrēķinu, kad darbs tiek atcelts vai daļa cenas tiek atmaksāta. Katrā norādīts, ka to izrakstījis StepsNest B.V. (Car2Door) jūsu vārdā un jūsu uzdevumā, un ka klients samaksāja Car2Door kā jūsu iekasēšanas aģentam.</li>
+<li><strong>Jūsu numuru sērija.</strong> Šiem rēķiniem ir sava sērija: TR-[jūsu kods]-[gads]-[numurs], kredītrēķiniem TRC-[jūsu kods]-[gads]-[numurs]. Sērija ir rezervēta rēķiniem, ko Car2Door izraksta jūsu vārdā; jūs to neizmantojat paši, un jūs paturat savu sēriju citiem saviem rēķiniem.</li>
+<li><strong>Kopijas.</strong> Katrs rēķins un kredītrēķins ir sadaļā Rēķini Car2Door Pro, un tas tiek nosūtīts jums pa e-pastu. Glabājiet tos savās grāmatās un deklarējiet PVN atskaitēs.</li>
+<li><strong>14 dienu pārbaude.</strong> Pārbaudiet katru jūsu vārdā izrakstīto rēķinu un kredītrēķinu un katru pašrēķinātu rēķinu (12. punkts). Ja kaut kas nav kārtībā, paziņojiet mums 14 dienu laikā pēc tā saņemšanas; mēs to tad labojam ar kredītrēķinu un jaunu rēķinu. Pēc 14 dienām tas tiek uzskatīts par jums akceptētu, kas neaptur labojumu, ko likums prasa.</li>
+<li><strong>Polija.</strong> Polijas pārvadātājs kopā ar šiem noteikumiem dod Car2Door savu pilnvarojumu (upoważnienie, Polijas PVN likuma 106d panta 2. daļa) izrakstīt rēķinus tā vārdā un tā uzdevumā.<ul>
+<li><strong>Uzņēmuma klienti.</strong> Uzņēmuma klienta rēķins jāiesniedz caur KSeF arī klientam ārzemēs ar PVN apgrieztā maksāšanā. Jūs to izrakstāt KSeF pats, no datiem, ko lietotne jums dod sadaļā Rēķini, ko izrakstāt pats, un tur ierakstāt tā numuru; mēs klientam nosūtām maksājuma kvīti. Labojums vai kredītrēķins tam ir arī jūsu, minot tā KSeF numuru.</li>
+<li><strong>Privāti klienti:</strong> mēs izrakstām rēķinu ārpus KSeF jūsu TR sērijā.</li>
+<li>Nekavējoties paziņojiet mums, ja mainās jūsu PVN statuss (aktīvs, atbrīvots, VAT-UE, OSS).</li>
+</ul>
+</li>
+<li><strong>Rumānija.</strong> Rumānijas rēķinu noteikumi attiecas uz katru rēķinu, ko mēs izrakstām Rumānijas pārvadātājam (Codul fiscal 319. pants).<ul>
+<li><strong>Pirms jūsu pirmā darba:</strong> paziņojiet savai nodokļu iestādei ar ierakstītu vēstuli, ka StepsNest B.V. (Car2Door, Weert, Nīderlande, ar PVN numuru, kas norādīts zemāk sadaļā Uzņēmuma dati) izraksta rēķinus jūsu vārdā, kā to no jums prasa Rumānijas likums.</li>
+<li><strong>Caur RO e-Factura:</strong> rēķins, ko likums prasa iesniegt caur e-Factura (lietotnē katrs ir uzskaitīts sadaļā Rēķini, ko izrakstāt pats). Jūs to izrakstāt un augšupielādējat paši, no datiem, ko lietotne jums dod, un tur ierakstāt tā numuru; mēs klientam nosūtām maksājuma kvīti. Storno vai labojošais rēķins tam ir arī jūsu.</li>
+<li><strong>Ārpus e-Factura:</strong> mēs izrakstām rēķinu jūsu TR sērijā un nosūtām to klientam pa e-pastu.</li>
+<li><strong>Bez PVN numura</strong> (PFA, II): iesniedziet mums savu īpašo PVN kodu (317. pants), pirms uzņematies uzņēmuma klienta darbu ārzemēs vai saņemat mūsu komisijas rēķinu.</li>
+</ul>
+</li>
+<li><strong>Citas valstu sistēmas</strong> (piemēram, Beļģijas Peppol, Horvātijas eRačun un fiskalizācija, Ungārijas Online Számla): ja kādai no tām rēķinam jānāk tieši no jums, jūs to izrakstāt tur paši tādā pašā veidā, un mēs klientam nosūtām maksājuma kvīti.</li>
+<li>Jūs esat atbildīgs par saviem rēķiniem un PVN. Mēs tos sastādām no datiem, ko jūs mums sniedzat, tāpēc turiet savu uzņēmuma nosaukumu, adresi un PVN numuru lietotnē pareizus.</li>
+</ol>
+<h2>12. Dalīties un nopelnīt (Share &amp; Earn) (šobrīd nav piedāvāts)</h2>
+<ol>
+<li>Dalīšanās un nopelnīšanas atlīdzības un partneru komisijas šobrīd netiek piedāvātas. Kad mēs jums izmaksājam šādu atlīdzību, mēs paši izrakstām rēķinu kā jūsu klients (pašrēķins, PVN direktīvas 224. pants). Jūs ar to piekrītat.</li>
+<li>Pašrēķinātiem rēķiniem ir sava sērija, un tie atrodas sadaļā Rēķini. Jūs katru akceptējat, ja vien mums 14 dienu laikā nepaziņojat, ka kaut kas nav kārtībā (11.4 punkts).</li>
+<li>Jūs varat izbeigt pašrēķināšanu, rakstiski paziņojot mums; tad atlīdzības tiek izmaksātas pret jūsu pašu rēķinu.</li>
+</ol>
+<h2>13. Izmaksas un aizturēšana</h2>
+<ol>
+<li>Mēs jūsu izmaksu pārskaitām caur Stripe uz bankas kontu jūsu uzņēmuma vārdā 48 stundas pēc nogādāšanas koda, kad mums ir sasniegušas četras stūru fotogrāfijas gan no savākšanas, gan no nogādāšanas. Kamēr jums vai klientam ir mazāk nekā 3 apmaksāti braucieni, izmaksa gaida 72 stundas kā krāpšanas aizsardzība. Jūsu daļa par atceltu braucienu (9.6 punkts) tiek izmaksāta 24 stundas pēc atcelšanas, lai kļūdaino atcelšanu varētu atsaukt.</li>
+<li>Jūs iestatāt izmaksas ar Stripe un akceptējat Stripe Connected Account Agreement. Bankas dati mainās tikai caur lietotni vai Stripe, un izmaiņa tiek pārbaudīta pirms nākamās izmaksas.</li>
+<li><strong>Aizturēšana.</strong> Katrai aizturēšanai ir iemesls, kas redzams lietotnē:<ul>
+<li>klienta iesniegts bojājuma ziņojums pirms izmaksas aptur šī brauciena izmaksu līdz 30 dienām;</li>
+<li>trūkstoši nodokļu dati ES DAC7 ziņojumam: pēc diviem atgādinājumiem un 60 dienām izmaksas gaida, līdz tie ir iesniegti;</li>
+<li>klienta bankas atvērts maksājuma strīds par jūsu braucienu: mēs varam atgūt strīdīto summu no vēlākajām izmaksām, ja banka lemj jūsu nelabā;</li>
+<li>ja uzņēmums jūsu Stripe izmaksu kontā atšķiras no tā, ko jūs mums devāt, jūsu izmaksas gaida, līdz cilvēks mūsu komandā to pārbauda; jaunie darbi tiek turpināti, ja vien šis cilvēks tos neaptur;</li>
+<li>kad jūsu uzņēmuma dati mainās pēc tam, kad mēs tos apstiprinājām, jūsu izmaksas un jūsu vārdā izrakstītie rēķini gaida, līdz cilvēks mūsu komandā pārbauda izmaiņu; jaunie darbi tiek turpināti;</li>
+<li>kamēr cilvēks mūsu komandā tur jūsu konta izmaksas (apturēšana vai izmeklēšana krāpšanas pazīmju dēļ), arī jaunie darbi tiek apturēti; sākti braucieni turpinās.</li>
+</ul>
+</li>
+<li><strong>Prasības.</strong> Mēs jums nosūtām klienta ziņojumu tajā pašā dienā un pārsūtām to jūsu CMR apdrošinātājam, izmantojot jūsu apdrošināšanas sertifikātā norādīto kontaktinformāciju prasību pieteikšanai. Ja jūsu sertifikātā šāda kontaktinformācija nav norādīta, mēs lūdzam jūs pašu nosūtīt ziņojumu savam apdrošinātājam. Jūs paliekat atbildīgs par paziņošanu savam apdrošinātājam un par tā termiņu ievērošanu. Lūdzu, atbildiet lietotnē 2 darba dienu laikā. Ja jūs vai jūsu apdrošinātājs pieņem prasību aizturēšanas laikā, mēs klientam izmaksājam no aizturētās izmaksas un jums paziņojam. Pēc aizturēšanas beigām izmaksa jums tiek atbrīvota, un prasība turpinās starp jums, klientu un jūsu apdrošinātāju.</li>
+</ol>
+<h2>14. Darba atdošana</h2>
+<ol>
+<li>Bez maksas līdz 48 stundām pirms savākšanas laika loga. Pēc tam tas maksā 25 €, ko atskaita no jūsu nākamajām izmaksām pēc 24 stundām (lai kļūdu vispirms varētu atcelt).</li>
+<li>Darbs tiek nodots citiem pārvadātājiem, un mēs to paziņojam klientam.</li>
+<li>Mūsu skaitītāji atzīmē tikai atkārtotas atdošanas. Cilvēks mūsu komandā lemj par jebkuru apturēšanu (15. punkts).</li>
+</ol>
+<h2>15. Vērtējumi, apturēšana un izbeigšana</h2>
+<ol>
+<li>Pēc pabeigta brauciena klients var novērtēt vadītāju un jūsu uzņēmumu: no 1 līdz 5 zvaigznēm ar komentāru. Jūsu vidējais vērtējums ir redzams jūsu profilā un klientiem. Mēs neizdzēšam atsauksmi zema vērtējuma dēļ; to varat ziņot lietotnē.</li>
+<li><strong>Kas lemj.</strong> Cilvēks mūsu komandā lemj par katru apturēšanu, ierobežojumu vai konta slēgšanu, kas balstās uz mūsu spriedumu. Mūsu signāli tikai atzīmē jūsu kontu šim cilvēkam: vēlas atdošanas un neierašanās (3 reizes 90 dienās vai 5 reizes 12 mēnešos), uzņēmums jūsu Stripe izmaksu kontā, kas atšķiras no jūsu, uzņēmuma dati, kas mainīti pēc apstiprināšanas, un uzņēmumu reģistra atbilde. Izmaksu aizturēšana 13.3 punktā sākas saskaņā ar fiksētiem noteikumiem, kas tur uzrakstīti, kā drošības solis, līdz cilvēks paskatās; tad cilvēks lemj, vai tā paliek spēkā. Šis cilvēks jums rakstiski paziņo iemeslus lietotnē un pa e-pastu līdz dienai, kad lēmums stājas spēkā, norādot cilvēka vārdu, ar kuru var runāt. Jūs varat lūgt, lai lēmumu pārskata cits cilvēks, pievienojot savu viedokli; mēs atbildam rakstiski 2 nedēļu laikā. Jūs to varat arī nest tiesā (20. punkts).<br>Dažas darbības notiek bez cilvēka, jo tās nosaka likums, fakts vai jūsu pašu solis, nevis mūsu spriedums:<ul>
+<li>beigies vai trūkstošs dokuments aptur jaunus darbus, līdz jūs augšupielādējat derīgu (3.3 punkts): dokumentu pārbaude ir mūsu pienākums, un tikai jūs varat tos atjaunot;</li>
+<li>iespējama sakritība ar sankciju sarakstu aptur darbus un izmaksas, līdz cilvēks mūsu komandā to notīra: sankciju likums aizliedz darīt naudu pieejamu personai, kas iekļauta sarakstā;</li>
+<li>jauni noteikumi: jaunie darbi gaida, līdz jūs tos akceptējat (17. punkts), jo katrs darbs tiek rezervēts spēkā esošajos noteikumos;</li>
+<li>Stripe atslēdz jūsu izmaksas: tas ir Stripe paša lēmums, un bez tā mēs nevaram samaksāt neko;</li>
+<li>uzņēmums ārpus ES nesaņem darbus: tikai ES transporta uzņēmumi var pievienoties (2.1 punkts);</li>
+<li>PVN numurs, ko VIES vairs nepazīst, pārtrauc skaitīties tās valstij, un mēs jums to paziņojam: apgrieztā maksāšanā rēķinam vajag derīgu numuru;</li>
+<li>demonstrācijas konts, ko mēs dodam lietotņu veikalu pārskatītājiem, nesaņem izmaksas: tas ir mūsu, nevis transporta uzņēmuma konts.</li>
+</ul>
+Cilvēks mūsu komandā kādu no tiem pārbauda, kad jūs to lūdzat: pieskarieties "Lūgt cilvēku paskatīties" lietotnē vai rakstiet tērzēšanā.</li>
+<li>Mēs varam ierobežot vai apturēt jūsu kontu vai pārtraukt jums piedāvāt darbus par: beigušos vai trūkstošu dokumentu; viltotu vai izmainītu dokumentu; sankciju saraksta sakritību; krāpšanas pazīmēm; prasīšanu no klienta papildu naudas vai klientu iedabūšanu ārpus lietotnes; 8.7 punkta (ziņas un uzvedība) pārkāpšanu; atkārtotām vēlām atdošanām vai neierašanām; drošības risku; vai juridisku pienākumu.</li>
+<li><strong>Izbeigšana.</strong> Jūs varat pārtraukt jebkurā laikā un izdzēst savu kontu lietotnē; vispirms pabeidziet vai atdodiet savus akceptētos darbus (14. punkts). Konts tad uzreiz tiek iesaldēts un izdzēsts pēc 28 dienām vai tūlīt, ja izvēlaties "Dzēst tagad". Ja šajā dienā vēl ir jāsamaksā izmaksa vai rēķins vai ir atvērts bojājuma ziņojums vai maksājuma strīds par vienu no jūsu braucieniem, mēs dzēšam to, ko var dzēst, bet pārējo — kad tas ir nokārtots vai slēgts, un viena mēneša laikā jums paziņojam, kas izdarīts un kas gaida (Privātuma politika, 11. punkts). Mēs izbeidzam kontu ar 30 dienu brīdinājumu un norādot savus iemeslus vai tūlīt juridiska pienākuma vai smagas vai atkārtotas noteikumu pārkāpuma gadījumā (ieskaitot viltotus dokumentus).</li>
+</ol>
+<h2>16. Jūsu dati un dati, ko jūs saņemat</h2>
+<ol>
+<li>Kā mēs izmantojam jūsu un jūsu vadītāju datus, ir norādīts mūsu Privātuma politikā. Dodiet saviem vadītājiem mūsu vadītāju paziņojumu (<a href="/lv/privacy#drivers">car2door.eu/privacy#drivers</a>).</li>
+<li>Klienta, pārdevēja un saņēmēja vārdiem, tālruņa numuriem un adresēm, ko jūs saņemat darbam, jūs esat atsevišķs pārzinis saskaņā ar VDAR. Izmantojiet tos tikai šim darbam un saviem juridiskajiem pienākumiem (piemēram, nodokļu uzskaitei un pavadzīmei), nekad mārketingam, un dzēsiet tos, kad to atļauj jūsu likums.</li>
+<li>Ko jūs redzat lietotnē: jūsu darbus, rēķinus, izmaksas, dokumentus un vērtējumus — kamēr pastāv jūsu konts un tik ilgi, cik likums liek mums tos glabāt. Jūs varat bez maksas lūgt mums jūsu datu kopiju, ieskaitot jūsu vērtējumus. Mēs ziņojam jūsu izmaksas Nīderlandes nodokļu iestādei saskaņā ar ES DAC7 noteikumiem.</li>
+<li><strong>Ko lietotne ieraksta un ko tā nekad nedara.</strong> Tā kopīgo jūsu vadītāja jaunāko atrašanās vietu no ceļa uz pieņemto savākšanu līdz nogādāšanai, neglabā nekādu pēdu, klientam un saņēmējam rāda tikai atlikušos kilometrus braucienā, precīzu punktu tikai pēdējos 30 km pirms nogādāšanas un neko atpūtas laikā, un dzēš to nogādāšanas brīdī. Tā ieraksta fotogrāfijas un parakstus tikai nodošanas brīžos. Tā ieraksta vērtējumus, atdošanas, dokumentu datumus un 3. punktā minētās pārbaudes. Mēs nekad neapstrādājam emocijas, privātas sarunas, veselību, arodbiedrību dalību vai sejas salīdzināšanu, un nekas netiek darīts, kad jūs neveicat Car2Door darbu. Mūsu privātuma riska novērtējums par šīm sistēmām ir pieejams jums pēc pieprasījuma; mēs tās pārskatām vismaz reizi 2 gados.</li>
+</ol>
+<h2>17. Izmaiņas šajos noteikumos</h2>
+<p>Mēs jums paziņojam par izmaiņu lietotnē un pa e-pastu vismaz 15 dienas pirms tā stāšanās spēkā. Jūs to pirms tam varat izbeigt savu kontu. Pirms jauniem darbiem jūs akceptējat jauno versiju Car2Door Pro sadaļā Profils › Dokumenti; braucieni, kas jau ir sākušies, tiek pabeigti pēc vecās versijas. Nekāda izmaiņa neattiecas uz pagātni.</p>
+<h2>18. Jūsu sūdzības</h2>
+<p>Rakstiet lietotnes tērzēšanā vai uz <a href="mailto:support@car2door.eu">support@car2door.eu</a>. Atbild cilvēks, parasti 2 darba dienu laikā.</p>
+<h2>19. Atbildība starp mums</h2>
+<ol>
+<li>Jūs atbildat par savu pārvadājumu saskaņā ar CMR. Ja klients vai iestāde sauc Car2Door pie atbildības par jūsu pārvadājumu vai jūsu likuma pārkāpumu, jūs mūs atlīdzināt.</li>
+<li>Mēs atbildam par saviem pienākumiem šajos noteikumos. Mūsu atbildība pret jums ir ierobežota līdz attiecīgā darba komisijai, izņemot nodomu vai rupju nolaidību.</li>
+</ol>
+<h2>20. Likums un tiesas</h2>
+<p>Nīderlandes likums. Tiesa Limburgā (Rechtbank Limburg), Nīderlandē. Šie noteikumi ir angļu valodā; kad tie tiek publicēti jūsu valodā, katra versija ir vienlīdz spēkā esoša.</p>
+
+<section class="company" id="company">
+<h2>Uzņēmuma dati</h2>
+<p>StepsNest B.V., juridiskā adrese: Sprangstraat 10, 6004 XD Weert, Nīderlande. Nīderlandes Tirdzniecības kameras (KvK) reģistrācijas numurs 42105882, PVN maksātāja numurs NL869759164B01.</p>
+<p>Pārbaudiet mūs paši: <a href="https://www.kvk.nl/zoeken/?source=all&amp;q=42105882" rel="noopener">KvK reģistrs</a> · <a href="https://ec.europa.eu/taxation_customs/vies/" rel="noopener">ES PVN pārbaude (VIES)</a>.</p>
+</section>
+
+<nav class="links">
+<a href="/lv/">Car2Door</a>
+<a href="/lv/terms">Noteikumi klientiem</a>
+<a href="/lv/transporter-terms">Noteikumi pārvadātājiem</a>
+<a href="/lv/transport-conditions">Transport conditions</a>
+<a href="/lv/privacy">Privātuma politika</a>
+<a href="/lv/cookies">Sīkdatņu politika</a>
+<a href="/lv/delete-account">Konta dzēšana</a>
+</nav>
+</article>
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div class="proof">
+      <a class="brand" href="/lv/"><span class="logo"><svg><use href="#mark"/></svg></span><span class="word">Car<span class="n2">2</span>Door</span></a>
+      <p>Car2Door ir <b>StepsNest B.V.</b> pakalpojums, Weert, Nīderlande.<br>Tirdzniecības kamera (KvK) <a href="https://www.kvk.nl/zoeken/?source=all&amp;q=42105882" rel="noopener">42105882</a>.</p>
+      <p class="never">Mēs nekad neprasām jums naudu. Rezervējiet un maksājiet tikai car2door.eu.</p>
+      <p class="never car-price">Car2Door nekad neiekasē automašīnas cenu.</p>
+    </div>
+    <nav>
+      <a href="/lv/terms">Noteikumi klientiem</a>
+      <a href="/lv/transporter-terms">Noteikumi pārvadātājiem</a>
+      <a href="/lv/privacy">Privātuma politika</a>
+      <a href="/lv/cookies">Sīkdatņu politika</a>
+      <a href="/lv/delete-account">Konta dzēšana</a>
+      <a href="/lv/how-we-check-transporters">Kā mēs pārbaudām pārvadātājus</a>
+      <a href="/lv/claims-and-deadlines">Prasības un termiņi</a>
+      <a href="/lv/is-this-booking-real">Vai šī rezervācija ir īsta?</a>
+      <a href="#feedback">Atsauksmes</a>
+      <a href="#report">Ziņot par saturu</a>
+      <a href="mailto:support@car2door.eu">support@car2door.eu</a>
+    </nav>
+  </div>
+  <p class="wrap copy">© 2026 StepsNest B.V.</p>
+  <p class="wrap copy">Automašīnu markas un modeļi: <a href="https://www.eea.europa.eu/en/datahub" rel="noopener">Eiropas Vides aģentūras CO2 monitoringa dati</a>, <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.</p>
+</footer>
+</main>
+</div>
+
+<script type="application/json" id="dv-t">{"lang": "lv", "home": "/lv/", "acct_h": "Jūsu konts", "back": "Atpakaļ", "tab_login": "Pierakstīties", "tab_create": "Izveidot kontu", "google": "Turpināt ar Google", "apple": "Turpināt ar Apple", "redirecting": "Atver {provider}…", "signing_in": "Notiek pierakstīšanās…", "f_name": "Vārds un uzvārds", "ph_name": "Vārds Uzvārds", "f_email": "E-pasts", "ph_email": "vards@example.com", "hint": "Mēs nosūtīsim jums vienreizēju kodu e-pastā. Parole nav vajadzīga.", "send": "Sūtīt kodu uz e-pastu", "sending": "Sūta…", "code_h": "Pārbaudiet e-pastu", "code_sent": "Mēs nosūtījām kodu uz {email}", "f_code": "Kods no e-pasta", "verify": "Turpināt", "verifying": "Pārbauda…", "change_email": "Mainīt e-pastu", "resend": "Sūtīt jaunu kodu", "resend_in": "Jauns kods pēc {s} s", "resent": "Mēs nosūtījām jums jaunu kodu.", "legal": "Turpinot jūs piekrītat <a href=\"/lv/terms\">Noteikumiem<\/a> un <a href=\"/lv/privacy\">Privātuma politikai<\/a>.", "welcome": "Pierakstīšanās izdevās", "signed_in_as": "Konts", "my_trips": "Mani pārvadājumi", "logout": "Izrakstīties", "my_account": "Mans konts", "err_email": "Ievadiet derīgu e-pasta adresi.", "err_name": "Lūdzu, ievadiet savu vārdu.", "err_code": "Ievadiet kodu no e-pasta.", "err_bad_code": "Kods ir nepareizs vai vairs nav derīgs. Pārbaudiet e-pastu vai pieprasiet jaunu kodu.", "no_account": "Ar šo e-pastu vēl nav konta.", "create_instead": "Izveidot kontu", "err_rate": "Pārāk daudz mēģinājumu. Lūdzu, pagaidiet minūti un mēģiniet vēlreiz.", "err_wait": "Lūdzu, brīdi pagaidiet, pirms pieprasāt vēl vienu kodu.", "err_network": "Neizdevās sazināties ar Car2Door. Pārbaudiet savienojumu un mēģiniet vēlreiz.", "err_generic": "Kaut kas nogāja greizi. Lūdzu, mēģiniet vēlreiz.", "err_oauth": "Pierakstīšanās ar {provider} neizdevās. Lūdzu, mēģiniet vēlreiz vai izmantojiet e-pastu.", "err_oauth_off": "Pierakstīšanās ar {provider} vēl nav pieejama. Lūdzu, izmantojiet e-pastu.", "h_price": "Jūsu cena", "checking": "Pārbaudām jūsu maršrutu…", "err_from": "Ievadiet paņemšanas adresi.", "err_to": "Ievadiet piegādes adresi.", "err_not_found": "Mēs neatradām „{q}“. Mēģiniet pilsētu un valsti vai pasta indeksu.", "err_search": "Adrešu meklēšana pašlaik neatbild. Lūdzu, pēc brīža mēģiniet vēlreiz.", "err_route": "Car2Door rezervē auto pārvadājumus ES robežās.", "err_domestic": "Car2Door pagaidām nerezervē pārvadājumus vienas valsts robežās. Iespējami pārvadājumi no vienas valsts uz citu.", "err_short": "Pārvadājumam jābūt vismaz {n} km garam.", "err_when": "Izvēlieties dienu, sākot no rītdienas.", "err_make": "Izvēlieties marku no saraksta.", "err_model": "Izvēlieties modeli no saraksta.", "err_vin": "Ievadiet VIN: 17 burti un cipari no reģistrācijas apliecības (E lauks), bez I, O un Q.", "err_vin_old": "Ievadiet VIN vai, ja auto ražots pirms 1981. gada, šasijas numuru: 5–16 burti un cipari.", "vin_letters": "Tikai burti un cipari, bez I, O un Q", "vin_maker": "Ražotāja kods: {make}", "vin_other": "Šis ražotāja kods nav {make}. Auto, ko ražojis cits ražotājs, nes tā kodu: pārbaudiet VIN un marku, tad turpiniet.", "vin_check": "Vēlreiz pārbaudiet VIN: kontrolcipars nesakrīt. Daži ražotāji to neizmanto, tāpēc varat turpināt.", "vin_unknown": "Šo ražotāja kodu mēs vēl nezinām. Saņemot auto, VIN salīdzina ar reģistrācijas apliecību.", "err_value": "Izvēlieties auto vērtību: vienu no diapazoniem vai, ja vairāk nekā 50 000 €, vērtību veselos eiro līdz 250 000 €.", "err_plate": "Pārbaudiet numura zīmi vai atstājiet tukšu, ja auto nav reģistrēts.", "err_photo": "Pievienojiet vienu visa auto foto no sāniem.", "opt_h": "Izvēlieties iespēju", "ow_saver": "Paņemšana 7 dienu laikā", "ow_standard": "Paņemšana 5 dienu laikā", "ow_priority": "Paņemšana jūsu izvēlētajā vai nākamajā dienā", "deliver_by": "Piegāde līdz {date}", "runs_not": "Nebrauc", "km": "≈ {n} km", "total": "Kopā", "go_book": "Turpināt pasūtījumu", "fine_print": "Tālāk: automašīnas dati un jūsu karte. Jūs neko nemaksājat, kamēr transporta uzņēmums nepieņem pasūtījumu.", "s_car": "Auto", "s_paid": "Samaksāts", "s_price": "Cena", "s_voucher": "Uzaicinājuma kupons", "retry": "Mēģināt vēlreiz", "here_row": "Mana atrašanās vieta", "here_finding": "Nosaka jūsu atrašanās vietu…", "here_denied": "Lai aizpildītu, kur atrodaties, atļaujiet Car2Door piekļūt jūsu atrašanās vietai. Vai ierakstiet adresi.", "here_blocked": "Jūsu pārlūks šai vietnei bloķē atrašanās vietu. Atļaujiet to vietnes iestatījumos vai ierakstiet adresi.", "here_vague": "Jūsu atrašanās vieta pašlaik nav pietiekami precīza. Pēc brīža mēģiniet vēlreiz vai ierakstiet adresi.", "here_timeout": "Atrašanās vietas noteikšana aizņēma pārāk ilgu laiku. Mēģiniet vēlreiz vai ierakstiet adresi.", "here_unavailable": "Jūsu atrašanās vietu pašlaik nevar noteikt. Mēģiniet vēlreiz vai ierakstiet adresi.", "here_not_found": "Jūsu atrašanās vietā adrese nav atrasta. Ierakstiet adresi.", "here_not_served": "Jūs atrodaties ārpus valstīm, kurās darbojas Car2Door. Ierakstiet adresi.", "clear_addr": "Notīrīt adresi", "route_closed_h": "Šis maršruts vēl nav atvērts", "route_closed": "Car2Door šajā maršrutā vēl nepieņem rezervācijas. Tas tiks atvērts, kad to apkalpos pietiekami daudz transporta uzņēmumu. Izmēģiniet citu paņemšanas vai piegādes vietu vai atgriezieties vēlāk.", "country_closed": "Car2Door pašlaik nepieņem rezervācijas no šīs valsts vai uz to.", "err_quote": "Cenas neizdevās ielādēt. Pārbaudiet savienojumu un mēģiniet vēlreiz.", "priced_now": "Šodienas cenas tādam auto kā jūsējais. Precīzu cenu jūsu auto redzēsiet, rezervējot.", "book_trip": "Rezervēt pārvadājumu", "trip_h": "Jūsu pārvadājums", "up_h": "Aktuālie", "past_h": "Pabeigtie", "none_h": "Pārvadājumu vēl nav", "none_p": "Šeit redzēsiet rezervētos pārvadājumus.", "err_trips": "Neizdevās ielādēt jūsu pārvadājumus. Pārbaudiet savienojumu un mēģiniet vēlreiz.", "gone": "Šo pārvadājumu jūsu kontā neatradām.", "st_pending_payment": "Rezervācija nav pabeigta", "st_bidding": "Meklē transporta uzņēmumu", "st_accepted": "Transporta uzņēmums piešķirts", "st_en_route": "Ceļā uz paņemšanas vietu", "st_picked_up": "Ceļā", "st_completed": "Piegādāts", "st_cancelled": "Atcelts", "t_note": "Jūsu piezīme", "t_window": "Paņemšanas laika logs", "t_deliver": "Piegāde līdz", "t_to_charge": "Iekasē, kad uzņēmums pieņem", "t_to_confirm": "Maksājums jāapstiprina", "t_not_charged": "Nekas nav iekasēts", "n_bidding": "Jūsu pārvadājums tagad tiek piedāvāts transporta uzņēmumiem jūsu maršrutā.", "n_card_later": "No jūsu kartes summu iekasē tikai tad, kad kāds no tiem to pieņem.", "n_pending": "Šī rezervācija vēl nav pabeigta. Pabeidziet to lietotnē „Car2Door“ vai vietnē car2door.eu/book: nekas netiek iekasēts, kamēr transporta uzņēmums nepieņem pasūtījumu.", "n_held": "Transporta uzņēmums pieņēma pasūtījumu, un jūsu banka lūdz apstiprināt maksājumu. Apstipriniet to lietotnē „Car2Door“ vai vietnē car2door.eu/book līdz {time}, citādi pārvadājums tiks atcelts bez maksas.", "n_locked": "Transporta uzņēmuma dati un tālruņa numurs parādīsies {date}, 24 stundas pirms paņemšanas.", "tr_h": "Jūsu transporta uzņēmums", "slots": "Auto vietas: {n}", "call": "Zvanīt {phone}", "pc_h": "Nodošanas kods", "pc_p": "Piegādē, kad esat pārbaudījuši auto, iedodiet šo kodu vadītājam.", "t_carrier": "Rezervēts caur Car2Door.", "t_carried_by": "Pārvadājumu veic {company}.", "cancel": "Atcelt pārvadājumu", "cancel_q": "Atcelt šo pārvadājumu? Jūs saņemsiet atpakaļ visu naudu.", "cancel_q_free": "Atcelt šo rezervāciju? Nekas vēl nav iekasēts, tāpēc atcelšana jums neko nemaksā.", "cancel_yes": "Jā, atcelt", "cancel_no": "Paturēt pārvadājumu", "cancelling": "Atceļ…", "err_cancel": "Transporta uzņēmums jau ir pieņēmis šo pārvadājumu. Lai to atceltu, rakstiet uz support@car2door.eu.", "cx_free": "Bezmaksas atcelšana līdz {date}.", "cx_free_any": "Bezmaksas atcelšana.", "cx_part": "Atceļot tagad, atmaksa ir {pct} ({amount}).", "cx_none": "Atceļot tagad, nauda netiek atmaksāta.", "cx_then_part": "No {date} atmaksa ir {pct}.", "cx_then_none": "No {date} nauda netiek atmaksāta.", "cx_q_part": "Atcelt šo pārvadājumu? Jūs saņemsiet atpakaļ {amount} jeb {pct} no samaksātā.", "cx_q_none": "Atcelt šo pārvadājumu? Līdz paņemšanai ir palicis pārāk maz laika, tāpēc nauda netiks atmaksāta.", "cx_late": "Transporta uzņēmums kavējas vai neierodas? Tā vietā rakstiet uz support@car2door.eu.", "n_cx_none": "Jūs atcēlāt šo pārvadājumu īsi pirms paņemšanas, tāpēc maksājums netika atmaksāts.", "n_why_none": "Neviens transporta uzņēmums laikus nepieņēma šo pārvadājumu.", "n_why_you": "Jūs atcēlāt šo pārvadājumu.", "n_why_in_time": "Jūs atcēlāt šo pārvadājumu laikus, tāpēc atcelšanas maksas nav.", "n_why_fee": "Jūs atcēlāt šo pārvadājumu mazāk nekā 48 stundas pirms paņemšanas, tāpēc no tā cenas tika paturēti {fee}.", "n_why_unpaid": "Šī rezervācija tika atcelta, jo maksājums netika saņemts laikus.", "n_why_payment_failed": "Šis pārvadājums tika atcelts, jo pēc tam, kad transporta uzņēmums to pieņēma, maksājums netika laikus apstiprināts. Nekas netika iekasēts.", "n_why_no_paper": "Šī rezervācija tika atcelta, jo reģistrācijas apliecība netika saņemta laikus. Nekas netika iekasēts.", "n_why_checked": "Šis pārvadājums tika atcelts pēc Car2Door pārbaudes.", "n_why_fraud": "Šis pārvadājums tika atcelts: jūsu banka ziņoja par šo kartes maksājumu.", "n_why_disputed": "Šis pārvadājums tika atcelts, jo maksājums tiek apstrīdēts jūsu bankā. Par naudas atmaksu lemj jūsu banka.", "n_why_no_show": "Paņemšanas brīdī auto nebija uz vietas, tāpēc šis pārvadājums tika atcelts un maksājums netiek atmaksāts.", "n_why_carrier_no_show": "Car2Door atcēla šo pārvadājumu, jo transporta uzņēmums neieradās. Jūs saņemsiet atpakaļ visu samaksāto summu.", "n_why_staff": "Car2Door atcēla šo pārvadājumu. Jūs saņemsiet atpakaļ visu samaksāto summu.", "n_why_other": "Šis pārvadājums tika atcelts.", "n_ref_full": "Jūsu maksājums {amount} ir pilnībā atmaksāts uz karti vai kontu, ar kuru maksājāt. Nauda var pienākt 5–10 darba dienu laikā.", "n_ref_part": "Atmaksas summa {amount} ir pārskaitīta uz karti vai kontu, ar kuru maksājāt. Nauda var pienākt 5–10 darba dienu laikā.", "n_ref_pending": "Jūsu nauda tiek atmaksāta. Tā atgriezīsies uz karti vai kontu, ar kuru maksājāt, un tas var aizņemt 5–10 darba dienas.", "n_ref_retrying": "Jūsu atmaksa vēl nav izdevusies. Car2Door automātiski mēģinās vēlreiz, jums nekas nav jādara.", "n_ref_failed": "Atmaksu neizdevās veikt automātiski. Ar to nodarbojas Car2Door atbalsta komanda. Jautājumi? Rakstiet uz support@car2door.eu.", "err_cx_changed": "Atcelšanas atmaksas summa tikko mainījās. Pārbaudiet to un mēģiniet vēlreiz.", "err_cx_started": "Šo pārvadājumu šeit vairs nevar atcelt. Rakstiet uz support@car2door.eu.", "report": "Ziņot par problēmu", "report_until": "Kaut kas nav kārtībā ar šo pārvadājumu? Jūs varat ziņot līdz {date}.", "report_ph": "Kas notika?", "report_send": "Sūtīt ziņojumu", "report_done": "Jūs ziņojāt par problēmu ar šo pārvadājumu. Mēs ar jums sazināsimies.", "err_report_empty": "Pastāstiet, kas notika.", "err_report_closed": "Laiks ziņot par problēmu ar šo pārvadājumu ir beidzies. Rakstiet uz support@car2door.eu.", "invoices_h": "Rēķini", "invoice_trip": "Rēķins {n}", "invoice_credit": "Kredītrēķins {n}", "inv_by": "{name} uzaicināja jūs uz Car2Door", "inv_partner": "Car2Door transporta uzņēmums", "inv_saved": "Uzaicināja {name}", "inv_saved_p": "Uzaicinājums tiks pievienots jūsu kontam, kad pierakstīsieties vai reģistrēsieties.", "inv_ok": "Uzaicinājums tagad ir jūsu kontā.", "inv_h": "Uzaicinājuma kods", "inv_bad": "Šī uzaicinājuma saite vairs nav derīga. Jūs joprojām varat izmantot Car2Door kā parasti.", "inv_too_late": "Uzaicinājuma kodus var pievienot tikai pirmajās 7 dienās pēc reģistrācijas.", "inv_already": "Jūsu kontam jau ir uzaicinājums.", "inv_booked": "Uzaicinājuma kodus var pievienot tikai pirms pirmās rezervācijas.", "inv_own": "Jūs nevarat izmantot savu uzaicinājuma kodu.", "inv_close": "Aizvērt", "inv_card_h": "€25 atlaide pirmajam auto pārvadājumam", "inv_card_p": "No €300; €25 tiek atskaitīti, kad rezervējat. Saglabāts šajā pārlūkā 30 dienas.", "inv_price": "Uzzināt cenu", "inv_carried": "Car2Door auto pārvadājums, pārvadā {name}", "inv_lanes": "Maršruti", "inv_reviews": "Atsauksmes", "inv_reviews_v": "{rating} · {n} atsauksmes", "inv_first": "Atsauksmi var atstāt tikai klients, kurš rezervēja, vienreiz, pēc piegādes. Šeit rezervēts darbs vispirms tiek piedāvāts {name}, pēc tam citiem pārbaudītiem pārvadātājiem.", "inv_pay": "Rezervējiet un maksājiet tikai car2door.eu vai lietotnē Car2Door.", "inv_seen": "{name} saņem nelielu atlīdzību no Car2Door, kad rezervējat. Tas redz, cik klientu atnāca caur tā saiti, un mēneša summu. Tāpat kā jebkuram pārvadātājam, tam var piedāvāt jūsu pārvadājumu, atzīmētu kā tā klienta, un jūsu vārdu tas redz tikai tad, ja ved jūsu auto.", "inv_house": "Šo ielūgumu nevar izmantot šajā kontā.", "inv_off": "Share & Earn ir apturēts: jaunus ielūgumus pašlaik nevar pievienot.", "pn_help": "Palīdzība", "pn_site": "Vietne", "pn_saved": "Saglabāts.", "pn_help_more": "Joprojām vajadzīga palīdzība? Rakstiet mums uz {email}. Lai ziņotu par nelikumīgu saturu: {report}. Iestādēm: {legal} (angļu vai nīderlandiešu valodā).", "pn_rep_p": "Pastāstiet mums par saturu Car2Door, kas, jūsuprāt, ir nelikumīgs vai pārkāpj mūsu noteikumus: tērzēšanas ziņu, atsauksmi, uzņēmuma lapu, profila foto vai vārdu vai kaut ko šajā vietnē. Konts nav vajadzīgs.", "pn_rep_reason": "Kāpēc jūs par to ziņojat?", "pn_rep_illegal": "Tas ir nelikumīgi", "pn_rep_terms": "Tas pārkāpj Car2Door noteikumus", "pn_rep_where": "Kur tas atrodas?", "pn_rep_where_ph": "Saite vai kas to uzrakstīja, kurā pārvadājumā un kad", "pn_rep_details": "Paskaidrojiet, kāpēc", "pn_rep_law": "Kādu likumu tas pārkāpj? (nav obligāti)", "pn_rep_name": "Jūsu vārds (nav obligāti)", "pn_rep_email": "Jūsu e-pasts (nav obligāti: apstiprinājumam un mūsu lēmumam)", "pn_rep_faith": "Godprātīgi apliecinu, ka mans ziņojums ir precīzs un pilnīgs.", "pn_rep_send": "Sūtīt ziņojumu", "pn_rep_sending": "Sūta…", "pn_rep_done": "Paldies. Mēs saņēmām jūsu ziņojumu un to izskatīsim. Ja norādījāt e-pastu, nosūtīsim apstiprinājumu un mūsu lēmumu.", "pn_rep_again": "Ziņot par kaut ko citu", "pn_rep_112": "Vai kādam šobrīd draud briesmas? Vispirms zvaniet 112.", "pn_rep_err_where": "Norādiet, kur atrodas saturs.", "pn_rep_err_details": "Paskaidrojiet, kāpēc par to ziņojat.", "pn_rep_err_faith": "Atzīmējiet rūtiņu, lai apstiprinātu, ka ziņojat godprātīgi.", "pn_rep_err_email": "Pārbaudiet savu e-pasta adresi.", "pn_rep_err_long": "Pārāk garš: ne vairāk kā {max} rakstzīmes.", "pn_rep_err": "Neizdevās nosūtīt jūsu ziņojumu. Pārbaudiet savienojumu un mēģiniet vēlreiz vai rakstiet uz support@car2door.eu.", "pn_fb_p": "Pastāstiet, kas jums patīk, kā trūkst vai kas nedarbojas. Katru ziņu lasa cilvēks no Car2Door komandas. Konts nav vajadzīgs.", "pn_fb_email": "Jūsu e-pasts (nav obligāti: ja vēlaties atbildi)", "pn_fb_done": "Paldies! Mēs saņēmām jūsu atsauksmi. Katru ziņu lasa cilvēks no mūsu komandas un atbild, ja atbilde ir vajadzīga un jūs norādījāt e-pastu.", "pn_fb_again": "Sūtīt vēl atsauksmi", "pn_fb_err": "Neizdevās nosūtīt jūsu atsauksmi. Pārbaudiet savienojumu un mēģiniet vēlreiz.", "pn_delete_yes": "Jā, dzēst manu kontu", "pn_deleting": "Dzēš…", "pn_new": "Jauns pārvadājums", "pn_trips": "Mani pārvadājumi", "pn_profile": "Profils", "pn_account": "Konts", "pn_details": "Personas dati", "pn_invoices": "Rēķini", "pn_invite": "Uzaicinājuma kods", "pn_invite_by": "Pievienojiet līdz {date}", "pn_language": "Valoda", "pn_terms": "Lietošanas noteikumi", "pn_privacy": "Privātuma politika", "pn_close": "Aizvērt", "pn_save": "Saglabāt", "pn_cancel": "Atcelt", "pn_delete": "Dzēst kontu", "pn_delete_q": "Dzēst jūsu kontu?", "pn_delete_p": "Jūsu konts tiek uzreiz iesaldēts un pēc 28 dienām dzēsts. Līdz tam to varat atsaukt no mūsu nosūtītā e-pasta vai dzēst tagad. Rēķini un nodokļu dati paliek 7 gadus, bet braucienu ieraksts, kamēr vēl var iesniegt prasību, kā to prasa likums.", "pn_name": "Vārds un uzvārds", "pn_phone": "Tālrunis", "pn_bill_h": "Rēķina dati (nav obligāti)", "pn_bill_p": "Uzņēmuma pārvadājumiem: tad rēķinos būs norādīts jūsu uzņēmums.", "pn_bill_name": "Uzņēmuma nosaukums", "pn_bill_vat": "PVN numurs", "pn_bill_addr": "Norēķinu adrese", "pn_bill_addr_ph": "Iela, pasta indekss, pilsēta, valsts", "pn_inv_none": "Jūsu rēķini parādīsies šeit, kad pārvadājums būs pabeigts.", "bk_agree": "Es izlasīju šos dokumentus: {terms} un {privacy}, un piekrītu cenai un noteikumiem.", "pn_code_add": "Pievienot uzaicinājuma kodu", "pn_code_until": "No transporta uzņēmuma vai drauga, kas jūs uzaicināja. To varat pievienot līdz {date}, pirms pirmās rezervācijas.", "pn_code_short": "Uzaicinājuma kodā ir 6 burti un cipari.", "pn_feedback": "Atsauksmes un ieteikumi", "pn_fb_kind": "Par ko tas ir?", "pn_fb_suggestion": "Ieteikums", "pn_fb_problem": "Problēma", "pn_fb_praise": "Uzslava", "pn_fb_other": "Cits", "pn_fb_message": "Jūsu ziņa", "pn_fb_message_ph": "Jūsu ideja vai kas un kur nedarbojās", "pn_fb_send": "Sūtīt atsauksmi", "pn_fb_err_message": "Vispirms uzrakstiet atsauksmi.", "pn_fb_err_long": "Pārāk garš: ne vairāk kā {max} rakstzīmes.", "pn_fb_err_email": "Pārbaudiet e-pasta adresi vai atstājiet lauku tukšu.", "ph_code": "Valsts kods", "ph_pick": "Kods", "ph_first": "Vispirms izvēlieties valsts kodu.", "ph_invalid": "Pārbaudiet numuru: tas ir pārāk īss vai pārāk garš (valsts: {country}).", "sr_title": "Transporta uzņēmuma vēl nav", "sr_text": "Neviens vēl nav pieņēmis jūsu pārvadājumu. Meklēsim līdz {date}. Ja līdz tam neviens to nepieņems, rezervācija beigsies, un jums tas neko nemaksās.", "sr_keeping": "Meklēsim līdz {date}. Ja līdz tam neviens nepieņems jūsu pārvadājumu, rezervācija beigsies, un jums tas neko nemaksās.", "sr_keep": "Turpināt meklēt", "sr_stop": "Beigt meklēt", "sr_stop_q": "Beigt meklēt un atcelt rezervāciju?", "sr_stop_p": "Jūsu pārvadājums tiks atcelts, un viss samaksātais tiks jums atmaksāts.", "sr_stop_p_free": "Jūsu rezervācija ir atcelta. No jūsu kartes nekas netika iekasēts.", "sr_taken": "Transporta uzņēmums tikko pieņēma jūsu pārvadājumu.", "sr_closed": "Šis pārvadājums vairs negaida transporta uzņēmumu.", "wp_date": "Datums", "wp_time": "Laiks", "wp_prev": "Iepriekšējais mēnesis", "wp_next": "Nākamais mēnesis", "sz_car": "Auto", "sz_suv": "SUV", "sz_van": "Furgons ≤3,5t", "f_size": "Izmērs", "f_when": "Gatavs paņemšanai no", "band_low": "Līdz 15 000 €", "band_mid": "15 000 € – 50 000 €", "band_high": "Virs 50 000 €", "o_saver": "Ekonomiskais", "o_standard": "Standarta", "o_priority": "Prioritārais", "pn_join": "Kļūstiet par pārvadātāju", "pn_doc_terms": "Noteikumi klientiem", "pn_doc_tterms": "Noteikumi pārvadātājiem", "pn_doc_privacy": "Privātuma politika", "pn_doc_cookies": "Sīkdatņu politika", "pn_doc_delete": "Konta dzēšana", "pn_report": "Ziņot par saturu", "or": "vai", "refusals": {"rate_limited": "Pārāk daudz mēģinājumu. Brīdi pagaidiet un mēģiniet vēlreiz.", "trip_in_progress": "Vispirms pabeidziet vai atdodiet pieņemto braucienu. Tad varēsiet dzēst kontu.", "payout_due": "Izmaksa jums vēl ir ceļā (tā tiek veikta 48 stundas pēc piegādes). Kontu varēsiet dzēst, kad tā būs izmaksāta. Jautājumi? Rakstiet atbalstam.", "refund_due": "Atmaksa jums vēl tiek veikta. Kontu varēsiet dzēst, kad atmaksa būs veikta. Jautājumi? Rakstiet atbalstam.", "invoice_due": "Jūsu jaunākais rēķins vēl tiek sagatavots. Lūdzu, mēģiniet vēlreiz pēc 15 minūtēm."}, "countries": {"PL": "Polija", "RO": "Rumānija", "BG": "Bulgārija", "HU": "Ungārija", "LT": "Lietuva", "LV": "Latvija", "DE": "Vācija", "NL": "Nīderlande", "BE": "Beļģija", "AT": "Austrija", "FR": "Francija", "IT": "Itālija", "ES": "Spānija", "CZ": "Čehija", "DK": "Dānija", "SE": "Zviedrija", "IE": "Īrija", "PT": "Portugāle", "LU": "Luksemburga", "GR": "Grieķija"}, "gate_q": {"en": "What language?", "ro": "Ce limbă preferi?", "pl": "Wybierz język", "bg": "На какъв език?", "hu": "Válassz nyelvet", "lt": "Kuria kalba?", "lv": "Kurā valodā?"}}</script>
+</body>
+</html>
