@@ -723,10 +723,15 @@ try {
       already_booked: T.inv_booked, own_code: T.inv_own, house_account: T.inv_house, programme_off: T.inv_off }[res] || T.err_generic;
   }
 
-  // The company's lanes as the apps write them (src/lib/share-earn-rules.ts lanesText): the west, then Romania.
+  // The company's lanes as the apps write them (src/lib/share-earn-rules.ts lanesText): the west, then its home
+  // countries (D208); nothing when either side is missing.
+  var HOME = ['PL', 'RO', 'BG', 'HU', 'LT', 'LV'];
   function lanesText(codes) {
-    var names = (codes || []).filter(function (c) { return c !== 'RO' && T.countries[c]; }).map(function (c) { return T.countries[c]; });
-    return names.length && (codes || []).indexOf('RO') >= 0 ? names.join(', ') + ' ⇄ ' + T.countries.RO : '';
+    var known = (codes || []).filter(function (c) { return T.countries[c]; });
+    var name = function (c) { return T.countries[c]; };
+    var west = known.filter(function (c) { return HOME.indexOf(c) < 0; }).map(name);
+    var east = known.filter(function (c) { return HOME.indexOf(c) >= 0; }).map(name);
+    return west.length && east.length ? west.join(', ') + ' ⇄ ' + east.join(', ') : '';
   }
 
   // The invite panel on the home page: under the lead on wide screens, between the pill and the
