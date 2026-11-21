@@ -352,6 +352,8 @@ h1 { font-size: clamp(40px, 7vw, 64px); margin: 0 0 18px; letter-spacing: -0.035
 .tabbar.aside { transform: translate(-50%, 110px); opacity: 0; visibility: hidden; }
 @media (prefers-reduced-motion: reduce) { .tabbar { transition: opacity .2s, visibility .2s; } .tabbar.aside { transform: translateX(-50%); } }
 .has-tabs #stage { padding-bottom: 92px; }
+/* A page the apps opened (?app=1, site.js takeApp): the logo stays, the header's buttons go (fix list 22). */
+html.app-view .top nav { display: none; }
 @media (max-width: 860px) { body:has(.sheet input:focus, .sheet textarea:focus, #page input:focus, #page textarea:focus) .tabbar { display: none; } } /* the keyboard is up */
 
 /* Profile (signed in), as in the app: who you are, three tiles, then menus of rows. */

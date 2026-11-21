@@ -723,13 +723,15 @@ try {
       already_booked: T.inv_booked, own_code: T.inv_own, house_account: T.inv_house, programme_off: T.inv_off }[res] || T.err_generic;
   }
 
-  // The company's lanes as the apps write them (src/lib/share-earn-rules.ts lanesText): the west, then its home
-  // countries (D208); nothing when either side is missing.
+  // The company's lanes as the apps write them (src/lib/share-earn-rules.ts lanesText): the served west
+  // (ROUTE_WEST, D208), then its home countries; nothing when either side is missing. A trip area may hold
+  // any EU country; the invite names only routes clients can book (the try-outs' fix list, item 2).
   var HOME = ['PL', 'RO', 'BG', 'HU', 'LT', 'LV'];
+  var WEST = ['NL', 'DE', 'BE', 'AT'];
   function lanesText(codes) {
     var known = (codes || []).filter(function (c) { return T.countries[c]; });
     var name = function (c) { return T.countries[c]; };
-    var west = known.filter(function (c) { return HOME.indexOf(c) < 0; }).map(name);
+    var west = known.filter(function (c) { return WEST.indexOf(c) >= 0; }).map(name);
     var east = known.filter(function (c) { return HOME.indexOf(c) >= 0; }).map(name);
     return west.length && east.length ? west.join(', ') + ' ⇄ ' + east.join(', ') : '';
   }
@@ -1646,7 +1648,7 @@ try {
       a.classList.toggle('on', x);
       if (x) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
-    tabbar.hidden = gated();
+    tabbar.hidden = gated() || root.classList.contains('app-view');
     root.classList.toggle('has-tabs', !tabbar.hidden);
     clearCard();
   }
@@ -1831,6 +1833,8 @@ try {
     applyChrome(next.meta);
     page = next.page;
     curKey = next.key;
+    syncAppView();
+    syncTabs();
     if (!open && hash && !y) y = function () { var el = anchor(page, hash); return el ? yOf(el) : 0; };
     syncDeck(true);
     slideScreen(from, page, dir, y, function () { if (prev !== page) resetDeck(prev); });
@@ -1965,11 +1969,20 @@ try {
     } catch (e) { return false; }
   }
   // A page the apps opened (openLegal, src/lib/legal-url.ts fromApp) says so with ?app=1. Read and
-  // taken off the address before the page starts, like ?r=.
+  // taken off the address before the page starts, like ?r=. A legal page (article.legal) opened so
+  // shows no header buttons (Transporters, the language pill, Log in) and no bottom tabs, and so does
+  // every legal page later in the visit (html.app-view; fix list 22): the reader is in the app, which
+  // has its own. Any other page keeps them, so ?app=1 on the home page or a link from the site's own
+  // booking card strips nothing (the reader on #362).
+  var APP_VIEW = 'car2door.app-view';
+  function appView() { try { return sessionStorage.getItem(APP_VIEW) === '1'; } catch (e) { return false; } }
+  function isLegal(pg) { return !!(pg && $('article.legal', pg)); }
+  function syncAppView() { root.classList.toggle('app-view', appView() && isLegal(page)); }
   function takeApp() {
     if (!window.URLSearchParams) return false;
     var q = new URLSearchParams(location.search);
     if (!q.has('app')) return false;
+    if (isLegal(page)) try { sessionStorage.setItem(APP_VIEW, '1'); } catch (e) {}
     q.delete('app');
     var rest = q.toString();
     history.replaceState(history.state, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
@@ -2110,6 +2123,7 @@ try {
     var invited = REFERRALS && /[?&]r=/.test(location.search); // for the language card (below), before takeRef takes it off
     takeRef();
     var fromApp = takeApp();
+    syncAppView(); // a legal page opened from the apps: no language card either
     curKey = location.pathname + location.search;
     var st = history.state || {};
     hIdx = st.dv != null ? st.dv : stamp();
@@ -2132,7 +2146,7 @@ try {
     if (acctHash()) openLogin({ fromUrl: true, instant: true, view: acctHash() });
     else if (st.y && !location.hash) jump(st.y);
     // The visit's language card, over whatever the address opened.
-    langGate({ app: fromApp, signedIn: !!bookSession(), invite: invited });
+    langGate({ app: fromApp || root.classList.contains('app-view'), signedIn: !!bookSession(), invite: invited });
     window.addEventListener('keydown', gateKeys, true);
     d.addEventListener('focusin', gateFocus);
     d.addEventListener('click', langLinkClick, true);
