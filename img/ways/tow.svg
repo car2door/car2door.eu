@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Tow truck">
-  <!-- Drawn for car2door.eu (no photo): a flatbed tow truck carrying a car that doesn't drive. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Flatbed up to 3.5 t">
+  <!-- Drawn for car2door.eu (no photo): a flatbed up to 3.5 t (D63) carrying a car that doesn't drive. -->
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A1330"/><stop offset=".72" stop-color="#16224A"/><stop offset="1" stop-color="#0B1124"/></linearGradient>
     <radialGradient id="glow" cx=".45" cy=".78" r=".62"><stop offset="0" stop-color="#FF6A13" stop-opacity=".24"/><stop offset="1" stop-color="#FF6A13" stop-opacity="0"/></radialGradient>
